@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Iterator
 
 from Bio import SeqIO
@@ -6,7 +7,13 @@ from Bio.Seq import Seq
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from Bio.SeqRecord import SeqRecord
 
-from compgenlnc.config.paths import *
+from compgenlnc.config.paths import (
+    LNCRNA_FASTA,
+    MAT_MIRNA_FASTA,
+    PAIRS_FILES,
+    PRE_MIRNA_FASTA,
+    SEQ_SS_PREFIX,
+)
 
 
 def iter_seq_fasta(
@@ -27,13 +34,13 @@ def iter_seq_fasta(
     if not isinstance(filename, Path):
         filename = Path(filename).resolve()
 
-    with open(filename, 'r') as out_file:
-        for title, seq in SimpleFastaParser(out_file):
-            id = title.split()[0]
+    with open(filename, 'r') as file:
+        for title, seq in SimpleFastaParser(file):
+            id_ = title.split()[0]
             if (filter and
-                not any(prefix in id for prefix in filter)):
+                not any(prefix in id_ for prefix in filter)):
                 continue
-            yield SeqRecord(Seq(seq), id, description='')
+            yield SeqRecord(Seq(seq), id_, description='')
 
 
 def filter_fasta(
@@ -127,11 +134,11 @@ def list_seq_ss(
         for filename in sorted(os.listdir(folder)):
             if not filename.startswith(SEQ_SS_PREFIX):
                 continue
-            id = os.path.splitext(filename[len(SEQ_SS_PREFIX):])[0]
-            if keep is not None and id not in keep:
+            id_ = os.path.splitext(filename[len(SEQ_SS_PREFIX):])[0]
+            if keep is not None and id_ not in keep:
                 continue
             seq = read_sequence(folder / filename, mature_only)
-            yield SeqRecord(Seq(seq), id, description='')
+            yield SeqRecord(Seq(seq), id_, description='')
 
 
 def seq_ss_to_fasta(
