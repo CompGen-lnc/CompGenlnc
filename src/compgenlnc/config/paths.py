@@ -18,6 +18,10 @@ MAT_MIRNA_FASTA = MIRNA_FOLDER / 'fasta' / 'mature_mirna.fa'
 MIRNA_SS_FASTA = MIRNA_FOLDER / 'fasta' / 'mirna_2d.fa'
 MIRNA_SEQ_SS_FOLDER = MIRNA_FOLDER / 'characterization' / 'seq+ss_join'
 
+LNCRNA_FASTA = LNCRNA_FOLDER / 'fasta' / 'lncrna.fa'
+LNCRNA_SS_FASTA = LNCRNA_FOLDER / 'fasta' / 'lncrna_2d.fa'
+LNCRNA_SEQ_SS_FOLDER = LNCRNA_FOLDER / 'characterization' / 'seq+ss_join'
+
 PAIRS_FILE_POSITIVE = INTERACTIONS_FOLDER / 'validated_pairs_negative.csv'
 PAIRS_FILE_NEGATIVE = INTERACTIONS_FOLDER / 'validated_pairs_positive.csv'
 PAIRS_FILES = [PAIRS_FILE_POSITIVE, PAIRS_FILE_NEGATIVE]
