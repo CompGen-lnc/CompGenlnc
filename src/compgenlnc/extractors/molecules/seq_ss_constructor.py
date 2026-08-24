@@ -6,23 +6,35 @@ from Bio.Seq import Seq
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from Bio.SeqRecord import SeqRecord
 
-from compgenlnc.config.paths import SEQ_SS_PREFIX
-from compgenlnc.extractors.molecules.fasta_constructor import iter_seq_fasta
+from compgenlnc.config.paths import (
+    LNCRNA_FASTA,
+    LNCRNA_SEQ_SS_FOLDER,
+    PRE_MIRNA_FASTA,
+    MIRNA_SEQ_SS_FOLDER,
+    SEQ_SS_PREFIX,
+)
+from compgenlnc.utils.fasta_manager import iter_seq_fasta
 
 
-def join_seq_ss(seq: str, ss: str, id_: str, folder: str | Path) -> None:
-    if not isinstance(folder, Path):
-        folder = Path(folder).resolve()
+def join_seq_ss(
+        seq: str,
+        ss: str,
+        id_: str,
+        folder: str | os.PathLike
+) -> None:
+    folder = Path(folder).resolve()
 
-    path = folder / f'{SEQ_SS_PREFIX}{id_}.txt'
+    path = folder / f'{SEQ_SS_PREFIX}{id_}.dat'
     with open(path, 'w') as out_file:
         out_file.write(seq + '\n')
         out_file.write(ss)
 
 
-def fasta_to_seq_ss(filename: str | Path, folder: str | Path) -> int:
-    if not isinstance(folder, Path):
-        folder = Path(folder).resolve()
+def fasta_to_seq_ss(
+        filename: str | os.PathLike,
+        folder: str | os.PathLike
+) -> int:
+    folder = Path(folder).resolve()
 
     seq_dict = {
         record.id: str(record.seq).replace('U', 'T')
@@ -42,3 +54,11 @@ def fasta_to_seq_ss(filename: str | Path, folder: str | Path) -> int:
             print(id_)
 
     return total
+
+
+def mirna_to_seq_ss() -> int:
+    return fasta_to_seq_ss(PRE_MIRNA_FASTA, MIRNA_SEQ_SS_FOLDER)
+
+
+def lncrna_to_seq_ss() -> int:
+    return fasta_to_seq_ss(LNCRNA_FASTA, LNCRNA_SEQ_SS_FOLDER)
