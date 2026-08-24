@@ -38,12 +38,18 @@ def iter_seq_fasta(
             yield SeqRecord(Seq(seq), id_, description='')
 
 
-def read_sequence(filename: str | os.PathLike, mature_only=False) -> str:
-    """Read the first line of the file and normalized to ACGT alphabet.
+def read_sequence(
+        filename: str | os.PathLike,
+        mature_only: bool = False
+) -> str:
+    """Read the first line of a seq+ss file and normalize to ACGT
+    alphabet.
 
     Args:
         filename:
     """
+    filename = Path(filename).resolve()
+
     with open(filename) as f:
         seq = f.readline().strip()
     if mature_only:
@@ -51,19 +57,18 @@ def read_sequence(filename: str | os.PathLike, mature_only=False) -> str:
     return seq.upper().replace('U', 'T')
 
 
-def list_seq_ss(
+def iter_seq_ss(
         folder: str | os.PathLike,
-        new_fasta: str | os.PathLike,
-        /,
         keep: list[str] | None = None,
-        mature_only=False
+        mature_only: bool = False
 ) -> Iterator[SeqRecord]:
-    with open(new_fasta, 'w') as out_file:
-        for filename in sorted(os.listdir(folder)):
-            if not filename.startswith(SEQ_SS_PREFIX):
-                continue
-            id_ = os.path.splitext(filename[len(SEQ_SS_PREFIX):])[0]
-            if keep is not None and id_ not in keep:
-                continue
-            seq = read_sequence(folder / filename, mature_only)
-            yield SeqRecord(Seq(seq), id_, description='')
+    folder = Path(folder).resolve()
+
+    for filename in sorted(os.listdir(folder)):
+        if not filename.startswith(SEQ_SS_PREFIX):
+            continue
+        id_ = os.path.splitext(filename[len(SEQ_SS_PREFIX):])[0]
+        if keep is not None and id_ not in keep:
+            continue
+        seq = read_sequence(folder / filename, mature_only)
+        yield SeqRecord(Seq(seq), id_, description='')

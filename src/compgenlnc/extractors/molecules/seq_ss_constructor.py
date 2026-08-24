@@ -31,14 +31,16 @@ def join_seq_ss(
 
 
 def fasta_to_seq_ss(
-        filename: str | os.PathLike,
+        seq_file: str | os.PathLike,
+        ss_file: str | os.PathLike,
         folder: str | os.PathLike
 ) -> int:
+    seq_file = Path(seq_file).resolve()
     folder = Path(folder).resolve()
 
     seq_dict = {
         record.id: str(record.seq).replace('U', 'T')
-        for record in iter_seq_fasta(filename)
+        for record in iter_seq_fasta(seq_file)
     }
     id_list = list(seq_dict.keys())
     id_list.sort()

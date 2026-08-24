@@ -13,13 +13,13 @@ from compgenlnc.config.paths import (
     PAIRS_FILES,
     PRE_MIRNA_FASTA,
 )
-from compgenlnc.utils.fasta_manager import iter_seq_fasta, list_seq_ss
+from compgenlnc.utils.fasta_manager import iter_seq_fasta, iter_seq_ss
 
 
 def filter_fasta(
         filename: str | os.PathLike,
-        filter: list[str],
-        new_fasta: str | os.PathLike
+        new_fasta: str | os.PathLike,
+        filter: list[str]
 ) -> None:
     """Filter the RNA sequences from a FASTA file by the name.
 
@@ -29,6 +29,7 @@ def filter_fasta(
             desired sequences.
         new_fasta: path of the filtered FASTA file.
     """
+    filename = Path(filename).resolve()
     new_fasta = Path(new_fasta).resolve()
         
     fasta = [record for record in iter_seq_fasta(filename, filter)]
@@ -50,6 +51,7 @@ def filter_pre_mirna(
         filter: a list with all substrings contained in the name of the 
             desired sequences.
     """
+    filename = Path(filename).resolve()
     filter_fasta(filename, filter, new_fasta=PRE_MIRNA_FASTA)
 
 
@@ -64,6 +66,7 @@ def filter_mat_mirna(
         filter: a list with all substrings contained in the name of the 
             desired sequences.
     """
+    filename = Path(filename).resolve()
     filter_fasta(filename, filter, new_fasta=MAT_MIRNA_FASTA)
 
 
@@ -78,16 +81,18 @@ def filter_lncrna(
         filter: a list with all substrings contained in the name of the 
             desired sequences.
     """
+    filename = Path(filename).resolve()
     filter_fasta(filename, filter, new_fasta=LNCRNA_FASTA)
 
 
 
 def seq_ss_to_fasta(
         folder: str | os.PathLike,
-        new_fasta: str | os.PathLike
+        new_seq_fasta: str | os.PathLike,
+        new_ss_fasta: str | os.PathLike
 ) -> None:
-    folder = Path(str(folder)).resolve()
-    new_fasta = Path(str(new_fasta)).resolve()
+    folder = Path(folder).resolve()
+    new_seq_fasta = Path(new_seq_fasta).resolve()
 
     needed_seq = []
     for pf in PAIRS_FILES:
@@ -99,9 +104,9 @@ def seq_ss_to_fasta(
 
     fasta = [
         record
-        for record in list_seq_ss(folder, new_fasta, keep=needed_seq)
+        for record in iter_seq_ss(folder, new_seq_fasta, keep=needed_seq)
     ]
     fasta.sort(key=lambda record: record.id)
 
-    new_fasta.parent.mkdir(parents=True, exist_ok=True)
-    SeqIO.write(fasta, new_fasta, 'fasta')
+    new_seq_fasta.parent.mkdir(parents=True, exist_ok=True)
+    SeqIO.write(fasta, new_seq_fasta, 'fasta')
