@@ -16,16 +16,16 @@ def iter_seq_fasta(
         filename: str | os.PathLike,
         filter: list[str] | None = None
 ) -> Iterator[SeqRecord]:
-    """Return all the RNA sequences from a FASTA file that fit the 
+    """Iterate all the RNA sequences from a FASTA file that fit the 
     filter.
 
     Args:
-        filename: path of the FASTA file.
-        filter: a list with all substrings contained in the name of the 
-            desired sequences.
+        filename: Path of the FASTA file.
+        filter: A list with all substrings contained in the name of the 
+            desired sequences. Iterate all if None.
 
     Yields:
-        SeqRecord: a record with the sequence and its name.
+        SeqRecord: A record with the sequence and its name.
     """
     filename = Path(filename).resolve()
 
@@ -46,7 +46,9 @@ def read_sequence(
     alphabet.
 
     Args:
-        filename:
+        filename: Path of the seq+ss file.
+        mature_only: Only saves the mature section of the sequence if
+            True.
     """
     filename = Path(filename).resolve()
 
@@ -62,6 +64,15 @@ def iter_seq_ss(
         keep: list[str] | None = None,
         mature_only: bool = False
 ) -> Iterator[SeqRecord]:
+    """Iterate all the seq+ss files from the same folder that fit the
+    filter.
+
+    Args:
+        folder: path of the folder containing seq+ss files.
+        keep: list of the RNA names to iterate.
+        mature_only: Only saves the mature section of the sequence if
+            True.
+    """
     folder = Path(folder).resolve()
 
     for filename in sorted(os.listdir(folder)):

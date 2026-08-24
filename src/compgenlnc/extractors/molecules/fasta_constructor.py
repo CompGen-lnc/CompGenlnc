@@ -24,10 +24,10 @@ def filter_fasta(
     """Filter the RNA sequences from a FASTA file by the name.
 
     Args:
-        filename: path of the FASTA file.
-        filter: a list with all substrings contained in the name of the 
+        filename: Path of the FASTA file.
+        filter: A list with all substrings contained in the name of the 
             desired sequences.
-        new_fasta: path of the filtered FASTA file.
+        new_fasta: Path of the filtered FASTA file.
     """
     filename = Path(filename).resolve()
     new_fasta = Path(new_fasta).resolve()
@@ -47,8 +47,8 @@ def filter_pre_mirna(
     name.
 
     Args:
-        filename: path of the FASTA file.
-        filter: a list with all substrings contained in the name of the 
+        filename: Path of the FASTA file.
+        filter: A list with all substrings contained in the name of the 
             desired sequences.
     """
     filename = Path(filename).resolve()
@@ -62,8 +62,8 @@ def filter_mat_mirna(
     """Filter the mature miRNA sequences from a FASTA file by the name.
     
     Args:
-        filename: path of the FASTA file.
-        filter: a list with all substrings contained in the name of the 
+        filename: Path of the FASTA file.
+        filter: A list with all substrings contained in the name of the 
             desired sequences.
     """
     filename = Path(filename).resolve()
@@ -77,8 +77,8 @@ def filter_lncrna(
     """Filter the lncRNA sequences from a FASTA file by the name.
     
     Args:
-        filename: path of the FASTA file.
-        filter: a list with all substrings contained in the name of the 
+        filename: Path of the FASTA file.
+        filter: A list with all substrings contained in the name of the 
             desired sequences.
     """
     filename = Path(filename).resolve()
@@ -91,6 +91,12 @@ def seq_ss_to_fasta(
         new_seq_fasta: str | os.PathLike,
         new_ss_fasta: str | os.PathLike
 ) -> None:
+    """Join all the seq+ss files from the same folder into a FASTA file.
+
+    Args:
+        new_seq_fasta: Path for the new FASTA file with the sequences.
+        folder: Path of the folder containing all the seq+ss files.
+    """
     folder = Path(folder).resolve()
     new_seq_fasta = Path(new_seq_fasta).resolve()
 

@@ -22,6 +22,15 @@ def join_seq_ss(
         id_: str,
         folder: str | os.PathLike
 ) -> None:
+    """Save the sequence and structure of a RNA molecule in the same
+    file.
+
+    Args:
+        seq: The RNA sequence on ACGT alphabet.
+        ss: The RNA 2d structure on dot-bracket notation.
+        id_: Name of the RNA molecule.
+        folder: Path for the seq+ss file of the RNA molecule.
+    """
     folder = Path(folder).resolve()
 
     path = folder / f'{SEQ_SS_PREFIX}{id_}.dat'
@@ -35,6 +44,13 @@ def fasta_to_seq_ss(
         ss_file: str | os.PathLike,
         folder: str | os.PathLike
 ) -> int:
+    """Convert a FASTA file into seq+ss files for each molecule.
+
+    Args:
+        seq_file: Path of the file containing all the RNA sequences.
+        ss_file: Path of the file containing all the RNA structures.
+        folder: Path for the seq+ss files.
+    """
     seq_file = Path(seq_file).resolve()
     folder = Path(folder).resolve()
 
@@ -59,8 +75,14 @@ def fasta_to_seq_ss(
 
 
 def mirna_to_seq_ss() -> int:
+    """Convert the pre-miRNA FASTA file into seq+ss files for each
+    molecule.
+    """
     return fasta_to_seq_ss(PRE_MIRNA_FASTA, MIRNA_SEQ_SS_FOLDER)
 
 
 def lncrna_to_seq_ss() -> int:
+    """Convert the lncRNA FASTA file into seq+ss files for each
+    molecule.
+    """
     return fasta_to_seq_ss(LNCRNA_FASTA, LNCRNA_SEQ_SS_FOLDER)
