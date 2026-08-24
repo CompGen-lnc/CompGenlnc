@@ -110,7 +110,7 @@ def seq_ss_to_fasta(
 
     fasta = [
         record
-        for record in iter_seq_ss(folder, new_seq_fasta, keep=needed_seq)
+        for record in iter_seq_ss(folder, keep=needed_seq)
     ]
     fasta.sort(key=lambda record: record.id)
 

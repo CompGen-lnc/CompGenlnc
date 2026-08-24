@@ -55,7 +55,7 @@ def fasta_to_seq_ss(
     folder = Path(folder).resolve()
 
     seq_dict = {
-        record.id: str(record.seq).replace('U', 'T')
+        record.id: str(record.seq).upper().replace('U', 'T')
         for record in iter_seq_fasta(seq_file)
     }
     id_list = list(seq_dict.keys())

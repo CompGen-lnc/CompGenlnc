@@ -79,7 +79,7 @@ def iter_seq_ss(
         if not filename.startswith(SEQ_SS_PREFIX):
             continue
         id_ = os.path.splitext(filename[len(SEQ_SS_PREFIX):])[0]
-        if keep is not None and id_ not in keep:
+        if keep and id_ not in keep:
             continue
         seq = read_sequence(folder / filename, mature_only)
         yield SeqRecord(Seq(seq), id_, description='')
