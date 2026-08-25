@@ -8,6 +8,7 @@ import numpy as np
 from Bio.SeqRecord import SeqRecord
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.utils.dict_manager import save_dict
 from compgenlnc.utils.fasta_manager import read_sequence, iter_seq_ss
 
 
@@ -18,7 +19,7 @@ n_combinations = [
 ]
 
 
-def get_kmer(seq: str, k: int) -> np.typing.NDArray[np.float64]:
+def get_kmer(seq: str | SeqRecord, k: int) -> np.typing.NDArray[np.float64]:
     """Get the k-mers of a RNA sequences from 1 to k from the given
     sequence.
 
@@ -28,20 +29,26 @@ def get_kmer(seq: str, k: int) -> np.typing.NDArray[np.float64]:
             from 1 to k, included.
 
     Returns:
-        NDArray: A flattened numpy array with the k-mers of the
+        NDArray: A concatenated numpy array with the k-mers of the
             sequence.
     """
     # Get the kmers of length n for the sequence
+    if isinstance(seq, SeqRecord):
+        seq = str(seq.seq)
+
+    seq = seq.upper().replace('U', 'T')
     def get_nmer(seq: str, n: int) -> np.typing.NDArray[np.float64]:
+        if not seq or len(seq) < n:
+            return np.array([0] * 4 ** n)
         kmers = Counter(
             (seq[i : i + n] for i in range(len(seq) - n + 1))
         )
-        combinations = n_combinations[n]
+        combinations = n_combinations[n - 1]
         return np.array([
             kmers[sub_s] / kmers.total()
             for sub_s in combinations
         ])
-    return np.array([get_nmer(seq, n) for n in range(1, k + 1)]).flatten()
+    return np.concatenate([get_nmer(seq, n) for n in range(1, k + 1)])
 
 
 def get_kmer_by_name(
@@ -63,7 +70,7 @@ def get_kmer_by_name(
             True.
 
     Returns:
-        NDArray: A flattened numpy array with the k-mers of the
+        NDArray: A concatenated numpy array with the k-mers of the
             sequence.
     """
     folder = Path(folder).resolve()
@@ -78,7 +85,6 @@ def gen_kmer_dict(
         dict_file: str | os.PathLike,
         k: int,
         /,
-        keep: Iterable[str] | None = None,
         mature_only: bool = False
 ) -> None:
     """Get the k-mers of a RNA sequences from 1 to k from the seq+ss
@@ -93,22 +99,14 @@ def gen_kmer_dict(
         keep: List of the RNA names to save. Save all if None.
         mature_only: Only saves the mature section of the sequence if
             True.
-
-    Returns:
-        NDArray: A flattened numpy array with the k-mers of the
-            sequence.
     """
     dict_file = Path(dict_file).resolve()
     
     dict_folder = dict_file.parent
     dict_folder.mkdir(parents=True, exist_ok=True)
 
-    with open(dict_file) as out_file:
-        for record in record_list:
-            id_, seq = record.id, record.seq
-            kmers = get_kmer(seq, k)
-            out_file.write(f'{id_}\n')
-            out_file.write(f'\t{','.join(kmers)}\n')
+    kmer_dict = {record.id: get_kmer(record.seq, k) for record in record_list}
+    save_dict(dict_file, kmer_dict)
 
 
 def gen_kmer_dict_from_folder(
@@ -130,10 +128,6 @@ def gen_kmer_dict_from_folder(
         keep: List of the RNA names to save. Save all if None.
         mature_only: Only saves the mature section of the sequence if
             True.
-
-    Returns:
-        NDArray: A flattened numpy array with the k-mers of the
-            sequence.
     """
     folder = Path(folder).resolve()
     dict_file = Path(dict_file).resolve()
@@ -141,9 +135,8 @@ def gen_kmer_dict_from_folder(
     dict_folder = dict_file.parent
     dict_folder.mkdir(parents=True, exist_ok=True)
 
-    with open(dict_file) as out_file:
-        for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only):
-            id_, seq = record.id, record.seq
-            kmers = get_kmer(seq, k)
-            out_file.write(f'{id_}\n')
-            out_file.write(f'\t{','.join(kmers)}\n')
+    kmer_dict = {
+        record.id: get_kmer(record.seq, k)
+        for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
+    }
+    save_dict(dict_file, kmer_dict)
