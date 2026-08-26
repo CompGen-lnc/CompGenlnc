@@ -1,5 +1,3 @@
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 import numpy as np
 import pytest
 
@@ -10,6 +8,7 @@ from compgenlnc.generators.sequences.kmer import (
     get_kmer,
     get_kmer_by_name,
 )
+from compgenlnc.structs import SeqSSRecord
 from compgenlnc.utils.dict_manager import load_dict
 from compgenlnc.utils.fasta_manager import iter_seq_ss, read_sequence
 from constants import SEQ_SS_FOLDER
@@ -23,7 +22,7 @@ from constants import SEQ_SS_FOLDER
         ])),
         ('AAA', 3, np.array([1] + [0] * 3 + [1] + [0] * 15 + [1] + [0] * 63)),
         (
-            SeqRecord(Seq('ATCGATCGATCG'), '', description=''),
+            SeqSSRecord('', 'ATCGATCGATCG', ''),
             1,
             np.array([0.25]*4)
         ),

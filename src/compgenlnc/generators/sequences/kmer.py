@@ -4,10 +4,10 @@ from pathlib import Path
 from typing import Iterable
 import os
 
-from Bio.SeqRecord import SeqRecord
 import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.structs import SeqRecord, SeqSSRecord
 from compgenlnc.utils.dict_manager import save_dict
 from compgenlnc.utils.fasta_manager import read_sequence, iter_seq_ss
 
@@ -19,7 +19,10 @@ n_combinations = [
 ]
 
 
-def get_kmer(seq: str | SeqRecord, k: int) -> np.typing.NDArray[np.float64]:
+def get_kmer(
+        seq: str | SeqRecord | SeqSSRecord,
+        k: int
+) -> np.typing.NDArray[np.float64]:
     """Get the k-mers of a RNA sequences from 1 to k from the given
     sequence.
 
@@ -33,8 +36,10 @@ def get_kmer(seq: str | SeqRecord, k: int) -> np.typing.NDArray[np.float64]:
             sequence.
     """
     # Get the kmers of length n for the sequence
-    if isinstance(seq, SeqRecord):
+    if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
+    if isinstance(seq, SeqRecord):
+        seq = str(seq)
 
     seq = seq.upper().replace('U', 'T')
     def get_nmer(seq: str, n: int) -> np.typing.NDArray[np.float64]:
@@ -81,7 +86,7 @@ def get_kmer_by_name(
 
 
 def gen_kmer_dict(
-        record_list: Iterable[SeqRecord],
+        record_list: Iterable[SeqSSRecord],
         dict_file: str | os.PathLike,
         k: int,
         /,

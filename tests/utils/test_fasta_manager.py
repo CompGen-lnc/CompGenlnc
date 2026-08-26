@@ -1,8 +1,7 @@
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 import pytest
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.structs import SeqSSRecord
 from compgenlnc.utils.fasta_manager import (
     iter_seq_fasta,
     iter_seq_ss,
@@ -14,11 +13,11 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 @pytest.mark.parametrize(
     'expected, index',
     [
-        (SeqRecord(Seq(''), 'hsa1', description=''), 0),
-        (SeqRecord(Seq('ACGUGCA'), 'hsa2', description=''), 1),
-        (SeqRecord(Seq('ACGUACGUACGU'), 'mol1', description=''), 2),
-        (SeqRecord(Seq('AAAA'), 'mol2', description=''), 3),
-        (SeqRecord(Seq('GCGCGCGC'), 'mol3', description=''), 4),
+        (SeqSSRecord('hsa1', '', ''), 0),
+        (SeqSSRecord('hsa2', 'ACGUGCA', ''), 1),
+        (SeqSSRecord('mol1', 'ACGUACGUACGU', ''), 2),
+        (SeqSSRecord('mol2', 'AAAA', ''), 3),
+        (SeqSSRecord('mol3', 'GCGCGCGC', ''), 4),
     ]
 )
 def test_iter_seq_fasta(expected, index, seq_fasta_list):
@@ -47,11 +46,11 @@ def test_iter_seq_fasta_filtered(filter, expected):
 @pytest.mark.parametrize(
     'expected, index',
     [
-        (SeqRecord(Seq(''), 'hsa1', description=''), 0),
-        (SeqRecord(Seq('ACGTGCA'), 'hsa2', description=''), 1),
-        (SeqRecord(Seq('ACGTACGTACGT'), 'mol1', description=''), 2),
-        (SeqRecord(Seq('AAAA'), 'mol2', description=''), 3),
-        (SeqRecord(Seq('GCGCGCGC'), 'mol3', description=''), 4),
+        (SeqSSRecord('hsa1', '', ''), 0),
+        (SeqSSRecord('hsa2', 'ACGTGCA', ''), 1),
+        (SeqSSRecord('mol1', 'ACGTACGTACGT', ''), 2),
+        (SeqSSRecord('mol2', 'AAAA', ''), 3),
+        (SeqSSRecord('mol3', 'GCGCGCGC', ''), 4),
     ]
 )
 def test_iter_seq_ss(expected, index, seq_ss_list):

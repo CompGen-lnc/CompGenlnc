@@ -1,11 +1,6 @@
 import os
 from pathlib import Path
 
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.SeqIO.FastaIO import SimpleFastaParser
-from Bio.SeqRecord import SeqRecord
-
 from compgenlnc.config.paths import (
     LNCRNA_FASTA,
     LNCRNA_SEQ_SS_FOLDER,

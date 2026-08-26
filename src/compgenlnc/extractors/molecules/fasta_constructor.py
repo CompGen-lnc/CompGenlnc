@@ -1,11 +1,8 @@
 import os
 from pathlib import Path
-from typing import Iterator
+from typing import Iterable
 
 from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.SeqIO.FastaIO import SimpleFastaParser
-from Bio.SeqRecord import SeqRecord
 
 from compgenlnc.config.paths import (
     LNCRNA_FASTA,
@@ -13,13 +10,17 @@ from compgenlnc.config.paths import (
     PAIRS_FILES,
     PRE_MIRNA_FASTA,
 )
-from compgenlnc.utils.fasta_manager import iter_seq_fasta, iter_seq_ss
+from compgenlnc.utils.fasta_manager import (
+    iter_seq_fasta,
+    iter_seq_ss,
+    save_fasta,
+)
 
 
 def filter_fasta(
         filename: str | os.PathLike,
         new_fasta: str | os.PathLike,
-        filter: list[str]
+        filter: Iterable[str]
 ) -> None:
     """Filter the RNA sequences from a FASTA file by the name.
 
@@ -36,12 +37,12 @@ def filter_fasta(
     fasta.sort(key=lambda record: record.id)
 
     new_fasta.parent.mkdir(parents=True, exist_ok=True)
-    SeqIO.write(fasta, new_fasta, 'fasta')
+    save_fasta(new_fasta, fasta, 'seq')
 
 
 def filter_pre_mirna(
         filename: str | os.PathLike,
-        filter: list[str]
+        filter: Iterable[str]
 ) -> None:
     """Filter the precursor miRNA sequences from a FASTA file by the 
     name.
@@ -57,7 +58,7 @@ def filter_pre_mirna(
 
 def filter_mat_mirna(
         filename: str | os.PathLike,
-        filter: list[str]
+        filter: Iterable[str]
 ) -> None:
     """Filter the mature miRNA sequences from a FASTA file by the name.
     
@@ -72,7 +73,7 @@ def filter_mat_mirna(
 
 def filter_lncrna(
         filename: str | os.PathLike,
-        filter: list[str]
+        filter: Iterable[str]
 ) -> None:
     """Filter the lncRNA sequences from a FASTA file by the name.
     
@@ -115,4 +116,4 @@ def seq_ss_to_fasta(
     fasta.sort(key=lambda record: record.id)
 
     new_seq_fasta.parent.mkdir(parents=True, exist_ok=True)
-    SeqIO.write(fasta, new_seq_fasta, 'fasta')
+    save_fasta(new_seq_fasta, fasta, 'seq')

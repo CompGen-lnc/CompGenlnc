@@ -1,5 +1,3 @@
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 import numpy as np
 import pytest
 
@@ -10,6 +8,7 @@ from compgenlnc.generators.sequences.ctd import (
     get_ctd,
     get_ctd_by_name,
 )
+from compgenlnc.structs import SeqSSRecord
 from compgenlnc.utils.dict_manager import load_dict
 from compgenlnc.utils.fasta_manager import iter_seq_ss, read_sequence
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
@@ -31,7 +30,7 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
             + [0.0] * 15
         )),
         (
-            SeqRecord(Seq('ATCGATCGATCG'), '', description=''),
+            SeqSSRecord('', 'ATCGATCGATCG', ''),
             np.array([0.25]*4 + [
                 3 / 11, 2 / 11, 0.0, 0.0, 3 / 11, 3 / 11,
                 1 / 12, 1 / 12, 5 / 12, 5 / 12, 3 / 4,
@@ -44,8 +43,6 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
 )
 def test_get_ctd(seq, expected):
     ctd = get_ctd(seq)
-    print(ctd)
-    print(expected)
     assert np.array_equal(ctd, expected)
 
 

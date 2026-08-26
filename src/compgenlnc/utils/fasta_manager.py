@@ -1,21 +1,53 @@
 import os
 from pathlib import Path
-from typing import Iterator
+from typing import Iterable, Iterator
 
-from Bio import SeqIO
-from Bio.Seq import Seq
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-from Bio.SeqRecord import SeqRecord
 
 from compgenlnc.config.paths import (
     SEQ_SS_PREFIX,
 )
+from compgenlnc.structs import SeqSSRecord
 
 
+def load_fasta(filename: str | os.PathLike, mode: str):
+    filename = Path(filename).resolve()
+    id_ = seq = ss = value = ''
+    with open(filename) as file:
+        for line in file.readlines():
+            if line[0] != '>':
+                value += line.split()[0].strip()
+                continue
+
+            if mode == 'seq':
+                seq = value
+            elif mode == 'ss':
+                ss = value
+            if id_:
+                yield SeqSSRecord(id_, seq, ss)
+            value = ''
+            id_ = line[1:].split()[0].strip()
+
+
+def save_fasta(
+        filename: str | os.PathLike,
+        molecules: Iterable[SeqSSRecord],
+        mode: str,
+) -> None:
+    filename = Path(filename).resolve()
+    with open(filename, 'w') as out_file:
+        for record in molecules:
+            value = record.seq if mode == 'seq' else record.ss
+            out_file.write(f'>{record.id}\n')
+            if not value:
+                continue
+            out_file.write(f'{value}\n')
+
+    
 def iter_seq_fasta(
         filename: str | os.PathLike,
-        filter: list[str] | None = None
-) -> Iterator[SeqRecord]:
+        filter: Iterable[str] | None = None
+) -> Iterator[SeqSSRecord]:
     """Iterate all the RNA sequences from a FASTA file that fit the 
     filter.
 
@@ -25,7 +57,7 @@ def iter_seq_fasta(
             desired sequences. Iterate all if None.
 
     Yields:
-        SeqRecord: A record with the sequence and its name.
+        SeqSSRecord: A record with the sequence and its name.
     """
     filename = Path(filename).resolve()
 
@@ -35,7 +67,7 @@ def iter_seq_fasta(
             if (filter and
                 not any(prefix in id_ for prefix in filter)):
                 continue
-            yield SeqRecord(Seq(seq), id_, description='')
+            yield SeqSSRecord(id_, seq, '')
 
 
 def read_sequence(
@@ -61,15 +93,15 @@ def read_sequence(
 
 def iter_seq_ss(
         folder: str | os.PathLike,
-        keep: list[str] | None = None,
+        keep: Iterable[str] | None = None,
         mature_only: bool = False
-) -> Iterator[SeqRecord]:
+) -> Iterator[SeqSSRecord]:
     """Iterate all the seq+ss files from the same folder that fit the
     filter.
 
     Args:
-        folder: path of the folder containing seq+ss files.
-        keep: list of the RNA names to iterate.
+        folder: Path of the folder containing seq+ss files.
+        keep: List of the RNA names to iterate. Iterate all if None.
         mature_only: Only saves the mature section of the sequence if
             True.
     """
@@ -82,4 +114,4 @@ def iter_seq_ss(
         if keep and id_ not in keep:
             continue
         seq = read_sequence(folder / filename, mature_only)
-        yield SeqRecord(Seq(seq), id_, description='')
+        yield SeqSSRecord(id_, seq, '')
