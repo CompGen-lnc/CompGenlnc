@@ -1,11 +1,11 @@
-import os
-from pathlib import Path
-from itertools import product
 from collections import Counter
+from itertools import product
+from pathlib import Path
 from typing import Iterable
+import os
 
-import numpy as np
 from Bio.SeqRecord import SeqRecord
+import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.utils.dict_manager import save_dict

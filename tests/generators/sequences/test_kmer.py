@@ -1,5 +1,3 @@
-import os
-
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import numpy as np
@@ -14,7 +12,7 @@ from compgenlnc.generators.sequences.kmer import (
 )
 from compgenlnc.utils.dict_manager import load_dict
 from compgenlnc.utils.fasta_manager import iter_seq_ss, read_sequence
-from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
+from constants import SEQ_SS_FOLDER
 
 @pytest.mark.parametrize(
     'seq, k, expected',
@@ -28,7 +26,7 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
             SeqRecord(Seq('ATCGATCGATCG'), '', description=''),
             1,
             np.array([0.25]*4)
-        )
+        ),
     ]
 )
 def test_get_kmer(seq, k, expected):
@@ -37,20 +35,12 @@ def test_get_kmer(seq, k, expected):
 
 
 @pytest.mark.parametrize(
-    'id_, k, expected',
-    [
-        ('hsa1', 3, np.array([0]*84)),
-        ('hsa2', 1, np.array([2 / 7, 1 / 7, 2 / 7, 2 / 7])),
-        ('mol1', 2, np.array(
-            [0.25] * 4 + [0] * 2 + [3 / 11] + [0] + [2 / 11]
-            + [0] * 6 + [3 / 11] + [0] + [3 / 11] + [0] * 2
-        )),
-        ('mol2', 3, np.array([1] + [0] * 3 + [1] + [0] * 15 + [1] + [0] * 63)),
-        ('mol3', 1, np.array([0, 0, 0.5, 0.5]))
-    ]
+    'id_, k', [('hsa1', 3), ('hsa2', 1), ('mol1', 2), ('mol2', 3), ('mol3', 1)]
 )
-def test_get_kmer_by_name(id_, k, expected):
+def test_get_kmer_by_name(id_, k):
     kmers = get_kmer_by_name(id_, SEQ_SS_FOLDER, k)
+    seq = read_sequence(SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{id_}.dat')
+    expected = get_kmer(seq, k)
     assert np.array_equal(kmers, expected)
 
 
