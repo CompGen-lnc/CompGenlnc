@@ -2,8 +2,6 @@ import os
 from pathlib import Path
 from typing import Iterable, Iterator
 
-from Bio.SeqIO.FastaIO import SimpleFastaParser
-
 from compgenlnc.config.paths import (
     SEQ_SS_PREFIX,
 )
@@ -98,13 +96,11 @@ def iter_seq_fasta(
     """
     filename = Path(filename).resolve()
 
-    with open(filename, 'r') as file:
-        for title, seq in SimpleFastaParser(file):
-            id_ = title.split()[0]
-            if (filter and
-                not any(prefix in id_ for prefix in filter)):
-                continue
-            yield SeqSSRecord(id_, seq, '')
+    for record in load_fasta(filename, 'seq'):
+        if (filter and
+            not any(prefix in record.id for prefix in filter)):
+            continue
+        yield SeqSSRecord(record.id, record.seq, '')
 
 
 def read_sequence(

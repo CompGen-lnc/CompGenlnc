@@ -8,7 +8,7 @@ from compgenlnc.config.paths import (
     MIRNA_SEQ_SS_FOLDER,
     SEQ_SS_PREFIX,
 )
-from compgenlnc.utils.fasta_manager import iter_seq_fasta
+from compgenlnc.utils.fasta_manager import load_fasta
 
 
 def join_seq_ss(
@@ -51,7 +51,7 @@ def fasta_to_seq_ss(
 
     seq_dict = {
         record.id: str(record.seq).upper().replace('U', 'T')
-        for record in iter_seq_fasta(seq_file)
+        for record in load_fasta(seq_file, mode='seq')
     }
     id_list = list(seq_dict.keys())
     id_list.sort()
