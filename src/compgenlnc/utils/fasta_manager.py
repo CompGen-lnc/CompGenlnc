@@ -10,7 +10,27 @@ from compgenlnc.config.paths import (
 from compgenlnc.structs import SeqSSRecord
 
 
-def load_fasta(filename: str | os.PathLike, mode: str):
+def load_fasta(
+        filename: str | os.PathLike,
+        mode: str,
+) -> Iterator[SeqSSRecord]:
+    """Load a FASTA file and iterate the RNA molecules into them.
+
+    Args:
+        filename: Path of the FASTA file.
+        mode: Type of the data saved in the file. If 'seq', it will treat the
+            data as sequences. If 'ss', it will treat the data as 2D
+            structures.
+
+    Yields:
+        SeqSSRecord: A record with the sequence or structure and its name.
+
+    Raises:
+        ValueError: If mode is any other than 'seq' or 'ss'.
+    """
+    if mode not in ['seq', 'ss']:
+        raise ValueError(f"Value {mode} for mode is not allowed")
+    
     filename = Path(filename).resolve()
     id_ = seq = ss = value = ''
     with open(filename) as file:
@@ -23,6 +43,7 @@ def load_fasta(filename: str | os.PathLike, mode: str):
                 seq = value
             elif mode == 'ss':
                 ss = value
+                
             if id_:
                 yield SeqSSRecord(id_, seq, ss)
             value = ''
@@ -34,6 +55,21 @@ def save_fasta(
         molecules: Iterable[SeqSSRecord],
         mode: str,
 ) -> None:
+    """Save sequences or 2D structures from a group of RNA molecules into a
+    FATSA file.
+
+    Args:
+        filename: Path of the FASTA file.
+        molecules: Group of RNA molecules to 
+        mode: Type of the data saved in the file. If 'seq', it will save the
+            sequences. If 'ss', it will save the 2Dstructures.
+
+    Raises:
+        ValueError: If mode is any other than 'seq' or 'ss'.
+    """
+    if mode not in ['seq', 'ss']:
+        raise ValueError(f"Value {mode} for mode is not allowed")
+    
     filename = Path(filename).resolve()
     with open(filename, 'w') as out_file:
         for record in molecules:
@@ -54,7 +90,8 @@ def iter_seq_fasta(
     Args:
         filename: Path of the FASTA file.
         filter: A list with all substrings contained in the name of the 
-            desired sequences. Iterate all if None.
+            desired sequences. If None, it is the same as using `load_fasta`
+            with mode as 'seq'.
 
     Yields:
         SeqSSRecord: A record with the sequence and its name.

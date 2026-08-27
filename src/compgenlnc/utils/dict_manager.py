@@ -8,6 +8,16 @@ def load_dict(
     filename: str | os.PathLike,
     val_type: type = np.float64
 ) -> dict[str, np.typing.NDArray]:
+    """Load a dicationary from a file with pairs of RNA names and feature
+    vectors.
+
+    Args:
+        filename: Path of the dictionary file.
+        val_type: Type of the feature vector.
+
+    Returns:
+        dict
+    """
     filename = Path(filename).resolve()
 
     lines = open(filename, "r").readlines()
@@ -34,6 +44,12 @@ def save_dict(
     filename: str | os.PathLike,
     dict_: dict[str, Iterable]
 ) -> None:
+    """Save a dicationary pairs of RNA names and feature vectors into a file.
+
+    Args:
+        filename: Path of the dictionary file.
+        dict_: Dictionary with the RNA names and feature vectors.
+    """
     filename = Path(filename).resolve()
 
     keys = list(dict_.keys())
