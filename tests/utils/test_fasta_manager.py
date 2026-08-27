@@ -5,9 +5,38 @@ from compgenlnc.structs import SeqSSRecord
 from compgenlnc.utils.fasta_manager import (
     iter_seq_fasta,
     iter_seq_ss,
-    read_sequence
+    load_fasta,
+    read_sequence,
+    save_fasta,
 )
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
+
+
+@pytest.mark.parametrize(
+    'expected, index',
+    [
+        (SeqSSRecord('hsa1', '', ''), 0),
+        (SeqSSRecord('hsa2', 'ACGUGCA', ''), 1),
+        (SeqSSRecord('mol1', 'ACGUACGUACGU', ''), 2),
+        (SeqSSRecord('mol2', 'AAAA', ''), 3),
+        (SeqSSRecord('mol3', 'GCGCGCGC', ''), 4),
+    ]
+)
+def test_load_fasta(expected, index, seq_fasta_loader):
+    record = seq_fasta_loader[index]
+    assert record.id == expected.id
+    assert record.seq == expected.seq
+
+
+def test_save_fasta(tmp_path):
+    new_fasta = tmp_path / 'fasta.fa'
+    molecules = load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')
+    save_fasta(new_fasta, molecules, mode='seq')
+    assert new_fasta.exists()
+
+    it = load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')
+    new_it = load_fasta(new_fasta, mode='seq')
+    assert all(a == b for a, b in zip(it, new_it))
 
 
 @pytest.mark.parametrize(

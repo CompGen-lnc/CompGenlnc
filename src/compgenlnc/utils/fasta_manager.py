@@ -32,8 +32,9 @@ def load_fasta(
     filename = Path(filename).resolve()
     id_ = seq = ss = value = ''
     with open(filename) as file:
-        for line in file.readlines():
-            if line[0] != '>':
+        # Add the '>' at the end for capturing the last molecule
+        for line in file.readlines() + ['>']:
+            if line.strip() and line[0] != '>':
                 value += line.split()[0].strip()
                 continue
 
@@ -43,9 +44,10 @@ def load_fasta(
                 ss = value
                 
             if id_:
-                yield SeqSSRecord(id_, seq, ss)
+                yield SeqSSRecord(id_.strip(), seq, ss)
             value = ''
-            id_ = line[1:].split()[0].strip()
+            if line[1:]:
+                id_ = line[1:].split()[0]
 
 
 def save_fasta(
@@ -100,7 +102,7 @@ def iter_seq_fasta(
         if (filter and
             not any(prefix in record.id for prefix in filter)):
             continue
-        yield SeqSSRecord(record.id, record.seq, '')
+        yield record
 
 
 def read_sequence(
