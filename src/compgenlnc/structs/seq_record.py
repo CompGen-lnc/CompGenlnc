@@ -1,6 +1,7 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
 import copy
+from dataclasses import dataclass
 
 @dataclass(slots=True)
 class SeqRecord:

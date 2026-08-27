@@ -1,5 +1,6 @@
-from .seq_record import SeqRecord
 from dataclasses import dataclass
+
+from .seq_record import SeqRecord
 
 @dataclass(slots=True)
 class SeqSSRecord:
