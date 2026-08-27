@@ -71,6 +71,7 @@ def save_fasta(
         raise ValueError(f"Value {mode} for mode is not allowed")
     
     filename = Path(filename).resolve()
+    filename.parent.mkdir(parents=True, exist_ok=True)
     with open(filename, 'w') as out_file:
         for record in molecules:
             value = record.seq if mode == 'seq' else record.ss

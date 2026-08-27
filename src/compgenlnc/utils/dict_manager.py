@@ -52,6 +52,7 @@ def save_dict(
         dict_: Dictionary with the RNA names and feature vectors.
     """
     filename = Path(filename).resolve()
+    filename.parent.mkdir(parents=True, exist_ok=True)
 
     keys = list(dict_.keys())
     with open(filename, 'w') as out_file:
