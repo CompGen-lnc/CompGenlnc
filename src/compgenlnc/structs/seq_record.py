@@ -22,4 +22,7 @@ class SeqRecord:
 
     def __len__(self):
         return len(self._seq)
+
+    def __getitem__(self, key):
+        return self._seq[key]
     

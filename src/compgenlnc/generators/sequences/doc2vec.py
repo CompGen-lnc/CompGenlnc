@@ -21,7 +21,7 @@ def train_doc2vec_model(
 ) -> Doc2Vec:
     tokens = [
         TaggedDocument(
-            (record.seq[j : j + 3] for j in range(len(record.seq) - 2)), [i]
+            [record.seq[j : j + 3] for j in range(len(record.seq) - 2)], [i]
         )
         for i, record in enumerate(sequences)
     ]
@@ -76,7 +76,7 @@ def get_doc2vec_by_name(
     folder = Path(folder).resolve()
     filename = folder / f'{SEQ_SS_PREFIX}{id_}.dat'
     seq = read_sequence(filename, mature_only=mature_only)
-    return get_doc2vec(seq)
+    return get_doc2vec(seq, model=model, model_file=model_file)
 
 
 def gen_doc2vec_dict(
@@ -139,7 +139,7 @@ def gen_doc2vec_dict_from_folder(
     dict_folder.mkdir(parents=True, exist_ok=True)
 
     doc2vec_dict = {
-        record.id: get_doc2vec(record.seq)
+        record.id: get_doc2vec(record.seq, model=model, model_file=model_file)
         for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
     }
     save_dict(dict_file, doc2vec_dict)

@@ -1,5 +1,8 @@
+import numpy as np
 import pytest
 
+from compgenlnc.config.seeds import DOC2VEC_MODEL_SEED
+from compgenlnc.generators.sequences.doc2vec import train_doc2vec_model
 from compgenlnc.utils.fasta_manager import (
     load_fasta,
     iter_seq_fasta,
@@ -8,9 +11,33 @@ from compgenlnc.utils.fasta_manager import (
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 
 
+@pytest.fixture(scope='session')
+def doc2vec_model():
+    return train_doc2vec_model(iter_seq_fasta(SEQ_FASTA_EXAMPLE))
+
+
 @pytest.fixture
+def doc2vec_model_deterministic(doc2vec_model):
+    model = doc2vec_model
+    infer_original = model.infer_vector
+
+    def fixed_infer(doc_words, **kwargs):
+        model.random.seed(0)
+        return infer_original(doc_words, **kwargs)
+
+    model.infer_vector = fixed_infer
+
+    yield model
+
+
+@pytest.fixture(scope='session')
 def seq_fasta_loader():
     return list(load_fasta(SEQ_FASTA_EXAMPLE, mode='seq'))
+
+
+@pytest.fixture(scope='session')
+def seq_fasta_list():
+    return list(iter_seq_fasta(SEQ_FASTA_EXAMPLE))
 
 
 @pytest.fixture
