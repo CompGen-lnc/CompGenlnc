@@ -20,15 +20,15 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 @pytest.mark.parametrize(
     'dict_gen, args, type_, expected',
     [
-        (gen_ctd_dict_from_folder, [], np.float64, {
+        (gen_ctd_dict_from_folder, [], np.float32, {
             record.id: get_ctd(record.seq)
             for record in load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')
         }),
-        (gen_kmer_dict_from_folder, [3], np.float64, {
+        (gen_kmer_dict_from_folder, [3], np.float32, {
             record.id: get_kmer(record.seq, 3)
             for record in load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')
         }),
-        (gen_kmer_dict_from_folder, [4], np.float64, {
+        (gen_kmer_dict_from_folder, [4], np.float32, {
             record.id: get_kmer(record.seq, 4)
             for record in load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')
         }),
@@ -37,6 +37,7 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 def test_load_dict(dict_gen, args, type_, expected, tmp_path):
     filename = tmp_path / 'example.dict'
     dict_gen(SEQ_SS_FOLDER, filename, *args)
+    assert filename.exists()
     dict_ = load_dict(filename, type_)
     assert set(dict_.keys()) == set(expected.keys())
     assert all(
@@ -48,15 +49,15 @@ def test_load_dict(dict_gen, args, type_, expected, tmp_path):
 @pytest.mark.parametrize(
     'type_, expected',
     [
-        (np.float64, {
+        (np.float32, {
             record.id: get_ctd(record.seq)
             for record in load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')
         }),
-        (np.float64, {
+        (np.float32, {
             record.id: get_kmer(record.seq, 3)
             for record in load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')
         }),
-        (np.float64, {
+        (np.float32, {
             record.id: get_kmer(record.seq, 4)
             for record in load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')
         }),

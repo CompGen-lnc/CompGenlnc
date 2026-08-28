@@ -6,7 +6,7 @@ import numpy as np
 
 def load_dict(
     filename: str | os.PathLike,
-    val_type: type = np.float64
+    val_type: type = np.float32
 ) -> dict[str, np.typing.NDArray]:
     """Load a dicationary from a file with pairs of RNA names and feature
     vectors.
@@ -30,13 +30,12 @@ def load_dict(
 
         if line[0] != '\t':
             if actual_id:
-                res_dict[actual_id] = np.array(actual_value).squeeze()
+                res_dict[actual_id] = np.array(actual_value, np.float32).squeeze()
             actual_id, actual_value = line.strip(), []
-            print(actual_id)
             continue
         value = line.strip().split(',')
         actual_value.append([val_type(x) for x in value])
-    res_dict[actual_id] = np.array(actual_value).squeeze()
+    res_dict[actual_id] = np.array(actual_value, np.float32).squeeze()
 
     return res_dict
 

@@ -23,11 +23,12 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
             0.5, 0.5, 0.5, 0.5, 0.5,
             0.375, 0.375, 0.375, 0.625, 0.625,
             0.25, 0.25, 0.25, 1, 1,
-        ])),
+        ], np.float32)),
         ('AAA', np.array(
             [1] + [0.0] * 9
             + [1 / 3, 1 / 3, 2 / 3, 2 / 3, 1]
-            + [0.0] * 15
+            + [0.0] * 15,
+            np.float32
         )),
         (
             SeqSSRecord('', 'ATCGATCGATCG', ''),
@@ -37,7 +38,7 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
                 1 / 6, 1 / 6, 1 / 2, 1 / 2, 5 / 6,
                 1 / 3, 1 / 3, 2 / 3, 2 / 3, 1,
                 1 / 4, 1 / 4, 7 / 12, 7 / 12, 11 / 12,
-            ])
+            ], np.float32)
         )
     ]
 )

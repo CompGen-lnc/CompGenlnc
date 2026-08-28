@@ -49,13 +49,13 @@ def get_doc2vec(
         *,
         model: Doc2Vec | None = None,
         model_file: str | os.PathLike = '',
-) -> np.typing.NDArray[np.float64]:
+) -> np.typing.NDArray[np.float32]:
     if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
     if isinstance(seq, SeqRecord):
         seq = str(seq)
     if not seq:
-        return np.array([0.0] * 256)
+        return np.array([0.0] * 256, np.float32)
     doc = [seq[i : i + 3] for i in range(len(seq) - 2)]
 
     if model is None:
@@ -72,7 +72,7 @@ def get_doc2vec_by_name(
         mature_only: bool = False,
         model: Doc2Vec | None = None,
         model_file: str | os.PathLike = '',
-) -> np.typing.NDArray[np.float64]:
+) -> np.typing.NDArray[np.float32]:
     folder = Path(folder).resolve()
     filename = folder / f'{SEQ_SS_PREFIX}{id_}.dat'
     seq = read_sequence(filename, mature_only=mature_only)

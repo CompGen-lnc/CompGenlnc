@@ -13,7 +13,7 @@ from compgenlnc.utils.fasta_manager import read_sequence, iter_seq_ss
 
 def get_ctd(
         seq: str | SeqRecord | SeqSSRecord
-) -> np.typing.NDArray[np.float64]:
+) -> np.typing.NDArray[np.float32]:
     """Get the CTD of a RNA sequences from the given sequence.
 
     Args:
@@ -28,7 +28,7 @@ def get_ctd(
     if isinstance(seq, SeqRecord):
         seq = str(seq)
     if not seq:
-        return np.array([0.0] * 30)
+        return np.array([0.0] * 30, np.float32)
     
     seq = seq.upper().replace('U', 'T')
     codes = {'A': 0, 'T': 1, 'G': 2, 'C': 3}
@@ -78,7 +78,7 @@ def get_ctd(
         T0_dis, T1_dis, T2_dis, T3_dis, T4_dis,
         G0_dis, G1_dis, G2_dis, G3_dis, G4_dis,
         C0_dis, C1_dis, C2_dis, C3_dis, C4_dis,
-    ])
+    ], np.float32)
 
 
 def get_ctd_by_name(
@@ -86,8 +86,7 @@ def get_ctd_by_name(
         folder: str | os.PathLike,
         /,
         mature_only: bool = False
-) -> np.typing.NDArray[np.float64]:
-    folder = Path(folder).resolve()
+) -> np.typing.NDArray[np.float32]:
     """Get the CTD of a RNA sequences from the seq+ss file of the given
     molecule.
 

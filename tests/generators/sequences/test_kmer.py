@@ -19,12 +19,15 @@ from constants import SEQ_SS_FOLDER
         ('ACGTGAAC', 2, np.array([
             0.375, 0.125, 0.25, 0.25, 1 / 7, 0, 2 / 7, 0, 0,
             0, 0, 1 / 7, 0, 0, 0, 1 / 7, 1 / 7, 1 / 7, 0, 0,
-        ])),
-        ('AAA', 3, np.array([1] + [0] * 3 + [1] + [0] * 15 + [1] + [0] * 63)),
+        ], np.float32)),
+        ('AAA', 3, np.array(
+            [1] + [0] * 3 + [1] + [0] * 15 + [1] + [0] * 63,
+            np.float32
+        )),
         (
             SeqSSRecord('', 'ATCGATCGATCG', ''),
             1,
-            np.array([0.25]*4)
+            np.array([0.25]*4, np.float32)
         ),
     ]
 )

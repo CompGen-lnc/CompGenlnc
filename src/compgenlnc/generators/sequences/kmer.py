@@ -22,7 +22,7 @@ n_combinations = [
 def get_kmer(
         seq: str | SeqRecord | SeqSSRecord,
         k: int
-) -> np.typing.NDArray[np.float64]:
+) -> np.typing.NDArray[np.float32]:
     """Get the k-mers of a RNA sequences from 1 to k from the given
     sequence.
 
@@ -42,9 +42,9 @@ def get_kmer(
         seq = str(seq)
 
     seq = seq.upper().replace('U', 'T')
-    def get_nmer(seq: str, n: int) -> np.typing.NDArray[np.float64]:
+    def get_nmer(seq: str, n: int) -> np.typing.NDArray[np.float32]:
         if not seq or len(seq) < n:
-            return np.array([0] * 4 ** n)
+            return np.array([0] * 4 ** n, np.float32)
         kmers = Counter(
             (seq[i : i + n] for i in range(len(seq) - n + 1))
         )
@@ -52,7 +52,7 @@ def get_kmer(
         return np.array([
             kmers[sub_s] / kmers.total()
             for sub_s in combinations
-        ])
+        ], np.float32)
     return np.concatenate([get_nmer(seq, n) for n in range(1, k + 1)])
 
 
@@ -62,7 +62,7 @@ def get_kmer_by_name(
         k: int,
         /,
         mature_only: bool = False
-) -> np.typing.NDArray[np.float64]:
+) -> np.typing.NDArray[np.float32]:
     """Get the k-mers of a RNA sequences from 1 to k from the seq+ss
     file of the given molecule.
 
