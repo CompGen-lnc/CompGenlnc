@@ -8,13 +8,14 @@ import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.structs import SeqRecord, SeqSSRecord
+from compgenlnc.typing import SeqLike
 from compgenlnc.utils.dict_manager import save_dict
 from compgenlnc.utils.fasta_manager import (
     read_sequence, iter_seq_ss, load_fasta,
 )
 
 def get_kmer(
-        seq: str | SeqRecord | SeqSSRecord,
+        seq: SeqLike,
         k: int
 ) -> np.typing.NDArray[np.float32]:
     """Get the k-mers of a RNA sequences from 1 to k from the given

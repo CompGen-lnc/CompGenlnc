@@ -8,6 +8,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.config.seeds import DOC2VEC_MODEL_SEED
+from compgenlnc.typing import SeqLike
 from compgenlnc.utils.dict_manager import save_dict
 from compgenlnc.utils.fasta_manager import (
     iter_seq_ss, load_fasta, read_sequence
@@ -45,7 +46,7 @@ def train_doc2vec_model_from_fasta(
     
 
 def get_doc2vec(
-        seq: str | SeqRecord | SeqSSRecord,
+        seq: SeqLike,
         *,
         model: Doc2Vec | None = None,
         model_file: str | os.PathLike = '',
