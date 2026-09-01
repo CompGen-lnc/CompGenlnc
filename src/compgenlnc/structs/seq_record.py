@@ -9,7 +9,7 @@ class SeqRecord:
 
     def __init__(self, seq: str | SeqRecord, /):
         if isinstance(seq, SeqRecord):
-            self = copy.deepcopy(seq)
+            self._seq = copy.deepcopy(seq._seq)
             return
 
         self._seq = seq.strip()
@@ -25,4 +25,17 @@ class SeqRecord:
 
     def __getitem__(self, key):
         return self._seq[key]
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self._seq == other
+        elif not isinstance(other, SeqRecord):
+            return NotImplemented
+        return self._seq == other._seq
+
+    def convert_to_T(self):
+        return SeqRecord(self._seq.replace('U', 'T'))
+
+    def convert_to_U(self):
+        return SeqRecord(self._seq.replace('T', 'U'))
     
