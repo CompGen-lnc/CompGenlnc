@@ -10,8 +10,9 @@ from compgenlnc.generators.sequences.ctd import (
 )
 from compgenlnc.structs import SeqSSRecord
 from compgenlnc.utils.dict_manager import load_dict
-from compgenlnc.utils.fasta_manager import iter_seq_ss, read_sequence
-from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
+from compgenlnc.utils.fasta_manager import read_sequence
+
+from constants import SEQ_SS_FOLDER
 
 @pytest.mark.parametrize(
     'seq, expected',
@@ -47,28 +48,16 @@ def test_get_ctd(seq, expected):
     assert np.array_equal(ctd, expected)
 
 
-@pytest.mark.parametrize(
-    'id_', [('hsa1'), ('hsa2'), ('mol1'), ('mol2'), ('mol3')]
-)
-def test_get_ctd_by_name(id_):
-    ctd = get_ctd_by_name(id_, SEQ_SS_FOLDER)
-    seq = read_sequence(SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{id_}.dat')
+def test_get_ctd_by_name(mirna_id):
+    ctd = get_ctd_by_name(mirna_id, SEQ_SS_FOLDER)
+    seq = read_sequence(SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{mirna_id}.dat')
     expected = get_ctd(seq)
     assert np.array_equal(ctd, expected)
 
 
-@pytest.mark.parametrize(
-    'record_list',
-    [
-        (iter_seq_ss(SEQ_SS_FOLDER, keep=['hsa1', 'hsa2', 'mol1'])),
-        (iter_seq_ss(SEQ_SS_FOLDER, keep=['hsa1', 'mol3', 'mol2'])),
-        (iter_seq_ss(SEQ_SS_FOLDER, keep=['hsa2', 'mol2'])),
-        (iter_seq_ss(SEQ_SS_FOLDER, keep=['hsa1', 'hsa2', 'mol1'])),
-    ]
-)
-def test_gen_ctd_dict(record_list, tmp_path):
+def test_gen_ctd_dict(seq_ss_filtered_list, tmp_path):
     dict_file = tmp_path / 'ctd.dict'
-    gen_ctd_dict(record_list, dict_file)
+    gen_ctd_dict(seq_ss_filtered_list, dict_file)
     assert dict_file.exists()
 
     ctd_dict = load_dict(dict_file)
@@ -77,22 +66,13 @@ def test_gen_ctd_dict(record_list, tmp_path):
             ctd_dict[record.id],
             get_ctd(record.seq)
         )
-        for record in record_list
+        for record in seq_ss_filtered_list
     ])
 
 
-@pytest.mark.parametrize(
-    'seq_list',
-    [
-        (['hsa1', 'hsa2', 'mol1']),
-        (['hsa1', 'mol3', 'mol2']),
-        (['hsa2', 'mol2']),
-        (['hsa1', 'hsa2', 'mol1']),
-    ]
-)
-def test_gen_ctd_dict_from_folder(seq_list, tmp_path):
+def test_gen_ctd_dict_from_folder(mirna_id_filter, tmp_path):
     dict_file = tmp_path / 'ctd.dict'
-    gen_ctd_dict_from_folder(SEQ_SS_FOLDER, dict_file, keep=seq_list)
+    gen_ctd_dict_from_folder(SEQ_SS_FOLDER, dict_file, keep=mirna_id_filter)
     assert dict_file.exists()
 
     ctd_dict = load_dict(dict_file)
@@ -101,5 +81,5 @@ def test_gen_ctd_dict_from_folder(seq_list, tmp_path):
             ctd_dict[id_],
             get_ctd_by_name(id_, SEQ_SS_FOLDER)
         )
-        for id_ in seq_list
+        for id_ in mirna_id_filter
     ])

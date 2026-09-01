@@ -1,23 +1,17 @@
+import os
 from collections import Counter
 from itertools import product
 from pathlib import Path
 from typing import Iterable
-import os
 
 import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.structs import SeqRecord, SeqSSRecord
 from compgenlnc.utils.dict_manager import save_dict
-from compgenlnc.utils.fasta_manager import read_sequence, iter_seq_ss
-
-
-# Array with all possible combinations for RNA k-mers with k from 1 to 4
-n_combinations = [
-    [''.join(p) for p in product('ATCG', repeat=n)]
-    for n in range(1, 5)
-]
-
+from compgenlnc.utils.fasta_manager import (
+    read_sequence, iter_seq_ss, load_fasta,
+)
 
 def get_kmer(
         seq: str | SeqRecord | SeqSSRecord,
@@ -48,7 +42,7 @@ def get_kmer(
         kmers = Counter(
             (seq[i : i + n] for i in range(len(seq) - n + 1))
         )
-        combinations = n_combinations[n - 1]
+        combinations = (''.join(p) for p in product('ATCG', repeat=n))
         return np.array([
             kmers[sub_s] / kmers.total()
             for sub_s in combinations

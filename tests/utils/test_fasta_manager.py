@@ -9,20 +9,16 @@ from compgenlnc.utils.fasta_manager import (
     read_sequence,
     save_fasta,
 )
+
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
+from params import seq_list, T_converted_seq_list
 
 
 @pytest.mark.parametrize(
-    'expected, index',
-    [
-        (SeqSSRecord('hsa1', '', ''), 0),
-        (SeqSSRecord('hsa2', 'ACGUGCA', ''), 1),
-        (SeqSSRecord('mol1', 'ACGUACGUACGU', ''), 2),
-        (SeqSSRecord('mol2', 'AAAA', ''), 3),
-        (SeqSSRecord('mol3', 'GCGCGCGC', ''), 4),
-    ]
+    'index, expected',
+    list(enumerate(seq_list))
 )
-def test_load_fasta(expected, index, seq_fasta_loader):
+def test_load_fasta(index, expected, seq_fasta_loader):
     record = seq_fasta_loader[index]
     assert record.id == expected.id
     assert record.seq == expected.seq
@@ -40,16 +36,10 @@ def test_save_fasta(tmp_path):
 
 
 @pytest.mark.parametrize(
-    'expected, index',
-    [
-        (SeqSSRecord('hsa1', '', ''), 0),
-        (SeqSSRecord('hsa2', 'ACGUGCA', ''), 1),
-        (SeqSSRecord('mol1', 'ACGUACGUACGU', ''), 2),
-        (SeqSSRecord('mol2', 'AAAA', ''), 3),
-        (SeqSSRecord('mol3', 'GCGCGCGC', ''), 4),
-    ]
+    'index, expected',
+    list(enumerate(seq_list))
 )
-def test_iter_seq_fasta(expected, index, seq_fasta_list):
+def test_iter_seq_fasta(index, expected, seq_fasta_list):
     record = seq_fasta_list[index]
     assert record.id == expected.id
     assert record.seq == expected.seq
@@ -58,9 +48,9 @@ def test_iter_seq_fasta(expected, index, seq_fasta_list):
 @pytest.mark.parametrize(
     'filter, expected',
     [
-        (['mol'], 3),
-        (['hsa'], 2),
-        (['mol', 'hsa'], 5),
+        (['7a'], 3),
+        (['hsa'], 10),
+        (['-1', '-2'], 4),
         (['non'], 0),
     ]
 )
@@ -73,16 +63,10 @@ def test_iter_seq_fasta_filtered(filter, expected):
 
 
 @pytest.mark.parametrize(
-    'expected, index',
-    [
-        (SeqSSRecord('hsa1', '', ''), 0),
-        (SeqSSRecord('hsa2', 'ACGTGCA', ''), 1),
-        (SeqSSRecord('mol1', 'ACGTACGTACGT', ''), 2),
-        (SeqSSRecord('mol2', 'AAAA', ''), 3),
-        (SeqSSRecord('mol3', 'GCGCGCGC', ''), 4),
-    ]
+    'index, expected',
+    list(enumerate(T_converted_seq_list))
 )
-def test_iter_seq_ss(expected, index, seq_ss_list):
+def test_iter_seq_ss(index, expected, seq_ss_list):
     record = seq_ss_list[index]
     assert record.id == expected.id
     assert record.seq == expected.seq
@@ -91,9 +75,9 @@ def test_iter_seq_ss(expected, index, seq_ss_list):
 @pytest.mark.parametrize(
     'keep, expected',
     [
-        (['mol1', 'hsa2', 'mol2'], 3),
-        (['hsa1', 'hsa2'], 2),
-        ([], 5),
+        (['hsa-let-7a-1', 'hsa-let-7a-2', 'hsa-let-7b'], 3),
+        (['hsa-let-7f-1', 'hsa-let-7f-2'], 2),
+        ([], 10),
         (['non1'], 0),
     ]
 )
@@ -106,18 +90,12 @@ def test_iter_seq_ss_filtered(keep, expected):
 
 
 @pytest.mark.parametrize(
-    'id_, expected',
-    [
-        ('hsa1', ''),
-        ('hsa2', 'ACGTGCA'),
-        ('mol1', 'ACGTACGTACGT'),
-        ('mol2', 'AAAA'),
-        ('mol3', 'GCGCGCGC'),
-    ]
+    'record',
+    T_converted_seq_list
 )
-def test_read_sequence(id_, expected):
-    filename = SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{id_}.dat'
+def test_read_sequence(record):
+    filename = SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{record.id}.dat'
     assert filename.exists()
 
     seq = read_sequence(filename)
-    assert seq == expected
+    assert seq == record.seq

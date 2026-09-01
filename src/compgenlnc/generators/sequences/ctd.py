@@ -1,15 +1,17 @@
+import os
 from collections import Counter
 from itertools import product
 from pathlib import Path
 from typing import Iterable
-import os
 
 import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.structs import SeqRecord, SeqSSRecord
 from compgenlnc.utils.dict_manager import save_dict
-from compgenlnc.utils.fasta_manager import read_sequence, iter_seq_ss
+from compgenlnc.utils.fasta_manager import (
+    read_sequence, iter_seq_ss, load_fasta
+)
 
 def get_ctd(
         seq: str | SeqRecord | SeqSSRecord
@@ -100,6 +102,7 @@ def get_ctd_by_name(
         NDArray: A concatenated numpy array with the CTD of the
             sequence.
     """
+    folder = Path(folder).resolve()
     filename = folder / f'{SEQ_SS_PREFIX}{id_}.dat'
     seq = read_sequence(filename, mature_only=mature_only)
     return get_ctd(seq)

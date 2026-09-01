@@ -14,7 +14,7 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
 def test_fasta_to_seq_ss(tmp_path):
     folder = tmp_path / 'seq+ss_join'
     total = fasta_to_seq_ss(SEQ_FASTA_EXAMPLE, SS_FASTA_EXAMPLE, folder)
-    assert total == 5
+    assert total == 10
 
 
 @pytest.mark.parametrize(

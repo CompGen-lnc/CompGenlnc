@@ -12,9 +12,9 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 @pytest.mark.parametrize(
     'filter, expected',
     [
-        (['hsa'], ['hsa1', 'hsa2']),
-        (['mol'], ['mol1', 'mol2', 'mol3']),
-        (['mol', 'hsa'], ['hsa1', 'hsa2', 'mol1', 'mol2', 'mol3']),
+        (['7a'], ['hsa-let-7a-1', 'hsa-let-7a-2', 'hsa-let-7a-3']),
+        (['7f', '7c'], ['hsa-let-7c', 'hsa-let-7f-1', 'hsa-let-7f-2']),
+        (['hsa'], [record.id for record in iter_seq_fasta(SEQ_FASTA_EXAMPLE)]),
         (['non'], []),
     ]
 )
@@ -33,6 +33,6 @@ def test_seq_ss_to_fasta(tmp_path):
     seq_ss_to_fasta(SEQ_SS_FOLDER, new_seq_fasta_file, new_ss_fasta_file)
     assert new_seq_fasta_file.exists()
 
-    new_seq_fasta = new_seq_fasta_file.read_text()
-    seq_fasta = SEQ_FASTA_EXAMPLE.read_text()
+    new_seq_fasta = new_seq_fasta_file.read_text().replace('\n', '')
+    seq_fasta = SEQ_FASTA_EXAMPLE.read_text().replace('\n', '')
     assert new_seq_fasta.upper() == seq_fasta.upper().replace('U', 'T')

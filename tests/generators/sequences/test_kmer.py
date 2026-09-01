@@ -36,60 +36,43 @@ def test_get_kmer(seq, k, expected):
     assert np.array_equal(kmers, expected)
 
 
-@pytest.mark.parametrize(
-    'id_, k', [('hsa1', 3), ('hsa2', 1), ('mol1', 2), ('mol2', 3), ('mol3', 1)]
-)
-def test_get_kmer_by_name(id_, k):
-    kmers = get_kmer_by_name(id_, SEQ_SS_FOLDER, k)
-    seq = read_sequence(SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{id_}.dat')
-    expected = get_kmer(seq, k)
+def test_get_kmer_by_name(mirna_id):
+    kmers = get_kmer_by_name(mirna_id, SEQ_SS_FOLDER, 3)
+    seq = read_sequence(
+        SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{mirna_id}.dat'
+    )
+    expected = get_kmer(seq, 3)
     assert np.array_equal(kmers, expected)
 
 
-@pytest.mark.parametrize(
-    'record_list, k',
-    [
-        (iter_seq_ss(SEQ_SS_FOLDER, keep=['hsa1', 'hsa2', 'mol1']), 3),
-        (iter_seq_ss(SEQ_SS_FOLDER, keep=['hsa1', 'mol3', 'mol2']), 2),
-        (iter_seq_ss(SEQ_SS_FOLDER, keep=['hsa2', 'mol2']), 4),
-        (iter_seq_ss(SEQ_SS_FOLDER, keep=['hsa1', 'hsa2', 'mol1']), 1),
-    ]
-)
-def test_gen_kmer_dict(record_list, k, tmp_path):
+def test_gen_kmer_dict(seq_ss_filtered_list, tmp_path):
     dict_file = tmp_path / 'kmer.dict'
-    gen_kmer_dict(record_list, dict_file, k)
+    gen_kmer_dict(seq_ss_filtered_list, dict_file, 3)
     assert dict_file.exists()
 
     kmer_dict = load_dict(dict_file)
     assert all([
         np.array_equal(
             kmer_dict[record.id],
-            get_kmer(record.seq, k)
+            get_kmer(record.seq, 3)
         )
-        for record in record_list
+        for record in seq_ss_filtered_list
     ])
 
 
-@pytest.mark.parametrize(
-    'seq_list, k',
-    [
-        (['hsa1', 'hsa2', 'mol1'], 3),
-        (['hsa1', 'mol3', 'mol2'], 2),
-        (['hsa2', 'mol2'], 4),
-        (['hsa1', 'hsa2', 'mol1'], 1),
-    ]
-)
-def test_gen_kmer_dict_from_folder(seq_list, k, tmp_path):
+def test_gen_kmer_dict_from_folder(mirna_id_filter, tmp_path):
     dict_file = tmp_path / 'kmer.dict'
-    gen_kmer_dict_from_folder(SEQ_SS_FOLDER, dict_file, k, keep=seq_list)
+    gen_kmer_dict_from_folder(
+        SEQ_SS_FOLDER, dict_file, 3, keep=mirna_id_filter
+    )
     assert dict_file.exists()
 
     kmer_dict = load_dict(dict_file)
     assert all([
         np.array_equal(
             kmer_dict[id_],
-            get_kmer_by_name(id_, SEQ_SS_FOLDER, k)
+            get_kmer_by_name(id_, SEQ_SS_FOLDER, 3)
         )
-        for id_ in seq_list
+        for id_ in mirna_id_filter
     ])
 

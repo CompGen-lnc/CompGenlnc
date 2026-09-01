@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 
 from compgenlnc.config.seeds import DOC2VEC_MODEL_SEED
@@ -8,7 +7,9 @@ from compgenlnc.utils.fasta_manager import (
     iter_seq_fasta,
     iter_seq_ss
 )
+
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
+from params import id_list
 
 
 @pytest.fixture(scope='session')
@@ -43,3 +44,34 @@ def seq_fasta_list():
 @pytest.fixture
 def seq_ss_list(scope='session'):
     return list(iter_seq_ss(SEQ_SS_FOLDER))
+
+
+@pytest.fixture(
+    params=id_list
+)
+def mirna_id(request):
+    return request.param
+
+
+@pytest.fixture(
+    params=[
+        iter_seq_ss(SEQ_SS_FOLDER),
+        iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [0, 1, 2]]),
+        iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [2, 4, 6, 8]]),
+        iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [7, 8]]),
+    ]
+)
+def seq_ss_filtered_list(request):
+    return request.param
+
+
+@pytest.fixture(
+    params=[
+        [],
+        [id_list[i] for i in [0, 1, 2]],
+        [id_list[i] for i in [2, 4, 6, 8]],
+        [id_list[i] for i in [7, 8]],
+    ]
+)
+def mirna_id_filter(request):
+    return request.param
