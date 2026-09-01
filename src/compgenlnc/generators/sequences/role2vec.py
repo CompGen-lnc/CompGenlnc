@@ -24,10 +24,10 @@ def gen_role2vec_dict(
         filename: str | os.PathLike,
 ) -> None:
     keys = sorted(kmer_dict.keys() & doc2vec_dict.keys() & ctd_dict.keys())
-    vectors = np.array((
-        ctd_dict[key] + doc2vec_dict[key] + kmer_dict[key]
+    vectors = np.array([
+        np.concatenate((ctd_dict[key], doc2vec_dict[key], kmer_dict[key]), dtype=np.float32)
         for key in keys
-    ), np.float32)
+    ])
     kdt = KDTree(vectors, leaf_size=30, metric='euclidean')
     k_near = kdt.query(vectors, k=10, return_distance=False)
 
