@@ -136,6 +136,39 @@ def gen_ctd_dict(
     save_dict(dict_file, ctd_dict)
 
 
+def gen_ctd_dict_from_fasta(
+        filename: str | os.PathLike,
+        dict_file: str | os.PathLike,
+        /,
+        keep: Iterable[str] | None = None,
+        mature_only: bool = False
+) -> None:
+    """Get the ctd of a RNA sequences from 1 to k from a FASTA file with RNA
+    sequences.
+
+    Args:
+        filename: Path of the FASTA file.
+        dict_file: Path of the file where the dictionary will be saved.
+        k: Maximum length for k-mers. It calculates k-mers with length
+            from 1 to k, included.
+        keep: List of the RNA names to save. Save all if None.
+        mature_only: Only saves the mature section of the sequence if
+            True.
+    """
+    filename = Path(filename).resolve()
+    dict_file = Path(dict_file).resolve()
+
+    dict_folder = dict_file.parent
+    dict_folder.mkdir(parents=True, exist_ok=True)
+
+    ctd_dict = {
+        record.id: get_ctd(record.seq)
+        for record in load_fasta(filename, mode='seq')
+        if not keep or record.id in keep
+    }
+    save_dict(dict_file, ctd_dict)
+
+
 def gen_ctd_dict_from_folder(
         folder: str | os.PathLike,
         dict_file: str | os.PathLike,
@@ -143,8 +176,7 @@ def gen_ctd_dict_from_folder(
         keep: Iterable[str] | None = None,
         mature_only: bool = False
 ) -> None:
-    """Get the CTD of a RNA sequences from the seq+ss file of the given
-    molecule.
+    """Get the CTD of a RNA sequences from the seq+ss files.
 
     Args:
         folder: Path of the folder where the seq+ss file is.

@@ -87,8 +87,7 @@ def gen_kmer_dict(
         /,
         mature_only: bool = False
 ) -> None:
-    """Get the k-mers of a RNA sequences from 1 to k from the seq+ss
-    file of the given molecule.
+    """Get the k-mers of RNA sequences from 1 to k for the given molecule.
 
     Args:
         record_list: Iterable that contains all the sequence records to
@@ -109,6 +108,40 @@ def gen_kmer_dict(
     save_dict(dict_file, kmer_dict)
 
 
+def gen_kmer_dict_from_fasta(
+        filename: str | os.PathLike,
+        dict_file: str | os.PathLike,
+        k: int,
+        /,
+        keep: Iterable[str] | None = None,
+        mature_only: bool = False
+) -> None:
+    """Get the k-mers of RNA sequences from 1 to k from a FASTA file with RNA
+    sequences.
+
+    Args:
+        filename: Path of the FASTA file.
+        dict_file: Path of the file where the dictionary will be saved.
+        k: Maximum length for k-mers. It calculates k-mers with length
+            from 1 to k, included.
+        keep: List of the RNA names to save. Save all if None.
+        mature_only: Only saves the mature section of the sequence if
+            True.
+    """
+    filename = Path(filename).resolve()
+    dict_file = Path(dict_file).resolve()
+
+    dict_folder = dict_file.parent
+    dict_folder.mkdir(parents=True, exist_ok=True)
+
+    kmer_dict = {
+        record.id: get_kmer(record.seq, k)
+        for record in load_fasta(filename, mode='seq')
+        if not keep or record.id in keep
+    }
+    save_dict(dict_file, kmer_dict)
+
+
 def gen_kmer_dict_from_folder(
         folder: str | os.PathLike,
         dict_file: str | os.PathLike,
@@ -117,8 +150,8 @@ def gen_kmer_dict_from_folder(
         keep: Iterable[str] | None = None,
         mature_only: bool = False
 ) -> None:
-    """Get the k-mers of a RNA sequences from 1 to k from the seq+ss
-    file of the given molecule.
+    """Get the k-mers of RNA sequences from 1 to k from the seq+ss
+    files.
 
     Args:
         folder: Path of the folder where the seq+ss file is.
@@ -140,3 +173,4 @@ def gen_kmer_dict_from_folder(
         for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
     }
     save_dict(dict_file, kmer_dict)
+    
