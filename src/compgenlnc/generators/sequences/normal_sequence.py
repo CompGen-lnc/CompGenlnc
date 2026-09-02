@@ -1,3 +1,4 @@
+import math
 import os
 from pathlib import Path
 from typing import Iterable
@@ -12,9 +13,7 @@ from compgenlnc.utils.dict_manager import save_dict
 
 def recode_sequence(seq: SeqLike) -> np.typing.NDArray[np.uint8]:
     if isinstance(seq, SeqSSRecord):
-        seq = str(seq.seq)
-    elif isinstance(seq, SeqRecord):
-        seq = str(seq)
+        seq = seq.seq
 
     recode_map = {'A': 1, 'C': 2, 'G': 3, 'T': 4 , 'U': 4}
     recoded = np.fromiter((
@@ -35,7 +34,7 @@ def normalize_sequence_list(
         normal_size: int | None = None,
 ) -> np.typing.NDArray[np.float32]:
     if normal_size is None:
-        np.mean([len(seq) for seq in seq_list])
+        normal_size = math.ceil(np.mean([len(seq) for seq in seq_list]))
         
     matrix = np.array([
         np.pad(
@@ -43,10 +42,10 @@ def normalize_sequence_list(
             (0, max(0, normal_size - len(sequence))),
         )
         for sequence in seq_list
-    ])
+    ], np.float32)
 
-    average = matrix.mean(1)
-    deviation = matrix.std(1)
+    average = matrix.mean(0)
+    deviation = matrix.std(0)
     deviation[deviation < 1e-10] = 1
 
     return (matrix - average) / deviation
@@ -134,7 +133,7 @@ def gen_normalized_sequence_dict_from_folder(
         pair[0]: pair[1]
         for pair in zip(
             id_vector,
-            normalize_sequence_list(seq_vector, normal_size, mature_only)
+            normalize_sequence_list(seq_vector, normal_size)
         )
     }
     save_dict(dict_file, seq_dict)

@@ -55,10 +55,19 @@ def mirna_id(request):
 
 @pytest.fixture(
     params=[
-        iter_seq_ss(SEQ_SS_FOLDER),
-        iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [0, 1, 2]]),
-        iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [2, 4, 6, 8]]),
-        iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [7, 8]]),
+        list(iter_seq_ss(SEQ_SS_FOLDER)),
+        list(iter_seq_ss(
+            SEQ_SS_FOLDER,
+            keep=[id_list[i] for i in [0, 1, 2]]
+        )),
+        list(iter_seq_ss(
+            SEQ_SS_FOLDER,
+            keep=[id_list[i] for i in [2, 4, 6, 8]]
+        )),
+        list(iter_seq_ss(
+            SEQ_SS_FOLDER,
+            keep=[id_list[i] for i in [7, 8]]
+        )),
     ]
 )
 def seq_ss_filtered_list(request):

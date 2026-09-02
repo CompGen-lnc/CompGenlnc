@@ -26,6 +26,9 @@ class SeqRecord:
     def __getitem__(self, key):
         return self._seq[key]
 
+    def __iter__(self):
+        return iter(self._seq)
+
     def __eq__(self, other):
         if isinstance(other, str):
             return self._seq == other
