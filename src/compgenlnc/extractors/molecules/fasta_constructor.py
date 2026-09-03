@@ -1,20 +1,25 @@
+import itertools
+import multiprocessing as mp
 import os
 from pathlib import Path
 from typing import Iterable
-
-from Bio import SeqIO
 
 from compgenlnc.config.paths import (
     LNCRNA_FASTA,
     MAT_MIRNA_FASTA,
     PAIRS_FILES,
     PRE_MIRNA_FASTA,
+    LNCRNA_SS_FASTA,
+    MIRNA_SS_FASTA,
 )
-from compgenlnc.utils.fasta_manager import (
+from compgenlnc.extractors import extract_2d_structure_identified
+from compgenlnc.utils import (
     iter_seq_fasta,
     iter_seq_ss,
+    load_fasta,
     save_fasta,
 )
+from compgenlnc.structs import SeqSSRecord
 
 
 def filter_fasta(
@@ -87,6 +92,28 @@ def filter_lncrna(
 
 
 
+def gen_fasta_2d(
+        seq_fasta: str | os.PathLike,
+        ss_fasta: str | os.PathLike,
+        /, *,
+        keep: Iterable[str] | None = None
+) -> None:
+    num_processes = max(1, mp.cpu_count() - 2)
+    seq_fasta = Path(seq_fasta).resolve()
+    ss_fasta = Path(ss_fasta).resolve()
+
+    ss_fasta.parent.mkdir(parents=True, exist_ok=True)
+
+    with mp.Pool(processes=num_processes) as pool:
+        ss_list = pool.imap(
+            extract_2d_structure_identified,
+            load_fasta(seq_fasta, mode='seq', keep=keep),
+            chunksize=10,
+        )
+        save_fasta(ss_fasta, ss_list, 'ss')
+
+
+
 def seq_ss_to_fasta(
         folder: str | os.PathLike,
         new_seq_fasta: str | os.PathLike,
@@ -117,3 +144,7 @@ def seq_ss_to_fasta(
 
     new_seq_fasta.parent.mkdir(parents=True, exist_ok=True)
     save_fasta(new_seq_fasta, fasta, 'seq')
+
+if __name__ == '__main__':
+    gen_fasta_2d(LNCRNA_FASTA, LNCRNA_SS_FASTA)
+    gen_fasta_2d(PRE_MIRNA_FASTA, MIRNA_SS_FASTA)
