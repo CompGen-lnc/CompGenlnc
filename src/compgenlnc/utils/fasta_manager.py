@@ -10,7 +10,9 @@ from compgenlnc.structs import SeqSSRecord
 
 def load_fasta(
         filename: str | os.PathLike,
-        mode: str,
+        /, *,
+        mode: str = 'seq',
+        keep: Iterable[str] | None = None,
 ) -> Iterator[SeqSSRecord]:
     """Load a FASTA file and iterate the RNA molecules into them.
 
@@ -33,21 +35,29 @@ def load_fasta(
     id_ = seq = ss = value = ''
     with open(filename) as file:
         # Add the '>' at the end for capturing the last molecule
-        for line in file.readlines() + ['>']:
-            if line.strip() and line[0] != '>':
-                value += line.split()[0].strip()
+        for raw_line in file.readlines() + ['>']:
+            if raw_line[0] != '>':
+                if id_ and raw_line.strip():
+                    value += raw_line.split()[0]
                 continue
 
             if mode == 'seq':
                 seq = value
             elif mode == 'ss':
                 ss = value
-                
-            if id_:
-                yield SeqSSRecord(id_.strip(), seq, ss)
-            value = ''
-            if line[1:]:
-                id_ = line[1:].split()[0]
+
+            if id_:    
+                yield SeqSSRecord(id_, seq, ss)
+                id_ = ''
+                value = ''
+
+            if not raw_line[1:].strip():
+                continue
+
+            line = raw_line[1:].split()[0]
+            if keep is None or line in keep:
+                id_ = line
+
 
 
 def save_fasta(
@@ -78,7 +88,9 @@ def save_fasta(
             out_file.write(f'>{record.id}\n')
             if not value:
                 continue
-            out_file.write(f'{value}\n')
+            out_file.write(f'{'\n'.join([
+                value[i : i + 60] for i in range(0, len(value), 60)
+            ])}\n')
 
     
 def iter_seq_fasta(
@@ -99,7 +111,7 @@ def iter_seq_fasta(
     """
     filename = Path(filename).resolve()
 
-    for record in load_fasta(filename, 'seq'):
+    for record in load_fasta(filename, mode='seq'):
         if (filter and
             not any(prefix in record.id for prefix in filter)):
             continue

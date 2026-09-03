@@ -1,12 +1,14 @@
 import pytest
 
-from compgenlnc.extractors.molecules.fasta_constructor import (
+from compgenlnc.extractors import extract_2d_structure
+from compgenlnc.extractors.molecules import (
     filter_fasta,
-    seq_ss_to_fasta
+    gen_fasta_2d,
+    seq_ss_to_fasta,
 )
-from compgenlnc.utils.fasta_manager import iter_seq_fasta
+from compgenlnc.utils import load_fasta
 
-from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
+from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
 
 
 @pytest.mark.parametrize(
@@ -14,7 +16,8 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
     [
         (['7a'], ['hsa-let-7a-1', 'hsa-let-7a-2', 'hsa-let-7a-3']),
         (['7f', '7c'], ['hsa-let-7c', 'hsa-let-7f-1', 'hsa-let-7f-2']),
-        (['hsa'], [record.id for record in iter_seq_fasta(SEQ_FASTA_EXAMPLE)]),
+        (['hsa'], [record.id
+                   for record in load_fasta(SEQ_FASTA_EXAMPLE, mode='seq')]),
         (['non'], []),
     ]
 )
@@ -23,7 +26,7 @@ def test_filter_seq_fasta(filter, expected, tmp_path):
     filter_fasta(SEQ_FASTA_EXAMPLE, new_fasta, filter)
     assert new_fasta.exists()
 
-    ids = [record.id for record in iter_seq_fasta(new_fasta)]
+    ids = [record.id for record in load_fasta(new_fasta, mode='seq')]
     assert ids == expected
 
 

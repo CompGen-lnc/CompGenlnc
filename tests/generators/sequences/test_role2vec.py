@@ -20,7 +20,7 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 
 
 def test_gen_role2vec_dict(doc2vec_model_deterministic, tmp_path):
-    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, 'seq'))
+    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, mode='seq'))
     doc2vec_model = doc2vec_model_deterministic
 
     kmer_dict = {
@@ -48,7 +48,7 @@ def test_gen_role2vec_dict(doc2vec_model_deterministic, tmp_path):
 
 
 def test_gen_role2vec_dict_from_files(doc2vec_model_deterministic, tmp_path):
-    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, 'seq'))
+    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, mode='seq'))
     doc2vec_model = doc2vec_model_deterministic
 
     kmer_file = tmp_path / 'kmer.dict'
@@ -70,7 +70,7 @@ def test_gen_role2vec_dict_from_files(doc2vec_model_deterministic, tmp_path):
     )
 
 def test_gen_role2vec_dict_from_folder(tmp_path):
-    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, 'seq'))
+    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, mode='seq'))
     filename = tmp_path / 'role2vec.dict'
     gen_role2vec_dict_from_folder(SEQ_SS_FOLDER, filename, 3)
     assert filename.exists()
