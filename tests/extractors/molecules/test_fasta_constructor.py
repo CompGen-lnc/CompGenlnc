@@ -30,6 +30,17 @@ def test_filter_seq_fasta(filter, expected, tmp_path):
     assert ids == expected
 
 
+def test_gen_fasta_2d(mirna_id_filter, tmp_path):
+    ss_fasta = tmp_path / 'fasta2d.fa'
+    gen_fasta_2d(SEQ_FASTA_EXAMPLE, ss_fasta, keep=mirna_id_filter)
+    seq_list = load_fasta(SEQ_FASTA_EXAMPLE, mode='seq', keep=mirna_id_filter)
+    ss_list = load_fasta(ss_fasta, mode='ss')
+
+    for seq, expected in zip(seq_list, ss_list):
+        ss = extract_2d_structure(seq)
+        assert ss == expected.ss
+
+
 def test_seq_ss_to_fasta(tmp_path):
     new_seq_fasta_file = tmp_path / 'new_seq_fasta.fa'
     new_ss_fasta_file = tmp_path / 'new_ss_fasta.fa'
