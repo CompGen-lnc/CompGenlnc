@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Iterable
 
 from compgenlnc.config.paths import (
     LNCRNA_FASTA,
@@ -8,7 +9,7 @@ from compgenlnc.config.paths import (
     MIRNA_SEQ_SS_FOLDER,
     SEQ_SS_PREFIX,
 )
-from compgenlnc.utils.fasta_manager import load_fasta
+from compgenlnc.utils import load_fasta
 
 
 def join_seq_ss(
@@ -37,7 +38,9 @@ def join_seq_ss(
 def fasta_to_seq_ss(
         seq_file: str | os.PathLike,
         ss_file: str | os.PathLike,
-        folder: str | os.PathLike
+        folder: str | os.PathLike,
+        /, *,
+        keep: Iterable[str] | None = None
 ) -> int:
     """Convert a FASTA file into seq+ss files for each molecule.
 
@@ -47,24 +50,31 @@ def fasta_to_seq_ss(
         folder: Path for the seq+ss files.
     """
     seq_file = Path(seq_file).resolve()
+    ss_file = Path(ss_file).resolve()
     folder = Path(folder).resolve()
 
     seq_dict = {
         record.id: str(record.seq).upper().replace('U', 'T')
         for record in load_fasta(seq_file, mode='seq')
     }
-    id_list = list(seq_dict.keys())
-    id_list.sort()
+    ss_dict = {
+        record.id: str(record.seq)
+        for record in load_fasta(ss_file, mode='seq')
+    }
+    id_list = seq_dict.keys() & ss_dict.keys()
+    if keep is not None:
+        id_list &= keep
     folder.mkdir(parents=True, exist_ok=True)
     total = 0
 
     for id_ in id_list:
         try:
             seq = seq_dict[id_]
-            join_seq_ss(seq, '', id_, folder)
+            ss = ss_dict[id_]
+            join_seq_ss(seq, ss, id_, folder)
             total += 1
         except:
-            print(id_)
+            pass
 
     return total
 

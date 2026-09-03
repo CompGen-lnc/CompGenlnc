@@ -7,7 +7,6 @@ from typing import Iterable
 from compgenlnc.config.paths import (
     LNCRNA_FASTA,
     MAT_MIRNA_FASTA,
-    PAIRS_FILES,
     PRE_MIRNA_FASTA,
     LNCRNA_SS_FASTA,
     MIRNA_SS_FASTA,
@@ -42,7 +41,7 @@ def filter_fasta(
     fasta.sort(key=lambda record: record.id)
 
     new_fasta.parent.mkdir(parents=True, exist_ok=True)
-    save_fasta(new_fasta, fasta, 'seq')
+    save_fasta(new_fasta, fasta, mode='seq')
 
 
 def filter_pre_mirna(
@@ -110,14 +109,16 @@ def gen_fasta_2d(
             load_fasta(seq_fasta, mode='seq', keep=keep),
             chunksize=10,
         )
-        save_fasta(ss_fasta, ss_list, 'ss')
+        save_fasta(ss_fasta, ss_list, mode='ss')
 
 
 
 def seq_ss_to_fasta(
         folder: str | os.PathLike,
         new_seq_fasta: str | os.PathLike,
-        new_ss_fasta: str | os.PathLike
+        new_ss_fasta: str | os.PathLike,
+        /, *,
+        keep: Iterable[str] | None = None
 ) -> None:
     """Join all the seq+ss files from the same folder into a FASTA file.
 
@@ -127,23 +128,12 @@ def seq_ss_to_fasta(
     """
     folder = Path(folder).resolve()
     new_seq_fasta = Path(new_seq_fasta).resolve()
-
-    needed_seq = []
-    for pf in PAIRS_FILES:
-        if pf.exists():
-            for line in open(pf):
-                parts = line.strip().split(',')
-                if len(parts) >= 2:
-                    needed_seq.add(parts[1])
-
-    fasta = [
-        record
-        for record in iter_seq_ss(folder, keep=needed_seq)
-    ]
-    fasta.sort(key=lambda record: record.id)
+    new_ss_fasta = Path(new_ss_fasta).resolve()
 
     new_seq_fasta.parent.mkdir(parents=True, exist_ok=True)
-    save_fasta(new_seq_fasta, fasta, 'seq')
+    new_ss_fasta.parent.mkdir(parents=True, exist_ok=True)
+    save_fasta(new_seq_fasta, iter_seq_ss(folder, keep=keep), mode='seq')
+    save_fasta(new_ss_fasta, iter_seq_ss(folder, keep=keep), mode='ss')
 
 if __name__ == '__main__':
     gen_fasta_2d(LNCRNA_FASTA, LNCRNA_SS_FASTA)

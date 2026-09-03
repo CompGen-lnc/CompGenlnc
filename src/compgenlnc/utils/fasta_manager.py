@@ -63,6 +63,7 @@ def load_fasta(
 def save_fasta(
         filename: str | os.PathLike,
         molecules: Iterable[SeqSSRecord],
+        /, *,
         mode: str,
 ) -> None:
     """Save sequences or 2D structures from a group of RNA molecules into a
@@ -133,10 +134,31 @@ def read_sequence(
     filename = Path(filename).resolve()
 
     with open(filename) as f:
-        seq = f.readline().strip()
+        seq = f.readlines()[0].strip()
     if mature_only:
         seq = ''.join(c for c in seq if c.isupper())
     return seq.upper().replace('U', 'T')
+
+
+def read_structure(
+        filename: str | os.PathLike,
+        mature_only: bool = False
+) -> str:
+    """Read the first line of a seq+ss file and normalize to ACGT
+    alphabet.
+
+    Args:
+        filename: Path of the seq+ss file.
+        mature_only: Only saves the mature section of the sequence if
+            True.
+    """
+    filename = Path(filename).resolve()
+
+    with open(filename) as f:
+        ss = f.readlines()[1].strip()
+    if mature_only:
+        ss = ''.join(c for c in ss if c.isupper())
+    return ss.upper().replace('U', 'T')
 
 
 def iter_seq_ss(
@@ -162,4 +184,5 @@ def iter_seq_ss(
         if keep and id_ not in keep:
             continue
         seq = read_sequence(folder / filename, mature_only)
+        ss = read_structure(folder / filename, mature_only)
         yield SeqSSRecord(id_, seq, '')
