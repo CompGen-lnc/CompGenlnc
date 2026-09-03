@@ -7,6 +7,7 @@ from compgenlnc.utils.fasta_manager import (
     iter_seq_ss,
     load_fasta,
     read_sequence,
+    read_structure,
     save_fasta,
 )
 
@@ -99,3 +100,11 @@ def test_read_sequence(record):
 
     seq = read_sequence(filename)
     assert seq == record.seq
+
+
+def test_read_structure(ss_record_identified):
+    filename = SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{ss_record_identified.id}.dat'
+    assert filename.exists()
+
+    ss = read_structure(filename)
+    assert ss == ss_record_identified.ss
