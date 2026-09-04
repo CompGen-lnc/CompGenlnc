@@ -1,1 +1,1 @@
-from .molecules import SeqLike
+from .molecules import SeqLike, SSLike

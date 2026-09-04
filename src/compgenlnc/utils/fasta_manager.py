@@ -185,4 +185,4 @@ def iter_seq_ss(
             continue
         seq = read_sequence(folder / filename, mature_only)
         ss = read_structure(folder / filename, mature_only)
-        yield SeqSSRecord(id_, seq, '')
+        yield SeqSSRecord(id_, seq, ss)
