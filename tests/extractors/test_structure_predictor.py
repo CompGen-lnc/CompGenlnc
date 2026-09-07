@@ -14,24 +14,27 @@ from compgenlnc.structs import SeqRecord, SeqSSRecord, StructureRecord
         (
             ('UGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACC'
             'CACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUA'),
-            StructureRecord(''),
+            StructureRecord('(((((.(((((((((((((((((((((.....(((...(('
+            '((....)))).)))))))))))))))))))))))))))))'),
         ),
         (
             SeqRecord('AGGUUGAGGUAGUAGGUUGUAUAGUUUAGAAUUACA'
             'UCAAGGGAGAUAACUGUACAGCCUCCUAGCUUUCCU'),
-            StructureRecord(''),
+            StructureRecord('(((..(((.(((.(((((((((((((.........('
+            '((......)))))))))))))))).))).))).)))'),
         ),
         (
             ('GGGUGAGGUAGUAGGUUGUAUAGUUUGGGGCUCUGCC'
             'CUGCUAUGGGAUAACUAUACAAUCUACUGUCUUUCCU'),
-            StructureRecord(''),
+            StructureRecord('(((.(((((((((((((((((((((((((((...)))'
+            '))).........))))))))))))))))))))).)))'),
         ),
     ]
 )
 def test_extract_2d_structure(seq, expected):
     ss = extract_2d_structure(seq)
     assert len(seq) == len(ss)
-    # assert ss == expected
+    assert ss == expected
 
 
 @pytest.mark.parametrize(
@@ -48,7 +51,8 @@ def test_extract_2d_structure(seq, expected):
                 'hsa-let-7a-1',
                 'UGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACC'
                 'CACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUA',
-                ''
+                '(((((.(((((((((((((((((((((.....(((...(('
+                '((....)))).)))))))))))))))))))))))))))))'
             ),
         ),
         (
@@ -62,7 +66,8 @@ def test_extract_2d_structure(seq, expected):
                 'hsa-let-7a-2',
                 'AGGUUGAGGUAGUAGGUUGUAUAGUUUAGAAUUACA'
                 'UCAAGGGAGAUAACUGUACAGCCUCCUAGCUUUCCU',
-                ''
+                '(((..(((.(((.(((((((((((((.........('
+                '((......)))))))))))))))).))).))).)))'
             ),
         ),
         (
@@ -76,7 +81,8 @@ def test_extract_2d_structure(seq, expected):
                 'hsa-let-7a-3',
                 'GGGUGAGGUAGUAGGUUGUAUAGUUUGGGGCUCUGCC'
                 'CUGCUAUGGGAUAACUAUACAAUCUACUGUCUUUCCU',
-                '',
+                '(((.(((((((((((((((((((((((((((...)))' \
+                '))).........))))))))))))))))))))).)))',
             ),
         ),
     ]
@@ -84,7 +90,7 @@ def test_extract_2d_structure(seq, expected):
 def test_extract_2d_structure_identified(seq, expected):
     ss = extract_2d_structure_identified(seq)
     assert len(seq.seq) == len(ss.ss)
-    # assert ss == expected
+    assert ss == expected
 
 
 def test_extract_2d_structure_list(seq_ss_filtered_list):

@@ -6,8 +6,16 @@ from constants import SEQ_SS_FOLDER
 from params import id_list
 
 
-@pytest.fixture
-def seq_ss_list(scope='session'):
+@pytest.fixture(
+    scope='session',
+    params=list(iter_seq_ss(SEQ_SS_FOLDER)),
+)
+def seq_ss_record(request):
+    return request.param
+
+
+@pytest.fixture(scope='session')
+def seq_ss_list():
     return list(iter_seq_ss(SEQ_SS_FOLDER))
 
 

@@ -1,0 +1,36 @@
+External loop                           :     0
+Interior loop (  1, 83) CG; (  2, 82) GT:  -140
+Interior loop (  2, 82) GT; (  3, 81) GC:  -210
+Interior loop (  3, 81) GC; (  4, 80) GC:  -330
+Interior loop (  4, 80) GC; (  5, 79) GC:  -330
+Interior loop (  5, 79) GC; (  7, 78) GT:   230
+Interior loop (  7, 78) GT; (  8, 77) AT:  -130
+Interior loop (  8, 77) AT; (  9, 76) GC:  -210
+Interior loop (  9, 76) GC; ( 10, 75) GC:  -330
+Interior loop ( 10, 75) GC; ( 11, 74) TG:  -250
+Interior loop ( 11, 74) TG; ( 12, 73) AT:  -100
+Interior loop ( 12, 73) AT; ( 13, 72) GC:  -210
+Interior loop ( 13, 72) GC; ( 14, 71) TA:  -220
+Interior loop ( 14, 71) TA; ( 15, 70) AT:  -130
+Interior loop ( 15, 70) AT; ( 16, 69) GC:  -210
+Interior loop ( 16, 69) GC; ( 17, 68) GC:  -330
+Interior loop ( 17, 68) GC; ( 18, 67) TA:  -220
+Interior loop ( 18, 67) TA; ( 19, 66) TA:   -90
+Interior loop ( 19, 66) TA; ( 20, 65) GC:  -210
+Interior loop ( 20, 65) GC; ( 21, 64) TA:  -220
+Interior loop ( 21, 64) TA; ( 22, 63) GT:  -100
+Interior loop ( 22, 63) GT; ( 23, 62) TA:  -140
+Interior loop ( 23, 62) TA; ( 24, 61) GT:  -100
+Interior loop ( 24, 61) GT; ( 25, 60) GC:  -210
+Interior loop ( 25, 60) GC; ( 26, 59) TA:  -220
+Interior loop ( 26, 59) TA; ( 27, 53) TA:   500
+Interior loop ( 27, 53) TA; ( 28, 52) TG:  -130
+Interior loop ( 28, 52) TG; ( 29, 51) CG:  -150
+Interior loop ( 29, 51) CG; ( 31, 47) GC:   230
+Interior loop ( 31, 47) GC; ( 32, 46) GC:  -330
+Interior loop ( 32, 46) GC; ( 33, 45) GC:  -330
+Interior loop ( 33, 45) GC; ( 34, 44) CG:  -340
+Interior loop ( 34, 44) CG; ( 35, 43) AT:  -210
+Interior loop ( 35, 43) AT; ( 36, 42) GT:   -60
+Hairpin  loop ( 36, 42) GT              :   560
+Energy                                  :   -46.70
