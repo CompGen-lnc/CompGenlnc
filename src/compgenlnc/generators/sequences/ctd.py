@@ -11,12 +11,13 @@ from compgenlnc.structs import SeqRecord, SeqSSRecord
 from compgenlnc.typing import SeqLike
 from compgenlnc.utils.dict_manager import save_dict
 from compgenlnc.utils.fasta_manager import (
-    read_sequence, iter_seq_ss, load_fasta
+    iter_seq_ss,
+    load_fasta,
+    read_sequence,
 )
 
-def get_ctd(
-        seq: SeqLike
-) -> np.typing.NDArray[np.float32]:
+
+def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
     """Get the CTD of a RNA sequences from the given sequence.
 
     Args:
@@ -32,20 +33,20 @@ def get_ctd(
         seq = str(seq)
     if not seq:
         return np.array([0.0] * 30, np.float32)
-    
-    seq = seq.upper().replace('U', 'T')
-    codes = {'A': 0, 'T': 1, 'G': 2, 'C': 3}
+
+    seq = seq.upper().replace("U", "T")
+    codes = {"A": 0, "T": 1, "G": 2, "C": 3}
     n = len(seq)
 
     nums = Counter(seq)
-    num_A, num_T, num_G, num_C = nums['A'], nums['T'], nums['G'], nums['C']
+    num_A, num_T, num_G, num_C = nums["A"], nums["T"], nums["G"], nums["C"]
     trans = Counter(seq[i : i + 2] for i in range(n - 1))
-    AT_trans = trans['AT'] + trans['TA']
-    AG_trans = trans['AG'] + trans['GA']
-    AC_trans = trans['AC'] + trans['CA']
-    TG_trans = trans['TG'] + trans['GT']
-    TC_trans = trans['TC'] + trans['CT']
-    GC_trans = trans['GC'] + trans['CG']
+    AT_trans = trans["AT"] + trans["TA"]
+    AG_trans = trans["AG"] + trans["GA"]
+    AC_trans = trans["AC"] + trans["CA"]
+    TG_trans = trans["TG"] + trans["GT"]
+    TC_trans = trans["TC"] + trans["CT"]
+    GC_trans = trans["GC"] + trans["CG"]
 
     count = [0] * 4
     dist = [[0.0] * 5 for i in range(4)]
@@ -85,10 +86,7 @@ def get_ctd(
 
 
 def get_ctd_by_name(
-        id_: str,
-        folder: str | os.PathLike,
-        /,
-        mature_only: bool = False
+    id_: str, folder: str | os.PathLike, /, mature_only: bool = False
 ) -> np.typing.NDArray[np.float32]:
     """Get the CTD of a RNA sequences from the seq+ss file of the given
     molecule.
@@ -104,17 +102,17 @@ def get_ctd_by_name(
             sequence.
     """
     folder = Path(folder).resolve()
-    filename = folder / f'{SEQ_SS_PREFIX}{id_}.dat'
+    filename = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
     seq = read_sequence(filename, mature_only=mature_only)
     return get_ctd(seq)
 
 
 def gen_ctd_dict(
-        record_list: Iterable[SeqSSRecord],
-        dict_file: str | os.PathLike,
-        /,
-        keep: Iterable[str] | None = None,
-        mature_only: bool = False
+    record_list: Iterable[SeqSSRecord],
+    dict_file: str | os.PathLike,
+    /,
+    keep: Iterable[str] | None = None,
+    mature_only: bool = False,
 ) -> None:
     """Get the CTD of a RNA sequences from the seq+ss file of the given
     molecule.
@@ -128,7 +126,7 @@ def gen_ctd_dict(
             True.
     """
     dict_file = Path(dict_file).resolve()
-    
+
     dict_folder = dict_file.parent
     dict_folder.mkdir(parents=True, exist_ok=True)
 
@@ -137,11 +135,11 @@ def gen_ctd_dict(
 
 
 def gen_ctd_dict_from_fasta(
-        filename: str | os.PathLike,
-        dict_file: str | os.PathLike,
-        /,
-        keep: Iterable[str] | None = None,
-        mature_only: bool = False
+    filename: str | os.PathLike,
+    dict_file: str | os.PathLike,
+    /,
+    keep: Iterable[str] | None = None,
+    mature_only: bool = False,
 ) -> None:
     """Get the ctd of a RNA sequences from 1 to k from a FASTA file with RNA
     sequences.
@@ -163,18 +161,18 @@ def gen_ctd_dict_from_fasta(
 
     ctd_dict = {
         record.id: get_ctd(record.seq)
-        for record in load_fasta(filename, mode='seq')
+        for record in load_fasta(filename, mode="seq")
         if not keep or record.id in keep
     }
     save_dict(dict_file, ctd_dict)
 
 
 def gen_ctd_dict_from_folder(
-        folder: str | os.PathLike,
-        dict_file: str | os.PathLike,
-        /,
-        keep: Iterable[str] | None = None,
-        mature_only: bool = False
+    folder: str | os.PathLike,
+    dict_file: str | os.PathLike,
+    /,
+    keep: Iterable[str] | None = None,
+    mature_only: bool = False,
 ) -> None:
     """Get the CTD of a RNA sequences from the seq+ss files.
 

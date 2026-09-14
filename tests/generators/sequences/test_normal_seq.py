@@ -18,21 +18,21 @@ from constants import SEQ_SS_FOLDER
 
 
 @pytest.mark.parametrize(
-    'seq, expected',
+    "seq, expected",
     [
         (
-            'AACCGGTT',
+            "AACCGGTT",
             np.array([1, 1, 2, 2, 3, 3, 4, 4], np.uint8),
         ),
         (
-            SeqRecord('UACGUGCAU'),
+            SeqRecord("UACGUGCAU"),
             np.array([4, 1, 2, 3, 4, 3, 2, 1, 4], np.uint8),
         ),
         (
-            SeqSSRecord('', 'CGCGCGCG', ''),
+            SeqSSRecord("", "CGCGCGCG", ""),
             np.array([2, 3] * 4, np.uint8),
         ),
-    ]
+    ],
 )
 def test_recode_sequence(seq, expected):
     recoded = recode_sequence(seq)
@@ -40,14 +40,12 @@ def test_recode_sequence(seq, expected):
 
 
 def test_recode_sequence_list(seq_fasta_list):
-    recoded_list = list(recode_sequence_list(seq_fasta_list))
-    for i, record in enumerate(seq_fasta_list):
-        assert np.array_equal(recode_sequence(record.seq), recoded_list[i])
+    recoded_list = recode_sequence_list(seq_fasta_list)
+    for i, (record, expected) in enumerate(zip(seq_fasta_list, recoded_list)):
+        assert np.array_equal(recode_sequence(record.seq), expected)
 
 
-@pytest.mark.parametrize(
-    'normal_size', [None, 100, 50, 73]
-)
+@pytest.mark.parametrize("normal_size", [None, 100, 50, 73])
 def test_normalize_sequence_list(normal_size, seq_fasta_list):
     recoded_list = list(recode_sequence_list(seq_fasta_list))
     normal_matrix = normalize_sequence_list(recoded_list, normal_size)
@@ -62,7 +60,7 @@ def test_normalize_sequence_list(normal_size, seq_fasta_list):
 
 
 def test_gen_normalized_sequence_dict(seq_ss_filtered_list, tmp_path):
-    dict_file = tmp_path / 'kmer.dict'
+    dict_file = tmp_path / "kmer.dict"
     gen_normalized_sequence_dict(seq_ss_filtered_list, dict_file)
     assert dict_file.exists()
 
@@ -75,15 +73,15 @@ def test_gen_normalized_sequence_dict(seq_ss_filtered_list, tmp_path):
 
 
 def test_gen_normalized_sequence_dict_from_folder(mirna_id_filter, tmp_path):
-    dict_file = tmp_path / 'kmer.dict'
+    dict_file = tmp_path / "kmer.dict"
     gen_normalized_sequence_dict_from_folder(
         SEQ_SS_FOLDER, dict_file, keep=mirna_id_filter
     )
     assert dict_file.exists()
 
-    recoded_list = list(recode_sequence_list(
+    recoded_list = recode_sequence_list(
         iter_seq_ss(SEQ_SS_FOLDER, keep=mirna_id_filter)
-    ))
+    )
     normal_matrix = normalize_sequence_list(recoded_list)
     normal_dict = load_dict(dict_file)
 

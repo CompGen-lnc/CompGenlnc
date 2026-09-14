@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 
+
 @dataclass(slots=True)
 class SeqRecord:
     _seq: str
@@ -37,8 +38,7 @@ class SeqRecord:
         return self._seq == other._seq
 
     def convert_to_T(self):
-        return SeqRecord(self._seq.replace('U', 'T'))
+        return SeqRecord(self._seq.replace("U", "T"))
 
     def convert_to_U(self):
-        return SeqRecord(self._seq.replace('T', 'U'))
-    
+        return SeqRecord(self._seq.replace("T", "U"))

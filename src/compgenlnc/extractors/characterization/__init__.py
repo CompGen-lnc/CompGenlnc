@@ -10,3 +10,8 @@ from .seq_ss_constructor import (
     fasta_to_seq_ss,
     join_seq_ss,
 )
+from .structure_predictor import (
+    extract_2d_structure,
+    extract_2d_structure_identified,
+    extract_2d_structure_list,
+)

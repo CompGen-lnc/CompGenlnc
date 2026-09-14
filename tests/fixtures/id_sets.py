@@ -1,11 +1,8 @@
 import pytest
-
 from params import id_list
 
 
-@pytest.fixture(
-    params=id_list
-)
+@pytest.fixture(params=id_list)
 def mirna_id(request):
     return request.param
 

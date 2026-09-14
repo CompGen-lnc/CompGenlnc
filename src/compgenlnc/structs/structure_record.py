@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 
+
 @dataclass(slots=True)
 class StructureRecord:
     _ss: str
@@ -35,4 +36,3 @@ class StructureRecord:
         elif not isinstance(other, StructureRecord):
             return NotImplemented
         return self._ss == other._ss
-    

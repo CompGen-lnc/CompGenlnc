@@ -6,9 +6,30 @@ build-backend = "setuptools.build_meta"
 name = "compgenlnc"
 version = "0.1.0"
 
+# Pytest settings
 [tool.pytest]
 minversion = "9.0"
 testpaths = ["tests"]
 
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
+
+# Ruff settings
+[tool.ruff]
+target-version = "py313"
+line-length = 79
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "W",
+  "F",
+  "I",
+  "D",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]

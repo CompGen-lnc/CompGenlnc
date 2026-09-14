@@ -5,17 +5,15 @@ from .ctd import (
     get_ctd,
     get_ctd_by_name,
 )
-
 from .doc2vec import (
-    train_doc2vec_model,
-    train_doc2vec_model_from_fasta,
     gen_doc2vec_dict,
     gen_doc2vec_dict_from_fasta,
     gen_doc2vec_dict_from_folder,
     get_doc2vec,
     get_doc2vec_by_name,
+    train_doc2vec_model,
+    train_doc2vec_model_from_fasta,
 )
-
 from .kmer import (
     gen_kmer_dict,
     gen_kmer_dict_from_fasta,
@@ -23,7 +21,6 @@ from .kmer import (
     get_kmer,
     get_kmer_by_name,
 )
-
 from .normal_sequence import (
     gen_normalized_sequence_dict,
     gen_normalized_sequence_dict_from_fasta,
@@ -32,7 +29,6 @@ from .normal_sequence import (
     recode_sequence,
     recode_sequence_list,
 )
-
 from .role2vec import (
     gen_role2vec_dict,
     gen_role2vec_dict_from_fasta,

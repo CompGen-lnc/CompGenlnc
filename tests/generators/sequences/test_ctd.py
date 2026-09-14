@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from constants import SEQ_SS_FOLDER
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.generators.sequences.ctd import (
@@ -12,10 +13,9 @@ from compgenlnc.structs import SeqSSRecord
 from compgenlnc.utils.dict_manager import load_dict
 from compgenlnc.utils.fasta_manager import read_sequence
 
-from constants import SEQ_SS_FOLDER
 
 @pytest.mark.parametrize(
-    'seq, expected',
+    "seq, expected",
     [
         ('ACGTGAAC', np.array([
             0.375, 0.125, 0.25, 0.25,
@@ -50,36 +50,34 @@ def test_get_ctd(seq, expected):
 
 def test_get_ctd_by_name(mirna_id):
     ctd = get_ctd_by_name(mirna_id, SEQ_SS_FOLDER)
-    seq = read_sequence(SEQ_SS_FOLDER / f'{SEQ_SS_PREFIX}{mirna_id}.dat')
+    seq = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{mirna_id}.dat")
     expected = get_ctd(seq)
     assert np.array_equal(ctd, expected)
 
 
 def test_gen_ctd_dict(seq_ss_filtered_list, tmp_path):
-    dict_file = tmp_path / 'ctd.dict'
+    dict_file = tmp_path / "ctd.dict"
     gen_ctd_dict(seq_ss_filtered_list, dict_file)
     assert dict_file.exists()
 
     ctd_dict = load_dict(dict_file)
-    assert all([
-        np.array_equal(
-            ctd_dict[record.id],
-            get_ctd(record.seq)
-        )
-        for record in seq_ss_filtered_list
-    ])
+    assert all(
+        [
+            np.array_equal(ctd_dict[record.id], get_ctd(record.seq))
+            for record in seq_ss_filtered_list
+        ]
+    )
 
 
 def test_gen_ctd_dict_from_folder(mirna_id_filter, tmp_path):
-    dict_file = tmp_path / 'ctd.dict'
+    dict_file = tmp_path / "ctd.dict"
     gen_ctd_dict_from_folder(SEQ_SS_FOLDER, dict_file, keep=mirna_id_filter)
     assert dict_file.exists()
 
     ctd_dict = load_dict(dict_file)
-    assert all([
-        np.array_equal(
-            ctd_dict[id_],
-            get_ctd_by_name(id_, SEQ_SS_FOLDER)
-        )
-        for id_ in mirna_id_filter
-    ])
+    assert all(
+        [
+            np.array_equal(ctd_dict[id_], get_ctd_by_name(id_, SEQ_SS_FOLDER))
+            for id_ in mirna_id_filter
+        ]
+    )

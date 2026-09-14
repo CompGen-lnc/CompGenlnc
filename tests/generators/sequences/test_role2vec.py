@@ -1,6 +1,5 @@
-import time
-
 import numpy as np
+from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 
 from compgenlnc.generators.sequences.ctd import gen_ctd_dict, get_ctd
 from compgenlnc.generators.sequences.doc2vec import (
@@ -16,27 +15,19 @@ from compgenlnc.generators.sequences.role2vec import (
 from compgenlnc.utils.dict_manager import load_dict
 from compgenlnc.utils.fasta_manager import load_fasta
 
-from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
-
 
 def test_gen_role2vec_dict(doc2vec_model_deterministic, tmp_path):
-    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, mode='seq'))
+    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, mode="seq"))
     doc2vec_model = doc2vec_model_deterministic
 
-    kmer_dict = {
-        record.id: get_kmer(record.seq, 3)
-        for record in sequences
-    }
-    ctd_dict = {
-        record.id: get_ctd(record.seq)
-        for record in sequences
-    }
+    kmer_dict = {record.id: get_kmer(record.seq, 3) for record in sequences}
+    ctd_dict = {record.id: get_ctd(record.seq) for record in sequences}
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=doc2vec_model)
         for record in sequences
     }
-    
-    filename = tmp_path / 'role2vec.dict'
+
+    filename = tmp_path / "role2vec.dict"
     gen_role2vec_dict(kmer_dict, ctd_dict, doc2vec_dict, filename)
     assert filename.exists()
 
@@ -48,18 +39,18 @@ def test_gen_role2vec_dict(doc2vec_model_deterministic, tmp_path):
 
 
 def test_gen_role2vec_dict_from_files(doc2vec_model_deterministic, tmp_path):
-    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, mode='seq'))
+    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, mode="seq"))
     doc2vec_model = doc2vec_model_deterministic
 
-    kmer_file = tmp_path / 'kmer.dict'
-    ctd_file = tmp_path / 'ctd.dict'
-    doc2vec_file = tmp_path / 'doc2vec.dict'
+    kmer_file = tmp_path / "kmer.dict"
+    ctd_file = tmp_path / "ctd.dict"
+    doc2vec_file = tmp_path / "doc2vec.dict"
 
     gen_kmer_dict(sequences, kmer_file, 3)
     gen_ctd_dict(sequences, ctd_file)
     gen_doc2vec_dict(sequences, doc2vec_file, model=doc2vec_model)
-    
-    filename = tmp_path / 'role2vec.dict'
+
+    filename = tmp_path / "role2vec.dict"
     gen_role2vec_dict_from_files(kmer_file, ctd_file, doc2vec_file, filename)
     assert filename.exists()
 
@@ -69,9 +60,9 @@ def test_gen_role2vec_dict_from_files(doc2vec_model_deterministic, tmp_path):
         for vector in role2vec_dict.values()
     )
 
+
 def test_gen_role2vec_dict_from_folder(tmp_path):
-    sequences = tuple(load_fasta(SEQ_FASTA_EXAMPLE, mode='seq'))
-    filename = tmp_path / 'role2vec.dict'
+    filename = tmp_path / "role2vec.dict"
     gen_role2vec_dict_from_folder(SEQ_SS_FOLDER, filename, 3)
     assert filename.exists()
 
