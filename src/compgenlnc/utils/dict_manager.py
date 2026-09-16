@@ -44,7 +44,10 @@ def load_dict(
 
 def save_dict(
     filename: str | os.PathLike,
-    dict_: dict[str, Iterable]
+    dict_: dict[str, np.typing.NDArray] | None = None,
+    *,
+    keys: Iterable[str] | None = None,
+    values: Iterable[np.typing.NDArray] | None = None,
 ) -> None:
     """Save a dicationary pairs of RNA names and feature vectors into a file.
 
@@ -55,8 +58,14 @@ def save_dict(
     filename = Path(filename).resolve()
     filename.parent.mkdir(parents=True, exist_ok=True)
 
-    keys = list(dict_.keys())
-    with open(filename, 'w') as out_file:
-        for key in keys:
-            out_file.write(f'{key}\n')
-            out_file.write(f'\t{','.join(str(x) for x in dict_[key])}\n')
+    items = dict_.items() if dict_ is not None else zip(keys, values)
+    with open(filename, "w") as out_file:
+        for key, value in items:
+            if value.ndim == 1:
+                value = value.reshape(1, len(value))
+            out_file.write(f"{key}\n")
+            out_file.write(
+                f"\t{
+                    '\n\t'.join(','.join(str(x) for x in row) for row in value)
+                }\n"
+            )
