@@ -40,6 +40,8 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
 
     nums = Counter(seq)
     num_A, num_T, num_G, num_C = nums["A"], nums["T"], nums["G"], nums["C"]
+    nums_array = np.array([num_A, num_T, num_G, num_C], np.float32) / n
+    
     trans = Counter(seq[i : i + 2] for i in range(n - 1))
     AT_trans = trans["AT"] + trans["TA"]
     AG_trans = trans["AG"] + trans["GA"]
@@ -47,6 +49,7 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
     TG_trans = trans["TG"] + trans["GT"]
     TC_trans = trans["TC"] + trans["CT"]
     GC_trans = trans["GC"] + trans["CG"]
+    trans_array = np.array([AT_trans, AG_trans, AC_trans, TG_trans, TC_trans, GC_trans], np.float32) / (n - 1)
 
     count = [0] * 4
     dist = [[0.0] * 5 for i in range(4)]
@@ -69,20 +72,9 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
     for i, j in product(range(4), range(1, 5)):
         if dist[i][j] < dist[i][j - 1]:
             dist[i][j] = dist[i][j - 1]
-    [A0_dis, A1_dis, A2_dis, A3_dis, A4_dis] = dist[0]
-    [T0_dis, T1_dis, T2_dis, T3_dis, T4_dis] = dist[1]
-    [G0_dis, G1_dis, G2_dis, G3_dis, G4_dis] = dist[2]
-    [C0_dis, C1_dis, C2_dis, C3_dis, C4_dis] = dist[3]
-
-    return np.array([
-        num_A / n, num_T / n, num_G / n, num_C / n,
-        AT_trans / (n - 1), AG_trans / (n - 1), AC_trans / (n - 1),
-        TG_trans / (n - 1), TC_trans / (n - 1), GC_trans / (n - 1),
-        A0_dis, A1_dis, A2_dis, A3_dis, A4_dis,
-        T0_dis, T1_dis, T2_dis, T3_dis, T4_dis,
-        G0_dis, G1_dis, G2_dis, G3_dis, G4_dis,
-        C0_dis, C1_dis, C2_dis, C3_dis, C4_dis,
-    ], np.float32)
+    dist_array = np.array(dist, np.float32).flatten()
+    
+    return np.concatenate((nums_array, trans_array, dist_array))
 
 
 def get_ctd_by_name(
