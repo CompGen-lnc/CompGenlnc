@@ -25,20 +25,19 @@ def load_dict(
     res_dict = {}
     actual_id, actual_value = "", []
 
-    for line in lines:
+    for line in lines + ["none"]:
         if not line.strip():
             continue
 
         if line[0] != "\t":
             if actual_id:
                 res_dict[actual_id] = np.array(
-                    actual_value, np.float32
+                    actual_value, val_type
                 ).squeeze()
             actual_id, actual_value = line.strip(), []
             continue
-        value = line.strip().split(',')
+        value = line.strip().split(",")
         actual_value.append([val_type(x) for x in value])
-    res_dict[actual_id] = np.array(actual_value, np.float32).squeeze()
 
     return res_dict
 
