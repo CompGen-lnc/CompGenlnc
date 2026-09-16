@@ -1,6 +1,6 @@
 import os
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument

@@ -1,7 +1,7 @@
 import os
+from collections.abc import Iterable
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Iterable
 
 import networkx as nx
 import numpy as np

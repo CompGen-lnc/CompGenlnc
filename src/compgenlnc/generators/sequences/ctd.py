@@ -1,8 +1,8 @@
 import os
 from collections import Counter
+from collections.abc import Iterable
 from itertools import product
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 

@@ -1,8 +1,8 @@
 import math
 import os
+from collections.abc import Iterable, Iterator
 from itertools import tee
 from pathlib import Path
-from typing import Iterable, Iterator
 
 import numpy as np
 

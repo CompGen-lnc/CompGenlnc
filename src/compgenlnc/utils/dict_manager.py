@@ -1,6 +1,7 @@
 import os
+from collections.abc import Iterable, Iterator
+from itertools import tee
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 
