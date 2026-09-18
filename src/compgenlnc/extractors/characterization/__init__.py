@@ -6,6 +6,13 @@ from .fasta_constructor import (
     gen_fasta_2d,
     seq_ss_to_fasta,
 )
+from .interaction_extractor import (
+    dtype_interaction_tuple,
+    extract_interactions,
+    filter_interactions,
+    load_interactions,
+    save_interactions,
+)
 from .seq_ss_constructor import (
     fasta_to_seq_ss,
     join_seq_ss,

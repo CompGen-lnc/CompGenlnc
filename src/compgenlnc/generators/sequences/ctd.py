@@ -41,7 +41,7 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
     nums = Counter(seq)
     num_A, num_T, num_G, num_C = nums["A"], nums["T"], nums["G"], nums["C"]
     nums_array = np.array([num_A, num_T, num_G, num_C], np.float32) / n
-    
+
     trans = Counter(seq[i : i + 2] for i in range(n - 1))
     AT_trans = trans["AT"] + trans["TA"]
     AG_trans = trans["AG"] + trans["GA"]
@@ -49,7 +49,10 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
     TG_trans = trans["TG"] + trans["GT"]
     TC_trans = trans["TC"] + trans["CT"]
     GC_trans = trans["GC"] + trans["CG"]
-    trans_array = np.array([AT_trans, AG_trans, AC_trans, TG_trans, TC_trans, GC_trans], np.float32) / (n - 1)
+    trans_array = np.array(
+        [AT_trans, AG_trans, AC_trans, TG_trans, TC_trans, GC_trans],
+        np.float32,
+    ) / (n - 1)
 
     count = [0] * 4
     dist = [[0.0] * 5 for i in range(4)]
@@ -73,7 +76,7 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
         if dist[i][j] < dist[i][j - 1]:
             dist[i][j] = dist[i][j - 1]
     dist_array = np.array(dist, np.float32).flatten()
-    
+
     return np.concatenate((nums_array, trans_array, dist_array))
 
 
