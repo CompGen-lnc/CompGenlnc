@@ -34,11 +34,11 @@ def test_get_doc2vec(seq, segments, doc2vec_model_deterministic):
     assert np.array_equal(vector, expected)
 
 
-def test_get_doc2vec_by_name(mirna_id, doc2vec_model_deterministic):
+def test_get_doc2vec_by_name(example_id, doc2vec_model_deterministic):
     model = doc2vec_model_deterministic
-    seq = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{mirna_id}.dat")
+    seq = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{example_id}.dat")
     segments = [seq[i : i + 3] for i in range(len(seq) - 2)]
-    vector = get_doc2vec_by_name(mirna_id, SEQ_SS_FOLDER, model=model)
+    vector = get_doc2vec_by_name(example_id, SEQ_SS_FOLDER, model=model)
     expected = model.infer_vector(segments) if segments else [0.0] * 256
     assert np.array_equal(vector, expected)
 
@@ -63,12 +63,12 @@ def test_gen_doc2vec_dict(
 
 
 def test_gen_doc2vec_dict_from_folder(
-    mirna_id_filter, doc2vec_model_deterministic, tmp_path
+    example_id_filter, doc2vec_model_deterministic, tmp_path
 ):
     model = doc2vec_model_deterministic
     dict_file = tmp_path / "doc2vec.dict"
     gen_doc2vec_dict_from_folder(
-        SEQ_SS_FOLDER, dict_file, model=model, keep=mirna_id_filter
+        SEQ_SS_FOLDER, dict_file, model=model, keep=example_id_filter
     )
     assert dict_file.exists()
 
@@ -79,6 +79,6 @@ def test_gen_doc2vec_dict_from_folder(
                 doc2vec_dict[id_],
                 get_doc2vec_by_name(id_, SEQ_SS_FOLDER, model=model),
             )
-            for id_ in mirna_id_filter
+            for id_ in example_id_filter
         ]
     )

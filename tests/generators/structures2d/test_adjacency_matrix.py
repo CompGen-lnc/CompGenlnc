@@ -96,15 +96,15 @@ def test_gen_normalized_matrix_dict(seq_ss_filtered_list, tmp_path):
         assert np.array_equal(mat, expected)
 
 
-def test_gen_normalized_matrix_dict_from_folder(mirna_id_filter, tmp_path):
+def test_gen_normalized_matrix_dict_from_folder(example_id_filter, tmp_path):
     dict_file = tmp_path / "kmer.dict"
     gen_normalized_matrix_dict_from_folder(
-        SEQ_SS_FOLDER, dict_file, keep=mirna_id_filter
+        SEQ_SS_FOLDER, dict_file, keep=example_id_filter
     )
     assert dict_file.exists()
 
     matrix_it = get_adjacency_matrix_list(
-        iter_seq_ss(SEQ_SS_FOLDER, keep=mirna_id_filter)
+        iter_seq_ss(SEQ_SS_FOLDER, keep=example_id_filter)
     )
     normal_it = normalize_matrix_list(matrix_it)
     normal_dict = load_dict(dict_file)

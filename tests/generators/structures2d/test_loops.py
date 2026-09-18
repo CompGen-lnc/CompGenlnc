@@ -29,11 +29,11 @@ def test_gen_2d_structure_loops_from_list(seq_ss_filtered_list, tmp_path):
         assert listed_file.read_text() == expected_file.read_text()
 
 
-def test_gen_2d_structure_loops_from_folder(mirna_id_filter, tmp_path):
+def test_gen_2d_structure_loops_from_folder(example_id_filter, tmp_path):
     gen_2d_structure_loops_from_folder(
-        SEQ_SS_FOLDER, tmp_path, keep=mirna_id_filter
+        SEQ_SS_FOLDER, tmp_path, keep=example_id_filter
     )
-    for record in iter_seq_ss(SEQ_SS_FOLDER, keep=mirna_id_filter):
+    for record in iter_seq_ss(SEQ_SS_FOLDER, keep=example_id_filter):
         listed_file = tmp_path / f"{LOOPS_PREFIX}{record.id}.dat"
         assert listed_file.exists()
         expected_file = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{record.id}.dat"
@@ -47,11 +47,11 @@ def test_get_2d_structure_loops(seq_ss_record):
     assert energy == total_energy
 
 
-def test_get_2d_structure_loops_from_folder(mirna_id_filter):
+def test_get_2d_structure_loops_from_folder(example_id_filter):
     loops_iter = get_2d_structure_loops_from_folder(
-        SS_LOOPS_FOLDER, keep=mirna_id_filter
+        SS_LOOPS_FOLDER, keep=example_id_filter
     )
-    for id_, structure_loops in zip(mirna_id_filter, loops_iter):
+    for id_, structure_loops in zip(example_id_filter, loops_iter):
         energy, loops = structure_loops
         loops_file = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{id_}.dat"
         expectd_energy, expected_loops = get_2d_struture_loops(loops_file)
@@ -77,11 +77,11 @@ def test_count_2d_structure_loops(seq_ss_record):
         assert kind_count == count_dict[kind]
 
 
-def test_count_2d_structure_loops_from_folder(mirna_id_filter):
+def test_count_2d_structure_loops_from_folder(example_id_filter):
     count_iter = count_2d_structure_loops_from_folder(
-        SEQ_SS_FOLDER, keep=mirna_id_filter
+        SEQ_SS_FOLDER, keep=example_id_filter
     )
-    for id_, count_loops in zip(mirna_id_filter, count_iter):
+    for id_, count_loops in zip(example_id_filter, count_iter):
         total_energy, energy_dict, count_dict = count_loops
         loops_file = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{id_}.dat"
         (

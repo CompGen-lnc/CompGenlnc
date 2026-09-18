@@ -72,15 +72,15 @@ def test_gen_normalized_sequence_dict(seq_ss_filtered_list, tmp_path):
         assert np.array_equal(normal_matrix[i], normal_dict[key])
 
 
-def test_gen_normalized_sequence_dict_from_folder(mirna_id_filter, tmp_path):
+def test_gen_normalized_sequence_dict_from_folder(example_id_filter, tmp_path):
     dict_file = tmp_path / "kmer.dict"
     gen_normalized_sequence_dict_from_folder(
-        SEQ_SS_FOLDER, dict_file, keep=mirna_id_filter
+        SEQ_SS_FOLDER, dict_file, keep=example_id_filter
     )
     assert dict_file.exists()
 
     recoded_list = recode_sequence_list(
-        iter_seq_ss(SEQ_SS_FOLDER, keep=mirna_id_filter)
+        iter_seq_ss(SEQ_SS_FOLDER, keep=example_id_filter)
     )
     normal_matrix = normalize_sequence_list(recoded_list)
     normal_dict = load_dict(dict_file)

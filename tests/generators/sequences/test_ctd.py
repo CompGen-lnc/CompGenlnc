@@ -48,9 +48,9 @@ def test_get_ctd(seq, expected):
     assert np.array_equal(ctd, expected)
 
 
-def test_get_ctd_by_name(mirna_id):
-    ctd = get_ctd_by_name(mirna_id, SEQ_SS_FOLDER)
-    seq = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{mirna_id}.dat")
+def test_get_ctd_by_name(example_id):
+    ctd = get_ctd_by_name(example_id, SEQ_SS_FOLDER)
+    seq = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{example_id}.dat")
     expected = get_ctd(seq)
     assert np.array_equal(ctd, expected)
 
@@ -69,15 +69,15 @@ def test_gen_ctd_dict(seq_ss_filtered_list, tmp_path):
     )
 
 
-def test_gen_ctd_dict_from_folder(mirna_id_filter, tmp_path):
+def test_gen_ctd_dict_from_folder(example_id_filter, tmp_path):
     dict_file = tmp_path / "ctd.dict"
-    gen_ctd_dict_from_folder(SEQ_SS_FOLDER, dict_file, keep=mirna_id_filter)
+    gen_ctd_dict_from_folder(SEQ_SS_FOLDER, dict_file, keep=example_id_filter)
     assert dict_file.exists()
 
     ctd_dict = load_dict(dict_file)
     assert all(
         [
             np.array_equal(ctd_dict[id_], get_ctd_by_name(id_, SEQ_SS_FOLDER))
-            for id_ in mirna_id_filter
+            for id_ in example_id_filter
         ]
     )
