@@ -27,8 +27,8 @@ def save_interactions(
     new_csv: os.PathLike,
     interactions_list: np.typing.NDArray[np.void] | None = None,
     *,
-    pos_list: np.typing.NDArray[np.str_] | None = None,
-    neg_list: np.typing.NDArray[np.str_] | None = None,
+    pos_list: np.typing.NDArray[np.void] | None = None,
+    neg_list: np.typing.NDArray[np.void] | None = None,
 ) -> None:
     parse_interactions = lambda interactions, positive: {
         "lncRNA": interactions["lncRNA"],
@@ -77,16 +77,21 @@ def extract_interactions(
             "lnc_list nor mir_list cannot be None or empty"
         )
 
-    def read_interactions(file_inter: Path) -> np.typing.NDArray[np.str_]:
+    def read_interactions(file_inter: Path) -> np.typing.NDArray[np.void]:
         interactions_list = []
         if not file_inter:
             return interactions_list
         with open(file_inter) as file:
             for line in file.readlines():
-                if not line.strip():
+                line = line.strip()
+                if not line or line == "lncRNA,miRNA":
                     continue
                 interaction = line.split(separator)
-                interactions_list.append(interaction)
+                interactions_list.append(
+                    tuple((id_.strip() for id_ in interaction))
+                )
+
+        print(interactions_list)
         return np.array(interactions_list, dtype_interaction_pair)
 
     pos_list = read_interactions(pos_file)
@@ -98,14 +103,15 @@ def extract_interactions(
         mir_neg_list = random.choices(mir_list, k=length)
         for i in range(length):
             while True:
-                pair = (lnc_neg_list[i], mir_neg_list[i])
-                if pair not in pos_list:
+                pair = (pos_list["lncRNA"] == lnc_neg_list[i]) & (
+                    pos_list["miRNA"] == mir_neg_list[i]
+                )
+                if not pair.any():
                     break
                 lnc_neg_list[i] = random.choice(lnc_list)
                 mir_neg_list[i] = random.choice(mir_list)
-        neg_list = np.array(
-            set(zip(lnc_neg_list, mir_neg_list)), dtype_interaction_pair
-        )
+        neg_interactions = set(zip(lnc_neg_list, mir_neg_list))
+        neg_list = np.array(list(neg_interactions), dtype_interaction_pair)
     save_interactions(new_csv, pos_list=pos_list, neg_list=neg_list)
 
 
@@ -124,4 +130,3 @@ def filter_interactions(
     if mir_filter:
         interactions = interactions[np.isin(interactions["miRNA"], mir_filter)]
     save_interactions(new_csv, interactions)
-
