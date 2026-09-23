@@ -1,7 +1,9 @@
 import re
 
-TOTAL_ENERGY_RE = re.compile(r"\((-?\d+(?:\.\d+)?)\)\s*$")
-EXTERNAL_LOOP_RE = re.compile(r"^(External loop)\s*:\s*([+-]?\d+)\s*$")
+EXTERNAL_LOOP_RE = re.compile(
+    r"^(?P<kind>External loop)\s*:\s*(?P<energy>[+-]?\d+)\s*$"
+)
 LOOP_RE = re.compile(
-    r"^(Interior loop|Hairpin\s+loop|Multi\s+loop)\s*\(\s*(\d+),\s*(\d+)\).*?:\s*([+-]?\d+)\s*$"
+    r"^(?P<kind>Interior loop|Hairpin\s+loop|Multi\s+loop)"
+    r"\s*\(\s*(?P<low>\d+),\s*(?P<high>\d+)\).*?:\s*(?P<energy>[+-]?\d+)\s*$"
 )
