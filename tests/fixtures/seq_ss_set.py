@@ -11,10 +11,7 @@ from constants import (
 from params import id_list
 
 
-@pytest.fixture(
-    scope="session",
-    params=list(iter_seq_ss(SEQ_SS_FOLDER)),
-)
+@pytest.fixture(params=list(iter_seq_ss(SEQ_SS_FOLDER)))
 def seq_ss_record(request):
     return request.param
 

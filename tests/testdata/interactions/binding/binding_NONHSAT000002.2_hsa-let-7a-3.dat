@@ -1,0 +1,7 @@
+Forward:	Score: 157.000000  Q:4 to 60  R:1081 to 1149 Align Len (57) (57.89%) (70.18%)
+
+   Query:    3' uccuuucugucaucuAACAUAUCAAUAGGGUAUCGUCCCGUCUCGGGGUUUGAUAUGUUGGAUGAU-GGAGUggg 5'
+                               || |||| | |  |:| ||:  | :   ||||:::||||| | |||  ||| :||||   
+   Ref:      5' atctgctactgccctTTCTATAATAA--CTAAAGTTAGCT---GCCCTGGACTATTC-ACCCCCTAGTCTCAatt 3'
+
+   Energy:  -48.830002 kCal/Mol
