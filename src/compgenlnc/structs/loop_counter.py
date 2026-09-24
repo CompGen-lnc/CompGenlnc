@@ -1,17 +1,11 @@
-from collections.abc import Iterable
+from __future__ import annotations
+
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 
 import numpy as np
 
-
-loop_tuple = np.dtype(
-    [
-        ("kind", "U10"),
-        ("low", np.uint16),
-        ("high", np.uint16),
-        ("energy", np.int16),
-    ]
-)
+from compgenlnc.typing.numpy_dtypes import loop_tuple, LoopTuple
 
 
 @dataclass(slots=True)
@@ -28,7 +22,7 @@ class LoopCounter:
         energy: float | None = None,
     ) -> None:
         loops_arr = np.array(loops, loop_tuple)
-        self._loops = loops_arr[loops_arr["kind"] != "External"]
+        self._loops = loops_arr
         if energy is not None:
             self._energy = energy
         else:
@@ -42,11 +36,11 @@ class LoopCounter:
         return self._energy
 
     @property
-    def loops(self) -> np.typing.NDArray[np.void]:
+    def loops(self) -> np.typing.NDArray[LoopTuple]:
         return self._loops
 
     @property
-    def hairpin_loops(self) -> np.typing.NDArray[np.void]:
+    def hairpin_loops(self) -> np.typing.NDArray[LoopTuple]:
         mask = self._loops["kind"] == "Hairpin"
         return self._loops[mask]
 
@@ -55,7 +49,7 @@ class LoopCounter:
         return self._hairpin_energy
 
     @property
-    def interior_loops(self) -> np.typing.NDArray[np.void]:
+    def interior_loops(self) -> np.typing.NDArray[LoopTuple]:
         mask = self._loops["kind"] == "Interior"
         return self._loops[mask]
 
@@ -64,10 +58,18 @@ class LoopCounter:
         return self._interior_energy
 
     @property
-    def multi_loops(self) -> np.typing.NDArray[np.void]:
+    def multi_loops(self) -> np.typing.NDArray[LoopTuple]:
         mask = self._loops["kind"] == "Multi"
         return self._loops[mask]
 
     @property
     def multi_energy(self) -> int:
         return self._multi_energy
+
+    def __eq__(self, value: LoopCounter):
+        same_energy = self.energy == value.energy
+        same_loops = np.array_equal(self.loops, value.loops)
+        return same_energy and same_loops
+
+    def __iter__(self) -> Iterator[LoopTuple]:
+        return iter(self.loops)
