@@ -3,6 +3,8 @@ from typing import Final
 
 SEQ_SS_PREFIX = "seq+ss_join_"
 LOOPS_PREFIX = "loops_"
+MIRANDA_PREFIX = "miranda_"
+BINDING_PREFIX = "binding_"
 
 BASE_PATH: Final[Path] = Path(__file__).resolve().parent.parent
 
@@ -12,12 +14,13 @@ EMBEDDING_FOLDER = DATA_FOLDER / "embedding"
 INTERACTIONS_FOLDER = DATA_FOLDER / "interactions"
 LNCRNA_FOLDER = DATA_FOLDER / "lncrna"
 MIRNA_FOLDER = DATA_FOLDER / "mirna"
+TEMP_FOLDER = DATA_FOLDER / "temp"
 
 # Embedding
 MODELS_FOLDER = EMBEDDING_FOLDER / "models"
-LNCRNA_DOC2VEC_MODEL = MODELS_FOLDER / "doc2vec.model"
-PRE_MIRNA_DOC2VEC_MODEL = MODELS_FOLDER / "doc2vec.model"
-MAT_MIRNA_DOC2VEC_MODEL = MODELS_FOLDER / "doc2vec.model"
+LNCRNA_DOC2VEC_MODEL = MODELS_FOLDER / "lnc_doc2vec.model"
+PRE_MIRNA_DOC2VEC_MODEL = MODELS_FOLDER / "pre_mir_doc2vec.model"
+MAT_MIRNA_DOC2VEC_MODEL = MODELS_FOLDER / "mat_mir_doc2vec.model"
 
 # Interactions
 PAIRS_FILE = INTERACTIONS_FOLDER / "interactions.csv"

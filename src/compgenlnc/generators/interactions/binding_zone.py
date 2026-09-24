@@ -5,12 +5,13 @@ import subprocess
 from collections.abc import Iterable
 from pathlib import Path
 
-import pandas as pd
+import numpy as np
 
 from compgenlnc.config.paths import BINDING_PREFIX, MIRANDA_PREFIX, TEMP_FOLDER
 from compgenlnc.consts.regex import MIRANDA_INFO
-from compgenlnc.structs import SeqSSRecord
-from compgenlnc.utils import load_fasta
+from compgenlnc.extractors.characterization.interaction_extractor import load_interactions
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.utils.fasta_manager import load_fasta
 
 
 def predict_miranda(
@@ -36,7 +37,15 @@ def predict_miranda(
         out_file.write(f"{mir_record.seq}\n")
 
     command = lambda mir, lnc, out: [
-        "conda", "run", "-n", "base", "miranda", mir, lnc, "-out", out
+        "conda",
+        "run",
+        "-n",
+        "base",
+        "miranda",
+        mir,
+        lnc,
+        "-out",
+        out,
     ]
 
     if platform.system() in ["Linux", "Darwin"]:
@@ -66,6 +75,8 @@ def predict_miranda_from_list(
 ) -> None:
     records_list = zip(lnc_list, mir_list)
     for records in records_list:
+        if None in records:
+            continue
         predict_miranda(*records, folder)
 
 
@@ -75,20 +86,16 @@ def predict_miranda_from_files(
     pre_mir_fasta: str | os.PathLike,
     mat_mir_fasta: str | os.PathLike,
     folder: str | os.PathLike,
-    /,
-    sep: str = ",",
 ) -> None:
-    df = pd.read_csv(interaction_file, sep=sep)
+    interactions = load_interactions(interaction_file)
     lnc_records = list(load_fasta(lnc_fasta))
     mir_records = list(load_fasta(pre_mir_fasta)) + list(
         load_fasta(mat_mir_fasta)
     )
-    lnc_list = df["lncRNA"].map(
-        lambda lnc: next((rec for rec in lnc_records if rec.id == lnc), None)
-    )
-    mir_list = df["miRNA"].map(
-        lambda mir: next((rec for rec in mir_records if rec.id == mir), None)
-    )
+    lnc_map = {rec.id: rec for rec in lnc_records}
+    mir_map = {rec.id: rec for rec in mir_records}
+    lnc_list = np.select([interactions["lncRNA"] == key for key in lnc_map.keys()], lnc_map.values(), None)
+    mir_list = np.select([interactions["miRNA"] == key for key in mir_map.keys()], mir_map.values(), None)
     predict_miranda_from_list(lnc_list, mir_list, folder)
 
 

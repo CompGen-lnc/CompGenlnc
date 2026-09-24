@@ -11,7 +11,13 @@ class BindingZone:
     _lnc_range: range
     _mir_range: range
 
-    def __init__(self, hint: bool, energy: float = 0, lnc_range: range = range(0), mir_range: range = range(0)) -> None:
+    def __init__(
+        self,
+        hint: bool,
+        energy: float = 0,
+        lnc_range: range = range(0),
+        mir_range: range = range(0),
+    ) -> None:
         self._hint = hint
         self._energy = energy
         self._lnc_range = lnc_range
