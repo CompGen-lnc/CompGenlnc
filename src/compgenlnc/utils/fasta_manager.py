@@ -5,7 +5,7 @@ from pathlib import Path
 from compgenlnc.config.paths import (
     SEQ_SS_PREFIX,
 )
-from compgenlnc.structs import SeqSSRecord
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
 
 def load_fasta(

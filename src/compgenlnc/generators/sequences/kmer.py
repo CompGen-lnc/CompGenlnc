@@ -7,8 +7,9 @@ from pathlib import Path
 import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
-from compgenlnc.structs import SeqRecord, SeqSSRecord
-from compgenlnc.typing import SeqLike
+from compgenlnc.structs.seq_record import SeqRecord
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.typing.molecules import SeqLike
 from compgenlnc.utils.dict_manager import save_dict
 from compgenlnc.utils.fasta_manager import (
     iter_seq_ss,

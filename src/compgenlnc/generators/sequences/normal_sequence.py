@@ -6,8 +6,8 @@ from pathlib import Path
 
 import numpy as np
 
-from compgenlnc.structs import SeqSSRecord
-from compgenlnc.typing import SeqLike
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.typing.molecules import SeqLike
 from compgenlnc.utils.dict_manager import save_dict
 from compgenlnc.utils.fasta_manager import iter_seq_ss, load_fasta
 
@@ -100,10 +100,9 @@ def gen_normalized_sequence_dict_from_fasta(
     id_vector = []
     seq_vector = []
 
-    for record in load_fasta(filename, "seq"):
-        if record in keep:
-            id_vector.append(record.id)
-            seq_vector.append(recode_sequence(record.seq))
+    for record in load_fasta(filename, mode="seq", keep=keep):
+        id_vector.append(record.id)
+        seq_vector.append(recode_sequence(record.seq))
 
     seq_dict = {
         pair[0]: pair[1]

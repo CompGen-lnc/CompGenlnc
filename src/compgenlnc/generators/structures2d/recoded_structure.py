@@ -2,8 +2,8 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from compgenlnc.structs import SeqSSRecord
-from compgenlnc.typing import SSLike
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.typing.molecules import SSLike
 
 
 def recode_2d_structure(ss: SSLike) -> np.typing.NDArray[np.uint8]:

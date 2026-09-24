@@ -7,8 +7,9 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.config.seeds import DOC2VEC_MODEL_SEED
-from compgenlnc.structs import SeqRecord, SeqSSRecord
-from compgenlnc.typing import SeqLike
+from compgenlnc.structs.seq_record import SeqRecord
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.typing.molecules import SeqLike
 from compgenlnc.utils.dict_manager import save_dict
 from compgenlnc.utils.fasta_manager import (
     iter_seq_ss,
@@ -114,16 +115,16 @@ def gen_doc2vec_dict_from_fasta(
     keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    folder = Path(folder).resolve()
     dict_file = Path(dict_file).resolve()
-
     dict_folder = dict_file.parent
     dict_folder.mkdir(parents=True, exist_ok=True)
 
+    if model is None:
+        model = Doc2Vec.load(str(model_file))
+
     doc2vec_dict = {
-        record.id: get_doc2vec(record.seq)
-        for record in load_fasta(filename, mode="seq")
-        if not keep or record.id in keep
+        record.id: get_doc2vec(record.seq, model=model)
+        for record in load_fasta(filename, mode="seq", keep=keep)
     }
     save_dict(dict_file, doc2vec_dict)
 

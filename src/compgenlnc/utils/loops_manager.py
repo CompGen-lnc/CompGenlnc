@@ -4,8 +4,8 @@ from pathlib import Path
 
 from compgenlnc.config.paths import LOOPS_PREFIX
 from compgenlnc.consts.regex import EXTERNAL_LOOP_RE, LOOP_RE
-from compgenlnc.structs import LoopCounter
-from compgenlnc.utils import iter_seq_ss
+from compgenlnc.structs.loop_counter import LoopCounter
+from compgenlnc.utils.fasta_manager import iter_seq_ss
 
 
 def get_2d_struture_loops(

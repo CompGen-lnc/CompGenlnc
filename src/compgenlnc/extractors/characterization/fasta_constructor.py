@@ -3,6 +3,9 @@ import os
 from collections.abc import Iterable
 from pathlib import Path
 
+from .structure_predictor import (
+    extract_2d_structure_identified,
+)
 from compgenlnc.config.paths import (
     LNCRNA_FASTA,
     LNCRNA_SS_FASTA,
@@ -10,10 +13,7 @@ from compgenlnc.config.paths import (
     MIRNA_SS_FASTA,
     PRE_MIRNA_FASTA,
 )
-from compgenlnc.extractors.characterization.structure_predictor import (
-    extract_2d_structure_identified,
-)
-from compgenlnc.utils import (
+from compgenlnc.utils.fasta_manager import (
     iter_seq_fasta,
     iter_seq_ss,
     load_fasta,

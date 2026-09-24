@@ -6,8 +6,8 @@ import numpy as np
 from ViennaRNA import fold_compound
 
 from compgenlnc.config.paths import LOOPS_PREFIX
-from compgenlnc.structs import SeqSSRecord
-from compgenlnc.utils import iter_seq_ss
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.utils.fasta_manager import iter_seq_ss
 
 loop_tuple = np.dtype(
     [

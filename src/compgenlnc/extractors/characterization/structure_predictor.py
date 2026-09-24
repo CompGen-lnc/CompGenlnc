@@ -2,8 +2,10 @@ from collections.abc import Iterable
 
 from ViennaRNA import fold_compound
 
-from compgenlnc.structs import SeqRecord, SeqSSRecord, StructureRecord
-from compgenlnc.typing import SeqLike
+from compgenlnc.structs.seq_record import SeqRecord
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.structs.structure_record import StructureRecord
+from compgenlnc.typing.molecules import SeqLike
 
 
 def extract_2d_structure(seq: SeqLike) -> StructureRecord:
