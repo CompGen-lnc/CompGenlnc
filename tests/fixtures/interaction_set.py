@@ -3,7 +3,10 @@ import pytest
 
 from compgenlnc.extractors.characterization import (
     dtype_interaction_tuple,
+    load_interactions,
 )
+
+from constants import INTERACTIONS_CSV
 
 
 @pytest.fixture(
@@ -47,17 +50,22 @@ from compgenlnc.extractors.characterization import (
         ),
     ]
 )
-def interaction_list(request):
+def interaction_set(request):
     return request.param
 
 
 @pytest.fixture
-def interaction_positive_pairs(interaction_list):
-    mask = interaction_list["positive"]
-    return interaction_list[mask][["lncRNA", "miRNA"]]
+def interaction_list():
+    return load_interactions(INTERACTIONS_CSV)
 
 
 @pytest.fixture
-def interaction_negative_pairs(interaction_list):
-    mask = ~interaction_list["positive"]
-    return interaction_list[mask][["lncRNA", "miRNA"]]
+def interaction_positive_pairs(interaction_set):
+    mask = interaction_set["positive"]
+    return interaction_set[mask][["lncRNA", "miRNA"]]
+
+
+@pytest.fixture
+def interaction_negative_pairs(interaction_set):
+    mask = ~interaction_set["positive"]
+    return interaction_set[mask][["lncRNA", "miRNA"]]

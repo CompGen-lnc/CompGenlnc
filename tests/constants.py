@@ -3,10 +3,12 @@ from pathlib import Path
 BASE_FOLDER = Path(__file__).resolve().parent
 
 TESTDATA_FOLDER = BASE_FOLDER / "testdata"
-EXAMPLE_FOLDER = TESTDATA_FOLDER / "mirna"
+EMBEDDING_FOLDER = TESTDATA_FOLDER / "embedding"
 INTERACTIONS_FOLDER = TESTDATA_FOLDER / "interactions"
 LNCRNA_FOLDER = TESTDATA_FOLDER / "lncrna"
 MIRNA_FOLDER = TESTDATA_FOLDER / "mirna"
+
+EXAMPLE_FOLDER = MIRNA_FOLDER
 
 # Examples
 SEQ_FASTA_EXAMPLE = EXAMPLE_FOLDER / "mirna_pre.fa"

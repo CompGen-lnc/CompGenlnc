@@ -1,8 +1,14 @@
 import pytest
-from constants import SEQ_SS_FOLDER
-from params import id_list
 
-from compgenlnc.utils.fasta_manager import iter_seq_ss
+from compgenlnc.utils import iter_seq_ss, load_fasta
+
+from constants import (
+    LNCRNA_FASTA,
+    MAT_MIRNA_FASTA,
+    PRE_MIRNA_FASTA,
+    SEQ_SS_FOLDER,
+)
+from params import id_list
 
 
 @pytest.fixture(
@@ -30,3 +36,23 @@ def seq_ss_list():
 )
 def seq_ss_filtered_list(request):
     return request.param
+
+
+@pytest.fixture(scope="session")
+def lnc_records():
+    return list(load_fasta(LNCRNA_FASTA))
+
+
+@pytest.fixture(scope="session")
+def pre_mir_records():
+    return list(load_fasta(PRE_MIRNA_FASTA))
+
+
+@pytest.fixture(scope="session")
+def mat_mir_records():
+    return list(load_fasta(MAT_MIRNA_FASTA))
+
+
+@pytest.fixture(scope="session")
+def mir_records(pre_mir_records, mat_mir_records):
+    return pre_mir_records + mat_mir_records

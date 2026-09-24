@@ -16,13 +16,13 @@ from constants import (
 
 
 def test_save_interactions(
-    interaction_list,
+    interaction_set,
     interaction_positive_pairs,
     interaction_negative_pairs,
     tmp_path,
 ):
     filename = tmp_path / "interaction.csv"
-    save_interactions(filename, interaction_list)
+    save_interactions(filename, interaction_set)
     assert filename.exists()
     joint_filename = tmp_path / "joint_interaction.csv"
     save_interactions(
@@ -34,18 +34,18 @@ def test_save_interactions(
     assert filename.read_text() == joint_filename.read_text()
 
     lines = filename.read_text().split("\n")
-    for line, expected in zip(lines[1:], interaction_list):
+    for line, expected in zip(lines[1:], interaction_set):
         values = line.split(",")
         values[2] = values[2] == "True"
         arr = np.array(tuple(values), dtype_interaction_tuple)
         assert np.array_equal(arr, expected)
 
 
-def test_load_interactions(interaction_list, tmp_path):
+def test_load_interactions(interaction_set, tmp_path):
     filename = tmp_path / "interaction.csv"
-    save_interactions(filename, interaction_list)
+    save_interactions(filename, interaction_set)
     loaded_list = load_interactions(filename)
-    assert np.array_equal(loaded_list, interaction_list)
+    assert np.array_equal(loaded_list, interaction_set)
 
 
 def test_extract_interactions_without_negavites(
