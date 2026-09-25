@@ -12,9 +12,9 @@ from compgenlnc.typing.numpy_dtypes import dtype_loop_tuple, LoopTuple
 class LoopCounter:
     _energy: float
     _loops: np.typing.NDArray[np.void]
-    _hairpin_energy: int
-    _interior_energy: int
-    _multi_energy: int
+    _hairpin_energy: float
+    _stack_energy: float
+    _multi_energy: float
 
     def __init__(
         self,
@@ -26,10 +26,10 @@ class LoopCounter:
         if energy is not None:
             self._energy = energy
         else:
-            self._energy = self._loops["energy"].sum()
-        self._hairpin_energy = self.hairpin_loops["energy"].sum()
-        self._interior_energy = self.interior_loops["energy"].sum()
-        self._multi_energy = self.multi_loops["energy"].sum()
+            self._energy = self._loops["energy"].sum() / 100
+        self._hairpin_energy = self.hairpin_loops["energy"].sum() / 100
+        self._stack_energy = self.stack_loops["energy"].sum() / 100
+        self._multi_energy = self.multi_loops["energy"].sum() / 100
 
     @property
     def energy(self) -> float:
@@ -49,13 +49,13 @@ class LoopCounter:
         return self._hairpin_energy
 
     @property
-    def interior_loops(self) -> np.typing.NDArray[LoopTuple]:
+    def stack_loops(self) -> np.typing.NDArray[LoopTuple]:
         mask = self._loops["kind"] == "Interior"
         return self._loops[mask]
 
     @property
-    def interior_energy(self) -> int:
-        return self._interior_energy
+    def stack_energy(self) -> int:
+        return self._stack_energy
 
     @property
     def multi_loops(self) -> np.typing.NDArray[LoopTuple]:
@@ -65,6 +65,21 @@ class LoopCounter:
     @property
     def multi_energy(self) -> int:
         return self._multi_energy
+
+    @property
+    def loops_vectorized(self) -> np.typing.NDArray[np.float32]:
+        return np.array(
+            [
+                len(self.hairpin_loops),
+                len(self.stack_loops),
+                len(self.multi_loops),
+                self.energy,
+                self.hairpin_energy,
+                self.stack_energy,
+                self.multi_energy,
+            ],
+            np.float32,
+        )
 
     def __eq__(self, value: LoopCounter):
         same_energy = self.energy == value.energy

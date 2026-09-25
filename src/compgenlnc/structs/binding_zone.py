@@ -24,10 +24,6 @@ class BindingZone:
         self._mir_range = mir_range
 
     @property
-    def hint(self) -> bool:
-        return self._hint
-
-    @property
     def energy(self) -> bool:
         return self._energy
 
@@ -46,3 +42,6 @@ class BindingZone:
     @property
     def mir_end(self) -> bool:
         return self._mir_range.stop
+
+    def __bool__(self):
+        return self._hint
