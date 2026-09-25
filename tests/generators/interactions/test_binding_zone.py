@@ -67,7 +67,11 @@ def test_predict_miranda_from_list(
 def test_predict_miranda_from_files(interaction_list, tmp_path):
     folder = tmp_path
     predict_miranda_from_files(
-        INTERACTIONS_CSV, LNCRNA_FASTA, PRE_MIRNA_FASTA, MAT_MIRNA_FASTA, folder
+        INTERACTIONS_CSV,
+        LNCRNA_FASTA,
+        PRE_MIRNA_FASTA,
+        MAT_MIRNA_FASTA,
+        folder,
     )
     for lnc, mir, _ in interaction_list:
         filename = folder / f"{MIRANDA_PREFIX}{lnc}_{mir}.dat"
@@ -88,17 +92,23 @@ def test_extract_binding_zone(interaction_list, tmp_path, subtests):
             assert filename.read_text() == expected.read_text()
 
 
-def test_extract_binding_zone_from_folder(interaction_list, lncrna_id_filter, mirna_id_filter, tmp_path):
+def test_extract_binding_zone_from_folder(
+    interaction_list, lncrna_id_filter, mirna_id_filter, tmp_path
+):
     miranda_folder = INTERACTIONS_FOLDER / "miranda"
     expected_folder = INTERACTIONS_FOLDER / "binding"
     folder = tmp_path
-    extract_binding_zone_from_folder(miranda_folder, folder, lncrna_id_filter,  mirna_id_filter)
+    extract_binding_zone_from_folder(
+        miranda_folder, folder, lncrna_id_filter, mirna_id_filter
+    )
     for interaction in interaction_list:
         lnc, mir = interaction[["lncRNA", "miRNA"]]
         filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
         expected = expected_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
-        
+
         lnc_filtered = not lncrna_id_filter or lnc not in lncrna_id_filter
         mir_filtered = not mirna_id_filter or mir not in mirna_id_filter
-        file_exists = filename.exists() and filename.read_text() == expected.read_text()
+        file_exists = (
+            filename.exists() and filename.read_text() == expected.read_text()
+        )
         assert (lnc_filtered or mir_filtered) == (not file_exists)

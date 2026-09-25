@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from compgenlnc.typing.numpy_dtypes import loop_tuple, LoopTuple
+from compgenlnc.typing.numpy_dtypes import dtype_loop_tuple, LoopTuple
 
 
 @dataclass(slots=True)
@@ -21,7 +21,7 @@ class LoopCounter:
         loops: Iterable[tuple[str, int, int, int]],
         energy: float | None = None,
     ) -> None:
-        loops_arr = np.array(loops, loop_tuple)
+        loops_arr = np.array(loops, dtype_loop_tuple)
         self._loops = loops_arr
         if energy is not None:
             self._energy = energy

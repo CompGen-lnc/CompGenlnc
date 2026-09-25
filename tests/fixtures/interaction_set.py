@@ -1,10 +1,8 @@
 import numpy as np
 import pytest
 
-from compgenlnc.extractors.characterization import (
-    dtype_interaction_tuple,
-    load_interactions,
-)
+from compgenlnc.extractors.characterization import load_interactions
+from compgenlnc.typing import dtype_interaction_tuple
 
 from constants import INTERACTIONS_CSV
 

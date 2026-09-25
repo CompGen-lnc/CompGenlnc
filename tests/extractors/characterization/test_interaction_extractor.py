@@ -1,12 +1,12 @@
 import numpy as np
 
 from compgenlnc.extractors.characterization import (
-    dtype_interaction_tuple,
     extract_interactions,
     filter_interactions,
     load_interactions,
     save_interactions,
 )
+from compgenlnc.typing import dtype_interaction_tuple
 
 from constants import (
     INTERACTIONS_CSV,

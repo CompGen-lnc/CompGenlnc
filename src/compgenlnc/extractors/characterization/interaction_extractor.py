@@ -6,29 +6,20 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-
-dtype_interaction_tuple = np.dtype(
-    [
-        ("lncRNA", np.dtypes.StringDType),
-        ("miRNA", np.dtypes.StringDType),
-        ("positive", np.bool),
-    ]
-)
-
-dtype_interaction_pair = np.dtype(
-    [
-        ("lncRNA", np.dtypes.StringDType),
-        ("miRNA", np.dtypes.StringDType),
-    ]
+from compgenlnc.typing.numpy_dtypes import (
+    dtype_interaction_tuple,
+    dtype_interaction_pair,
+    InteractionPair,
+    InteractionTuple,
 )
 
 
 def save_interactions(
     new_csv: os.PathLike,
-    interactions_list: np.typing.NDArray[np.void] | None = None,
+    interactions_list: np.typing.NDArray[InteractionTuple] | None = None,
     *,
-    pos_list: np.typing.NDArray[np.void] | None = None,
-    neg_list: np.typing.NDArray[np.void] | None = None,
+    pos_list: np.typing.NDArray[InteractionPair] | None = None,
+    neg_list: np.typing.NDArray[InteractionPair] | None = None,
 ) -> None:
     parse_interactions = lambda interactions, positive: {
         "lncRNA": interactions["lncRNA"],
@@ -55,7 +46,9 @@ def save_interactions(
     df.to_csv(new_csv, index=False)
 
 
-def load_interactions(filename: os.PathLike) -> np.typing.NDArray[np.void]:
+def load_interactions(
+    filename: os.PathLike,
+) -> np.typing.NDArray[InteractionTuple]:
     df = pd.read_csv(filename)
     return np.fromiter(
         df.itertuples(index=False), dtype_interaction_tuple, len(df.index)
@@ -77,7 +70,9 @@ def extract_interactions(
             "lnc_list nor mir_list cannot be None or empty"
         )
 
-    def read_interactions(file_inter: Path) -> np.typing.NDArray[np.void]:
+    def read_interactions(
+        file_inter: Path,
+    ) -> np.typing.NDArray[InteractionPair]:
         interactions_list = []
         if not file_inter:
             return interactions_list
