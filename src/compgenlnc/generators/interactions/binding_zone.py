@@ -9,9 +9,7 @@ import numpy as np
 
 from compgenlnc.config.paths import BINDING_PREFIX, MIRANDA_PREFIX, TEMP_FOLDER
 from compgenlnc.consts.regex import MIRANDA_INFO
-from compgenlnc.extractors.characterization.interaction_extractor import (
-    load_interactions,
-)
+from compgenlnc.utils.interactions_manager import load_interactions
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.utils.fasta_manager import load_fasta
 
