@@ -4,11 +4,11 @@ from compgenlnc.extractors.interactions import (
     extract_interactions,
     filter_interactions,
 )
-from compgenlnc.typing import dtype_interaction_tuple
-from compgenlnc.utils.interactions_manager import (
+from compgenlnc.fileman import (
     load_interactions,
     save_interactions,
 )
+from compgenlnc.typing import dtype_interaction_tuple
 
 from constants import (
     INTERACTIONS_CSV,

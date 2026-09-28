@@ -2,7 +2,7 @@ import numpy as np
 from constants import SS_LOOPS_FOLDER
 
 from compgenlnc.config.paths import LOOPS_PREFIX
-from compgenlnc.utils import (
+from compgenlnc.fileman import (
     get_2d_structure_loops_from_folder,
     get_2d_struture_loops,
 )

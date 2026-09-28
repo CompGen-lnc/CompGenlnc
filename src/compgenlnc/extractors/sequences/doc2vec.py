@@ -7,15 +7,15 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.config.seeds import DOC2VEC_MODEL_SEED
-from compgenlnc.structs.seq_record import SeqRecord
-from compgenlnc.structs.seq_ss_record import SeqSSRecord
-from compgenlnc.typing.molecules import SeqLike
-from compgenlnc.utils.dict_manager import save_dict
-from compgenlnc.utils.fasta_manager import (
+from compgenlnc.fileman.dict_manager import save_dict
+from compgenlnc.fileman.fasta_manager import (
     iter_seq_ss,
     load_fasta,
     read_sequence,
 )
+from compgenlnc.structs.seq_record import SeqRecord
+from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.typing.molecules import SeqLike
 
 
 def train_doc2vec_model(

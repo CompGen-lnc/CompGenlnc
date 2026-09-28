@@ -9,9 +9,8 @@ from compgenlnc.extractors.sequences import (
     get_ctd,
     get_ctd_by_name,
 )
+from compgenlnc.fileman import load_dict, read_sequence
 from compgenlnc.structs import SeqSSRecord
-from compgenlnc.utils.dict_manager import load_dict
-from compgenlnc.utils.fasta_manager import read_sequence
 
 
 @pytest.mark.parametrize(

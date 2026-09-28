@@ -2,15 +2,15 @@ import os
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
-from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.consts.params import LNCRNA_TYPE, MIRNA_TYPE
-from compgenlnc.structs.loop_counter import LoopCounter
+from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
+from compgenlnc.fileman.dict_manager import save_dict
+from compgenlnc.fileman.interactions_manager import load_interactions
+from compgenlnc.fileman.loops_manager import get_2d_struture_loops
+from compgenlnc.fileman.miranda_manager import get_binding_zone
 from compgenlnc.structs.binding_zone import BindingZone
+from compgenlnc.structs.loop_counter import LoopCounter
 from compgenlnc.typing.numpy_dtypes import InteractionTuple
-from compgenlnc.utils.dict_manager import save_dict
-from compgenlnc.utils.interactions_manager import load_interactions
-from compgenlnc.utils.loops_manager import get_2d_struture_loops
-from compgenlnc.utils.miranda_manager import get_binding_zone
 
 
 def get_substructure_loops(

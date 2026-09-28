@@ -1,6 +1,6 @@
 import pytest
 
-from compgenlnc.utils import iter_seq_ss, load_fasta
+from compgenlnc.fileman import iter_seq_ss, load_fasta
 
 from constants import (
     LNCRNA_FASTA,

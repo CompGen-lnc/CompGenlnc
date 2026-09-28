@@ -9,7 +9,7 @@ from compgenlnc.config.paths import (
     PRE_MIRNA_FASTA,
     SEQ_SS_PREFIX,
 )
-from compgenlnc.utils.fasta_manager import load_fasta
+from compgenlnc.fileman.fasta_manager import load_fasta
 
 
 def join_seq_ss(

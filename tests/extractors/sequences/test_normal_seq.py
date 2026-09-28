@@ -10,9 +10,8 @@ from compgenlnc.extractors.sequences import (
     recode_sequence,
     recode_sequence_list,
 )
+from compgenlnc.fileman import load_dict, iter_seq_ss
 from compgenlnc.structs import SeqRecord, SeqSSRecord
-from compgenlnc.utils.dict_manager import load_dict
-from compgenlnc.utils.fasta_manager import iter_seq_ss
 
 from constants import SEQ_SS_FOLDER
 

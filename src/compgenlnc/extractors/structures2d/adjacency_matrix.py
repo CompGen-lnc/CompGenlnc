@@ -7,10 +7,10 @@ from pathlib import Path
 import numpy as np
 import cv2
 
+from compgenlnc.fileman.dict_manager import save_dict
+from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SSLike
-from compgenlnc.utils.dict_manager import save_dict
-from compgenlnc.utils.fasta_manager import iter_seq_ss, load_fasta
 
 
 def get_adjacency_matrix(ss: SSLike) -> np.typing.NDArray[np.bool]:

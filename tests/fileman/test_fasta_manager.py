@@ -3,7 +3,7 @@ from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 from params import T_converted_seq_list, seq_list
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
-from compgenlnc.utils.fasta_manager import (
+from compgenlnc.fileman import (
     iter_seq_fasta,
     iter_seq_ss,
     load_fasta,

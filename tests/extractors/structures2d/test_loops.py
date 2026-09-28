@@ -6,7 +6,7 @@ from compgenlnc.extractors.structures2d import (
     gen_2d_structure_loops_from_folder,
     gen_2d_structure_loops_from_list,
 )
-from compgenlnc.utils import iter_seq_ss
+from compgenlnc.fileman import iter_seq_ss
 
 
 def test_gen_2d_structure_loops(seq_ss_record, tmp_path):

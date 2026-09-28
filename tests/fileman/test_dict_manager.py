@@ -8,11 +8,11 @@ from compgenlnc.extractors.sequences import (
     get_ctd,
     get_kmer,
 )
-from compgenlnc.utils.dict_manager import (
+from compgenlnc.fileman import (
     load_dict,
+    load_fasta,
     save_dict,
 )
-from compgenlnc.utils.fasta_manager import load_fasta
 
 
 @pytest.mark.parametrize(

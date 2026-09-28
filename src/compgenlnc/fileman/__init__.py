@@ -7,6 +7,7 @@ from .fasta_manager import (
     iter_seq_ss,
     load_fasta,
     read_sequence,
+    read_structure,
     save_fasta,
 )
 from .interactions_manager import load_interactions, save_interactions

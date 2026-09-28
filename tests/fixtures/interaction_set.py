@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from compgenlnc.typing import dtype_interaction_tuple
-from compgenlnc.utils.interactions_manager import load_interactions
+from compgenlnc.fileman import load_interactions
 
 from constants import INTERACTIONS_CSV
 

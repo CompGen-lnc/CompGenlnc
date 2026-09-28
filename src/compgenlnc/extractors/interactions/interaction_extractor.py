@@ -5,13 +5,13 @@ from pathlib import Path
 
 import numpy as np
 
+from compgenlnc.fileman.interactions_manager import (
+    load_interactions,
+    save_interactions,
+)
 from compgenlnc.typing.numpy_dtypes import (
     dtype_interaction_pair,
     InteractionPair,
-)
-from compgenlnc.utils.interactions_manager import (
-    load_interactions,
-    save_interactions,
 )
 
 

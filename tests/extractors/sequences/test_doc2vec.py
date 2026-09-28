@@ -9,8 +9,7 @@ from compgenlnc.extractors.sequences import (
     get_doc2vec,
     get_doc2vec_by_name,
 )
-from compgenlnc.utils.dict_manager import load_dict
-from compgenlnc.utils.fasta_manager import read_sequence
+from compgenlnc.fileman import load_dict, read_sequence
 
 
 def test_train_doc2vec_model(doc2vec_model_deterministic):

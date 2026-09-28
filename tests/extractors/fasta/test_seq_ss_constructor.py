@@ -6,7 +6,7 @@ from compgenlnc.extractors.fasta import (
     fasta_to_seq_ss,
     join_seq_ss,
 )
-from compgenlnc.utils.fasta_manager import iter_seq_fasta, read_sequence
+from compgenlnc.fileman.fasta_manager import iter_seq_fasta, read_sequence
 
 
 def test_fasta_to_seq_ss(tmp_path):

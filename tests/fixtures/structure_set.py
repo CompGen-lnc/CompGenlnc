@@ -1,7 +1,7 @@
 import pytest
 from constants import SS_FASTA_EXAMPLE
 
-from compgenlnc.utils.fasta_manager import load_fasta
+from compgenlnc.fileman.fasta_manager import load_fasta
 
 
 @pytest.fixture(

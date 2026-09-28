@@ -15,8 +15,8 @@ from compgenlnc.extractors.sequences.doc2vec import (
     train_doc2vec_model_from_fasta,
 )
 from compgenlnc.extractors.sequences.kmer import get_kmer
-from compgenlnc.utils.dict_manager import load_dict, save_dict
-from compgenlnc.utils.fasta_manager import iter_seq_ss, load_fasta
+from compgenlnc.fileman.dict_manager import load_dict, save_dict
+from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
 
 
 def gen_role2vec_dict(

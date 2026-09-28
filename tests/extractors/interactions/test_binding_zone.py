@@ -11,7 +11,7 @@ from compgenlnc.extractors.interactions import (
     predict_miranda_from_files,
     predict_miranda_from_list,
 )
-from compgenlnc.utils.interactions_manager import load_interactions
+from compgenlnc.fileman import load_interactions
 
 from constants import (
     INTERACTIONS_CSV,

@@ -1,6 +1,6 @@
 import pytest
 
-from compgenlnc.utils import load_fasta
+from compgenlnc.fileman import load_fasta
 
 from constants import (
     SEQ_FASTA_EXAMPLE,

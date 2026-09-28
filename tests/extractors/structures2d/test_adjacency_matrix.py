@@ -11,7 +11,7 @@ from compgenlnc.extractors.structures2d import (
     normalize_matrix_list,
 )
 from compgenlnc.structs import SeqSSRecord, StructureRecord
-from compgenlnc.utils import iter_seq_ss, load_dict
+from compgenlnc.fileman import iter_seq_ss, load_dict
 
 from constants import SEQ_SS_FOLDER
 

@@ -3,17 +3,15 @@ import os
 from collections.abc import Iterable
 from pathlib import Path
 
+from compgenlnc.config.paths import (
+    LNCRNA_FASTA,
+    MAT_MIRNA_FASTA,
+    PRE_MIRNA_FASTA,
+)
 from compgenlnc.extractors.structures2d.structure_predictor import (
     extract_2d_structure_identified,
 )
-from compgenlnc.config.paths import (
-    LNCRNA_FASTA,
-    LNCRNA_SS_FASTA,
-    MAT_MIRNA_FASTA,
-    MIRNA_SS_FASTA,
-    PRE_MIRNA_FASTA,
-)
-from compgenlnc.utils.fasta_manager import (
+from compgenlnc.fileman.fasta_manager import (
     iter_seq_fasta,
     iter_seq_ss,
     load_fasta,

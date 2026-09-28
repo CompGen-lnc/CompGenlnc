@@ -12,8 +12,7 @@ from compgenlnc.extractors.sequences import (
     get_doc2vec,
     get_kmer,
 )
-from compgenlnc.utils.dict_manager import load_dict
-from compgenlnc.utils.fasta_manager import load_fasta
+from compgenlnc.fileman import load_dict, load_fasta
 
 
 def test_gen_role2vec_dict(doc2vec_model_deterministic, tmp_path):

@@ -17,7 +17,7 @@ from compgenlnc.extractors.sequences import (
     gen_role2vec_dict,
     train_doc2vec_model_from_fasta,
 )
-from compgenlnc.utils import load_dict
+from compgenlnc.fileman import load_dict
 
 raiz_proyecto = str(Path(__file__).resolve().parents[2])
 if raiz_proyecto not in sys.path:

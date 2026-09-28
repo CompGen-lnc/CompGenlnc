@@ -2,7 +2,7 @@ import pytest
 from constants import SEQ_FASTA_EXAMPLE
 
 from compgenlnc.extractors.sequences import train_doc2vec_model
-from compgenlnc.utils.fasta_manager import iter_seq_fasta
+from compgenlnc.fileman import iter_seq_fasta
 
 
 @pytest.fixture(scope="session")
