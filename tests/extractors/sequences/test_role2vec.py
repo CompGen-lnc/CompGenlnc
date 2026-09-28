@@ -1,16 +1,16 @@
 import numpy as np
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 
-from compgenlnc.generators.sequences.ctd import gen_ctd_dict, get_ctd
-from compgenlnc.generators.sequences.doc2vec import (
+from compgenlnc.extractors.sequences import (
+    gen_ctd_dict,
     gen_doc2vec_dict,
-    get_doc2vec,
-)
-from compgenlnc.generators.sequences.kmer import gen_kmer_dict, get_kmer
-from compgenlnc.generators.sequences.role2vec import (
+    gen_kmer_dict,
     gen_role2vec_dict,
     gen_role2vec_dict_from_files,
     gen_role2vec_dict_from_folder,
+    get_ctd,
+    get_doc2vec,
+    get_kmer,
 )
 from compgenlnc.utils.dict_manager import load_dict
 from compgenlnc.utils.fasta_manager import load_fasta

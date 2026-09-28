@@ -3,7 +3,7 @@ import math
 import numpy as np
 import pytest
 
-from compgenlnc.generators.sequences.normal_sequence import (
+from compgenlnc.extractors.sequences import (
     gen_normalized_sequence_dict,
     gen_normalized_sequence_dict_from_folder,
     normalize_sequence_list,

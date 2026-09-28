@@ -2,12 +2,10 @@ import numpy as np
 import pytest
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 
-from compgenlnc.generators.sequences.ctd import (
+from compgenlnc.extractors.sequences import (
     gen_ctd_dict_from_folder,
-    get_ctd,
-)
-from compgenlnc.generators.sequences.kmer import (
     gen_kmer_dict_from_folder,
+    get_ctd,
     get_kmer,
 )
 from compgenlnc.utils.dict_manager import (

@@ -1,7 +1,7 @@
 from constants import SEQ_SS_FOLDER, SS_LOOPS_FOLDER
 
 from compgenlnc.config.paths import LOOPS_PREFIX
-from compgenlnc.generators.structures2d import (
+from compgenlnc.extractors.structures2d import (
     gen_2d_structure_loops,
     gen_2d_structure_loops_from_folder,
     gen_2d_structure_loops_from_list,

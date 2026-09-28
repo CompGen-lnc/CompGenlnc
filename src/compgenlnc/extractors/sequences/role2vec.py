@@ -8,13 +8,13 @@ import numpy as np
 from karateclub.node_embedding.structural import Role2Vec
 from sklearn.neighbors import KDTree
 
-from compgenlnc.generators.sequences.ctd import get_ctd
-from compgenlnc.generators.sequences.doc2vec import (
+from compgenlnc.extractors.sequences.ctd import get_ctd
+from compgenlnc.extractors.sequences.doc2vec import (
     get_doc2vec,
     train_doc2vec_model,
     train_doc2vec_model_from_fasta,
 )
-from compgenlnc.generators.sequences.kmer import get_kmer
+from compgenlnc.extractors.sequences.kmer import get_kmer
 from compgenlnc.utils.dict_manager import load_dict, save_dict
 from compgenlnc.utils.fasta_manager import iter_seq_ss, load_fasta
 

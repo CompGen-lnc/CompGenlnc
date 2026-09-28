@@ -9,7 +9,7 @@ from compgenlnc.config.paths import (
     NORMAL_SEQ_DICT,
     ROLE2VEC_DICT,
 )
-from compgenlnc.generators.sequences import (
+from compgenlnc.extractors.sequences import (
     gen_ctd_dict_from_fasta,
     gen_doc2vec_dict_from_fasta,
     gen_kmer_dict_from_fasta,

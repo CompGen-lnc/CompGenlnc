@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from compgenlnc.generators.structures2d import (
+from compgenlnc.extractors.structures2d import (
     recode_2d_structure,
     recode_2d_structure_list,
 )

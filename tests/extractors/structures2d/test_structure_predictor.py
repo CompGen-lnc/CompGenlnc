@@ -1,6 +1,6 @@
 import pytest
 
-from compgenlnc.extractors.characterization import (
+from compgenlnc.extractors.structures2d import (
     extract_2d_structure,
     extract_2d_structure_identified,
     extract_2d_structure_list,

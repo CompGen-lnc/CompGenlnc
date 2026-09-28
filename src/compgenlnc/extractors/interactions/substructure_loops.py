@@ -2,8 +2,6 @@ import os
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
-import numpy as np
-
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.consts.params import LNCRNA_TYPE, MIRNA_TYPE
 from compgenlnc.structs.loop_counter import LoopCounter
@@ -87,6 +85,8 @@ def gen_substructure_from_files(
             if not binding_zone:
                 yield [-1] * 3 + [0] * 4
             loop_counter = get_2d_struture_loops(loops_filename)
-            yield get_substructure_loops(loop_counter, binding_zone, molecule).loops_vectorized
+            yield get_substructure_loops(
+                loop_counter, binding_zone, molecule
+            ).loops_vectorized
 
     save_dict(dict_file, keys=keys, values=iter_interactions_loops())

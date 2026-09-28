@@ -9,15 +9,6 @@ from compgenlnc.config.paths import LOOPS_PREFIX
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.utils.fasta_manager import iter_seq_ss
 
-dtype_loop_tuple = np.dtype(
-    [
-        ("kind", "U10"),
-        ("low", np.int32),
-        ("high", np.int32),
-        ("energy", np.int32),
-    ]
-)
-
 
 def gen_2d_structure_loops(
     record: SeqSSRecord, loops_folder: str | os.PathLike

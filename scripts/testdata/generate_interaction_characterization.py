@@ -2,9 +2,9 @@ import os
 import sys
 from pathlib import Path
 
-from compgenlnc.generators.interactions import (
-    predict_miranda_from_files,
+from compgenlnc.extractors.interactions import (
     extract_binding_zone_from_folder,
+    predict_miranda_from_files,
 )
 
 raiz_proyecto = str(Path(__file__).resolve().parents[2])

@@ -12,3 +12,8 @@ from .loops import (
     gen_2d_structure_loops_from_list,
 )
 from .recoded_structure import recode_2d_structure, recode_2d_structure_list
+from .structure_predictor import (
+    extract_2d_structure,
+    extract_2d_structure_identified,
+    extract_2d_structure_list,
+)

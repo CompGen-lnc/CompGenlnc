@@ -3,13 +3,12 @@ import math
 import numpy as np
 import pytest
 
-from compgenlnc.generators.structures2d import (
-    normalize_matrix_list,
+from compgenlnc.extractors.structures2d import (
     gen_normalized_matrix_dict,
-    gen_normalized_matrix_dict_from_fasta,
     gen_normalized_matrix_dict_from_folder,
     get_adjacency_matrix,
     get_adjacency_matrix_list,
+    normalize_matrix_list,
 )
 from compgenlnc.structs import SeqSSRecord, StructureRecord
 from compgenlnc.utils import iter_seq_ss, load_dict

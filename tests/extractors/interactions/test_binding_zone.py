@@ -4,7 +4,7 @@ from compgenlnc.config.paths import (
     BINDING_PREFIX,
     MIRANDA_PREFIX,
 )
-from compgenlnc.generators.interactions import (
+from compgenlnc.extractors.interactions import (
     extract_binding_zone,
     extract_binding_zone_from_folder,
     predict_miranda,

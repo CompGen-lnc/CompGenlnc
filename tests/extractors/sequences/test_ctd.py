@@ -3,7 +3,7 @@ import pytest
 from constants import SEQ_SS_FOLDER
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
-from compgenlnc.generators.sequences.ctd import (
+from compgenlnc.extractors.sequences import (
     gen_ctd_dict,
     gen_ctd_dict_from_folder,
     get_ctd,

@@ -3,7 +3,7 @@ import os
 from collections.abc import Iterable
 from pathlib import Path
 
-from .structure_predictor import (
+from compgenlnc.extractors.structures2d.structure_predictor import (
     extract_2d_structure_identified,
 )
 from compgenlnc.config.paths import (
@@ -129,8 +129,3 @@ def seq_ss_to_fasta(
     new_ss_fasta.parent.mkdir(parents=True, exist_ok=True)
     save_fasta(new_seq_fasta, iter_seq_ss(folder, keep=keep), mode="seq")
     save_fasta(new_ss_fasta, iter_seq_ss(folder, keep=keep), mode="ss")
-
-
-if __name__ == "__main__":
-    gen_fasta_2d(LNCRNA_FASTA, LNCRNA_SS_FASTA)
-    gen_fasta_2d(PRE_MIRNA_FASTA, MIRNA_SS_FASTA)

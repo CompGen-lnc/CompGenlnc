@@ -1,6 +1,6 @@
 import numpy as np
 
-from compgenlnc.extractors.characterization import (
+from compgenlnc.extractors.interactions import (
     extract_interactions,
     filter_interactions,
 )
