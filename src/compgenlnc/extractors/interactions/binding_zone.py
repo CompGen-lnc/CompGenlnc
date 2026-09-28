@@ -122,12 +122,12 @@ def extract_binding_zone(
     text = miranda_file.read_text()
     hits = list(re.finditer(MIRANDA_INFO, text))
     if hits:
-        min_energy_hit = min(hits, key=lambda hit: hit["energy"])
+        min_energy_hit = min(hits, key=lambda hit: hit["energy"])[0]
     else:
         min_energy_hit = "No Hits Found above Threshold"
     filename = binding_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
     with open(filename, "w") as out_file:
-        out_file.write(min_energy_hit[0])
+        out_file.write(min_energy_hit)
 
 
 def extract_binding_zone_from_folder(
