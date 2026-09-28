@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 
 from ViennaRNA import fold_compound
 
@@ -21,7 +21,7 @@ def extract_2d_structure(seq: SeqLike) -> StructureRecord:
 
 def extract_2d_structure_list(
     seq_list: Iterable[SeqLike],
-) -> Iterable[StructureRecord]:
+) -> Iterator[StructureRecord]:
     return (extract_2d_structure(seq) for seq in seq_list)
 
 

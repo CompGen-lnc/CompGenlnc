@@ -44,7 +44,7 @@ def get_2d_structure_loops_from_folder(
     keep: Iterable[str] | None = None,
 ) -> Iterator[LoopCounter]:
     loops_folder = Path(loops_folder).resolve()
-    for filename in os.listdir(loops_folder):
+    for filename in sorted(os.listdir(loops_folder)):
         id_ = filename.split(".")[0][len(LOOPS_PREFIX) :]
         if (
             keep is not None

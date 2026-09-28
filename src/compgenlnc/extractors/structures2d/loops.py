@@ -1,5 +1,6 @@
 import os
 from collections.abc import Iterable
+from itertools import tee
 from pathlib import Path
 
 import numpy as np
@@ -7,10 +8,12 @@ from ViennaRNA import fold_compound
 
 from compgenlnc.config.paths import LOOPS_PREFIX
 from compgenlnc.fileman.fasta_manager import iter_seq_ss
+from compgenlnc.fileman.loops_manager import get_2d_structure_loops_from_folder
+from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
 
-def gen_2d_structure_loops(
+def extract_2d_structure_loops(
     record: SeqSSRecord, loops_folder: str | os.PathLike
 ) -> float:
     loops_folder = Path(loops_folder).resolve()
@@ -25,7 +28,7 @@ def gen_2d_structure_loops(
     return energy
 
 
-def gen_2d_structure_loops_from_list(
+def extract_2d_structure_loops_from_list(
     record_list: Iterable[SeqSSRecord],
     loops_folder: str | os.PathLike,
 ) -> np.typing.NDArray[np.float32]:
@@ -34,17 +37,46 @@ def gen_2d_structure_loops_from_list(
 
     energy_list = []
     for record in record_list:
-        energy_list.append(gen_2d_structure_loops(record, loops_folder))
+        energy_list.append(extract_2d_structure_loops(record, loops_folder))
 
     return np.array(energy_list, dtype=np.float32)
 
 
-def gen_2d_structure_loops_from_folder(
+def extract_2d_structure_loops_from_folder(
     seq_ss_folder: str | os.PathLike,
     loops_folder: str | os.PathLike,
-    /,
+    *,
     keep: Iterable[str] | None = None,
 ) -> np.typing.NDArray[np.float32]:
-    return gen_2d_structure_loops_from_list(
+    return extract_2d_structure_loops_from_list(
         iter_seq_ss(seq_ss_folder, keep=keep), loops_folder
     )
+
+
+def gen_loops_dict(
+    dict_file: str | os.PathLike,
+    record_list: Iterable[SeqSSRecord],
+    loops_folder: str | os.PathLike,
+) -> None:
+    record_list, id_list = tee(record_list)
+    extract_2d_structure_loops_from_list(record_list, loops_folder)
+    keys = sorted(rec.id for rec in id_list)
+    loops_list = get_2d_structure_loops_from_folder(loops_folder, keep=keys)
+    values = (counter.loops_vectorized for counter in loops_list)
+    save_dict(dict_file, keys=keys, values=values)
+
+
+def gen_loops_dict_from_folder(
+    dict_file: str | os.PathLike,
+    loops_folder: str | os.PathLike,
+    *,
+    keep: Iterable[str] | None = None,
+) -> None:
+    loops_list = get_2d_structure_loops_from_folder(loops_folder, keep=keep)
+    values = (counter.loops_vectorized for counter in loops_list)
+    if keep:
+        keys = sorted(keep)
+    else:
+        start = len(LOOPS_PREFIX)
+        keys = sorted(file[start:-4] for file in os.listdir(loops_folder))
+    save_dict(dict_file, keys=keys, values=values)

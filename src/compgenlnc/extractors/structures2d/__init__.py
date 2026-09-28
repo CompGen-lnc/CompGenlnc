@@ -7,9 +7,11 @@ from .adjacency_matrix import (
     get_adjacency_matrix_list,
 )
 from .loops import (
-    gen_2d_structure_loops,
-    gen_2d_structure_loops_from_folder,
-    gen_2d_structure_loops_from_list,
+    extract_2d_structure_loops,
+    extract_2d_structure_loops_from_folder,
+    extract_2d_structure_loops_from_list,
+    gen_loops_dict,
+    gen_loops_dict_from_folder,
 )
 from .recoded_structure import recode_2d_structure, recode_2d_structure_list
 from .structure_predictor import (
