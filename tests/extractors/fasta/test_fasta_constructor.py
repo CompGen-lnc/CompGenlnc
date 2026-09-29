@@ -1,7 +1,7 @@
 import pytest
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 
-from compgenlnc.extractors.fasta import (
+from compgenlnc.extractors.molecules import (
     filter_fasta,
     gen_fasta_2d,
     seq_ss_to_fasta,
