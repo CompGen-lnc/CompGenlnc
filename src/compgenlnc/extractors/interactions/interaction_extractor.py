@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from compgenlnc.fileman.interactions_manager import (
+from compgenlnc.fileman.csv_manager import (
     load_interactions,
     save_interactions,
 )

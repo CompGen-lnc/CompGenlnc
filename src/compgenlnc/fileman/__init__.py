@@ -1,3 +1,4 @@
+from .csv_manager import load_interactions, load_precursors, save_interactions
 from .dict_manager import (
     load_dict,
     save_dict,
@@ -10,7 +11,6 @@ from .fasta_manager import (
     read_structure,
     save_fasta,
 )
-from .interactions_manager import load_interactions, save_interactions
 from .loops_manager import (
     get_2d_struture_loops,
     get_2d_structure_loops_from_folder,

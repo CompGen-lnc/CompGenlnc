@@ -11,41 +11,37 @@ from compgenlnc.typing.numpy_dtypes import (
 
 
 def save_interactions(
-    new_csv: os.PathLike,
+    new_csv: str | os.PathLike,
     interactions_list: np.typing.NDArray[InteractionTuple] | None = None,
     *,
     pos_list: np.typing.NDArray[InteractionPair] | None = None,
     neg_list: np.typing.NDArray[InteractionPair] | None = None,
 ) -> None:
-    parse_interactions = lambda interactions, positive: {
-        "lncRNA": interactions["lncRNA"],
-        "miRNA": interactions["miRNA"],
-        "positive": np.array([positive] * len(interactions), dtype=np.bool),
-    }
+    parse_interactions = lambda interactions, positive: np.full(
+        (interactions.shape[0], interactions.shape[1] + 1),
+        positive,
+        dtype_interaction_tuple,
+    )
 
-    if interactions_list is not None:
-        interactions = {
-            "lncRNA": interactions_list["lncRNA"],
-            "miRNA": interactions_list["miRNA"],
-            "positive": interactions_list["positive"],
-        }
-    else:
+    if interactions_list is None:
         pos_interactions = parse_interactions(pos_list, True)
         neg_interactions = parse_interactions(neg_list, False)
-        interactions = {
-            key: np.concatenate((pos_interactions[key], neg_interactions[key]))
-            for key in pos_interactions.keys()
-        }
-    df = pd.DataFrame(interactions).sort_values(
+        interactions = np.stack((pos_interactions, neg_interactions))
+    df = pd.DataFrame.from_records(interactions).sort_values(
         ["positive", "lncRNA", "miRNA"], ascending=[False, True, True]
     )
     df.to_csv(new_csv, index=False)
 
 
 def load_interactions(
-    filename: os.PathLike,
+    filename: str | os.PathLike,
 ) -> np.typing.NDArray[InteractionTuple]:
     df = pd.read_csv(filename)
     return np.fromiter(
         df.itertuples(index=False), dtype_interaction_tuple, len(df.index)
     )
+
+
+def load_precursors(precursors_file: str | os.PathLike) -> dict[str, str]:
+    df = pd.read_csv(precursors_file)
+    return {mat: pre for mat, pre in df.itertuples(index=False)}
