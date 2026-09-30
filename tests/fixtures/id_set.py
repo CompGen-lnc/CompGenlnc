@@ -1,11 +1,12 @@
 import pytest
 
-from compgenlnc.fileman import load_fasta
+from compgenlnc.fileman import load_fasta, load_precursors
 
 from constants import (
     SEQ_FASTA_EXAMPLE,
     LNCRNA_FASTA,
     MAT_MIRNA_FASTA,
+    MIRNA_FOLDER,
     PRE_MIRNA_FASTA,
 )
 
@@ -137,3 +138,8 @@ def mirna_id_list(pre_mirna_id_list, mat_mirna_id_list):
 @pytest.fixture
 def mirna_id_filter(pre_mirna_id_filter, mat_mirna_id_filter):
     return pre_mirna_id_filter + mat_mirna_id_filter
+
+
+@pytest.fixture(scope="session")
+def precursors_consverter():
+    return load_precursors(MIRNA_FOLDER / "data_miRNA.csv")
