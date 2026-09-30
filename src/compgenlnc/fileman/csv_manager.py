@@ -26,8 +26,8 @@ def save_interactions(
     if interactions_list is None:
         pos_interactions = parse_interactions(pos_list, True)
         neg_interactions = parse_interactions(neg_list, False)
-        interactions = np.stack((pos_interactions, neg_interactions))
-    df = pd.DataFrame.from_records(interactions).sort_values(
+        interactions_list = np.stack((pos_interactions, neg_interactions))
+    df = pd.DataFrame.from_records(interactions_list).sort_values(
         ["positive", "lncRNA", "miRNA"], ascending=[False, True, True]
     )
     df.to_csv(new_csv, index=False)
