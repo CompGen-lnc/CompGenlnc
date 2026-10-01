@@ -1,7 +1,12 @@
 import numpy as np
 import pandas as pd
 
-from compgenlnc.consts import IS_POSITIVE_FIELD, LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
+from compgenlnc.consts import (
+    IS_POSITIVE_FIELD,
+    LNCRNA_FIELD,
+    MIRNA_FIELD,
+    PAIR_FIELDS,
+)
 from compgenlnc.fileman import (
     load_interactions,
     load_precursors,
@@ -17,7 +22,9 @@ def test_save_interactions(interaction_set, tmp_path):
     assert path.exists()
     df = pd.read_csv(path)
     columns = df.columns.to_numpy()
-    assert np.isin([LNCRNA_FIELD, MIRNA_FIELD, IS_POSITIVE_FIELD], columns).all()
+    assert np.isin(
+        [LNCRNA_FIELD, MIRNA_FIELD, IS_POSITIVE_FIELD], columns
+    ).all()
 
 
 def test_load_interactions(interaction_set, tmp_path):

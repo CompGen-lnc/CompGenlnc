@@ -1,6 +1,11 @@
 import numpy as np
 
-from compgenlnc.consts import HIGH_POSITION, LOW_POSITION, MIRNA_FIELD, PAIR_FIELDS
+from compgenlnc.consts import (
+    HIGH_POSITION,
+    LOW_POSITION,
+    MIRNA_FIELD,
+    PAIR_FIELDS,
+)
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.consts.params import MIRNA_TYPE
 from compgenlnc.extractors.interactions import (

@@ -84,5 +84,7 @@ def filter_interactions(
             np.isin(interactions[LNCRNA_FIELD], lnc_filter)
         ]
     if mir_filter:
-        interactions = interactions[np.isin(interactions[MIRNA_FIELD], mir_filter)]
+        interactions = interactions[
+            np.isin(interactions[MIRNA_FIELD], mir_filter)
+        ]
     save_interactions(new_csv, interactions)

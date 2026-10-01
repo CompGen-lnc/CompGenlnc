@@ -4,7 +4,14 @@ from pathlib import Path
 
 import numpy as np
 
-from compgenlnc.consts.fields import HIGH_POSITION, IS_POSITIVE_FIELD, LNCRNA_FIELD, LOW_POSITION, MIRNA_FIELD, PAIR_FIELDS
+from compgenlnc.consts.fields import (
+    HIGH_POSITION,
+    IS_POSITIVE_FIELD,
+    LNCRNA_FIELD,
+    LOW_POSITION,
+    MIRNA_FIELD,
+    PAIR_FIELDS,
+)
 from compgenlnc.consts.params import LNCRNA_TYPE, MIRNA_TYPE
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
@@ -26,7 +33,9 @@ def get_substructure_loops(
         start, end = binding_zone.lnc_start, binding_zone.lnc_end
     if molecule == MIRNA_TYPE:
         start, end = binding_zone.mir_start, binding_zone.mir_end
-    mask = (loops_arr[LOW_POSITION] >= start) & (loops_arr[HIGH_POSITION] <= end)
+    mask = (loops_arr[LOW_POSITION] >= start) & (
+        loops_arr[HIGH_POSITION] <= end
+    )
     new_loops = loops_arr[mask]
     return LoopCounter(new_loops)
 

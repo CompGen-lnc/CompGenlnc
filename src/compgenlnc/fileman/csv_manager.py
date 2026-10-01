@@ -3,7 +3,12 @@ import os
 import numpy as np
 import pandas as pd
 
-from compgenlnc.consts.fields import IS_POSITIVE_FIELD, LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
+from compgenlnc.consts.fields import (
+    IS_POSITIVE_FIELD,
+    LNCRNA_FIELD,
+    MIRNA_FIELD,
+    PAIR_FIELDS,
+)
 from compgenlnc.typing.numpy_dtypes import (
     dtype_interaction_tuple,
     InteractionPair,
@@ -18,7 +23,7 @@ def save_interactions(
     pos_list: np.typing.NDArray[InteractionPair] | None = None,
     neg_list: np.typing.NDArray[InteractionPair] | None = None,
 ) -> None:
-    def parse_interactions(interactions, positive): 
+    def parse_interactions(interactions, positive):
         arr = np.empty(interactions.shape, dtype=dtype_interaction_tuple)
         arr[PAIR_FIELDS] = interactions[PAIR_FIELDS]
         arr[IS_POSITIVE_FIELD] = positive
@@ -27,7 +32,9 @@ def save_interactions(
     if interactions_list is None:
         pos_interactions = parse_interactions(pos_list, True)
         neg_interactions = parse_interactions(neg_list, False)
-        interactions_list = np.concatenate((pos_interactions, neg_interactions))
+        interactions_list = np.concatenate(
+            (pos_interactions, neg_interactions)
+        )
     df = pd.DataFrame.from_records(interactions_list).sort_values(
         ["positive", "lncRNA", "miRNA"], ascending=[False, True, True]
     )

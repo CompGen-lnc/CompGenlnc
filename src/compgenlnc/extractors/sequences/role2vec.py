@@ -3,11 +3,12 @@ from collections.abc import Iterable
 from multiprocessing import cpu_count
 from pathlib import Path
 
-import networkx as nx
 import numpy as np
-from karateclub.node_embedding.structural import Role2Vec
-from sklearn.neighbors import KDTree
+import torch
+from torch_geometric.data import Data
+from torch_geometric.nn import knn_graph, Node2Vec
 
+from compgenlnc.consts.params import WORKERS
 from compgenlnc.extractors.sequences.ctd import get_ctd
 from compgenlnc.extractors.sequences.doc2vec import (
     get_doc2vec,
@@ -27,33 +28,41 @@ def gen_role2vec_dict(
     /,
 ) -> None:
     keys = sorted(kmer_dict.keys() & doc2vec_dict.keys() & ctd_dict.keys())
-    vectors = np.array(
-        [
-            np.concatenate(
-                (ctd_dict[key], doc2vec_dict[key], kmer_dict[key]),
-                dtype=np.float32,
-            )
-            for key in keys
-        ]
-    )
-    kdt = KDTree(vectors, leaf_size=30, metric="euclidean")
-    k_near = kdt.query(vectors, k=10, return_distance=False)
+    vectors = [
+        np.concatenate(
+            (ctd_dict[key], doc2vec_dict[key], kmer_dict[key]),
+            dtype=np.float32,
+        )
+        for key in keys
+    ]
+    tensor = torch.tensor(np.stack(vectors, dtype=np.float32))
 
-    g = nx.Graph()
-    for key in keys:
-        near = k_near[keys.index(key)][1:]
-        for x in near:
-            g.add_edge(x, keys.index(key))
+    g = knn_graph(tensor, k=10, num_workers=WORKERS)
+    data = Data(edge_index=g, num_nodes=tensor.size(0))
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = Node2Vec(
+        edge_index=data.edge_index,
+        embedding_dim=256,
+        walk_length=20,
+        context_size=10,
+        sparse=True,
+    ).to(device)
+    loader = model.loader(batch_size=128, shuffle=True, num_workers=WORKERS)
+    optimizer = torch.optim.SparseAdam(model.parameters())
 
-    model = Role2Vec(dimensions=256, workers=cpu_count(), epochs=16)
-    model.fit(g)
-    embedding = model.get_embedding()
-    embedding_dict = {}
-    for i in range(len(g.nodes)):
-        embedding_dict[keys[i]] = embedding[i].astype(np.float32)
+    for epoch in range(16):
+        model.train()
+        total_loss = 0
+        for pos_rw, neg_rw in loader:
+            optimizer.zero_grad()
+            loss = model.loss(pos_rw.to(device), neg_rw.to(device))
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        # return total_loss / len(loader)
 
-    filename = Path(filename).resolve()
-    save_dict(filename, embedding_dict)
+    embedding = model.embedding.weight.data.numpy(force=True)
+    save_dict(filename, keys=keys, values=embedding)
 
 
 def gen_role2vec_dict_from_files(
