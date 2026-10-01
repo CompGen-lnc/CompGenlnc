@@ -58,7 +58,12 @@ def save_dict(
     filename = Path(filename).resolve()
     filename.parent.mkdir(parents=True, exist_ok=True)
 
-    items = dict_.items() if dict_ is not None else zip(keys, values)
+    if dict_ is not None:
+        items = dict_.items()
+    elif keys is not None and values is not None:
+        items = zip(keys, values)
+    else:
+        return
     with open(filename, "w") as out_file:
         for key, value in items:
             if value.ndim == 1:

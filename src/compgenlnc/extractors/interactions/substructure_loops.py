@@ -2,6 +2,8 @@ import os
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
+import numpy as np
+
 from compgenlnc.consts.params import LNCRNA_TYPE, MIRNA_TYPE
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
@@ -23,45 +25,46 @@ def get_substructure_loops(
         start, end = binding_zone.lnc_start, binding_zone.lnc_end
     if molecule == MIRNA_TYPE:
         start, end = binding_zone.mir_start, binding_zone.mir_end
-    mask = loops_arr["low"] >= start & loops_arr["high"] <= end
+    mask = (loops_arr["low"] >= start) & (loops_arr["high"] <= end)
     new_loops = loops_arr[mask]
     return LoopCounter(new_loops)
 
 
 def get_substructure_loops_from_list(
-    loops_list: Iterable[LoopCounter],
-    binding_list: Iterable[BindingZone],
+    loops_it: Iterable[LoopCounter],
+    binding_it: Iterable[BindingZone],
     molecule: str,
 ) -> Iterator[LoopCounter]:
-    for loop_counter, binding_zone in zip(loops_list, binding_list):
+    for loop_counter, binding_zone in zip(loops_it, binding_it):
         yield get_substructure_loops(loop_counter, binding_zone, molecule)
 
 
 def gen_substructure_loops_dict(
     dict_file: str | os.PathLike,
     interactions: Iterable[InteractionTuple],
-    loops_list: Iterable[LoopCounter],
-    binding_list: Iterable[BindingZone],
+    loops_it: Iterable[LoopCounter],
+    binding_it: Iterable[BindingZone],
     molecule: str,
 ) -> None:
-    dict_file = Path(dict_file).resolve()
-    dict_file.mkdir(parents=True, exist_ok=True)
-
+    interactions = list(interactions)
     new_loops = get_substructure_loops_from_list(
-        loops_list, binding_list, molecule
+        loops_it, binding_it, molecule
     )
     keys = (
         f"{interaction['lncRNA']}_{interaction['miRNA']}"
         for interaction in interactions
     )
     values = (
-        loop_counter.loops_vectorized if binding_zone else [-1] * 3 + [0] * 4
-        for loop_counter, binding_zone in zip(new_loops, binding_list)
+        loop_counter.loops_vectorized
+        if interaction["positive"]
+        else np.array([-1] * 3 + [0] * 4)
+        for loop_counter, interaction in zip(new_loops, interactions)
     )
     save_dict(dict_file, keys=keys, values=values)
 
 
-def gen_substructure_from_files(
+# Fix when precursors are mapped to mature miRNAs
+def gen_substructure_loops_dict_from_files(
     dict_file: str | os.PathLike,
     interactions_file: str | os.PathLike,
     loops_folder: str | os.PathLike,

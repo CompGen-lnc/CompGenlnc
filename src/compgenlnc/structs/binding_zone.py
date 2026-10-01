@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -28,20 +30,28 @@ class BindingZone:
         return self._energy
 
     @property
-    def lnc_start(self) -> bool:
+    def lnc_start(self) -> int:
         return self._lnc_range.start + 1
 
     @property
-    def lnc_end(self) -> bool:
+    def lnc_end(self) -> int:
         return self._lnc_range.stop
 
     @property
-    def mir_start(self) -> bool:
+    def mir_start(self) -> int:
         return self._mir_range.start + 1
 
     @property
-    def mir_end(self) -> bool:
+    def mir_end(self) -> int:
         return self._mir_range.stop
+
+    def adjust_mirna_range(self, start: int) -> BindingZone:
+        new_range = range(
+            self._mir_range.start + start, self._mir_range.stop + start
+        )
+        return BindingZone(
+            self._hint, self._energy, self._lnc_range, new_range
+        )
 
     def __bool__(self):
         return self._hint

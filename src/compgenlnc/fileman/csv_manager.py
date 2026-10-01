@@ -18,7 +18,7 @@ def save_interactions(
     neg_list: np.typing.NDArray[InteractionPair] | None = None,
 ) -> None:
     parse_interactions = lambda interactions, positive: np.full(
-        (interactions.shape[0], interactions.shape[1] + 1),
+        (len(interactions), len(interactions.dtypes.names) + 1),
         positive,
         dtype_interaction_tuple,
     )

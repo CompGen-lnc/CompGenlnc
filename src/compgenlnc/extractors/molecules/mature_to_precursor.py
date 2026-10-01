@@ -17,8 +17,8 @@ def extract_precursor(
         return mir
 
     last_hyphen = mir.rfind("-")
-    base_precursor = mir[:last_hyphen]
-    return next(id_ for id_ in precursor_list if base_precursor in id_)
+    base_precursor = mir[:last_hyphen].lower()
+    return next(id_ for id_ in precursor_list if base_precursor in id_.lower())
 
 
 def gen_precursors_csv(
@@ -30,8 +30,7 @@ def gen_precursors_csv(
         mir.id if isinstance(mir, SeqSSRecord) else mir for mir in mir_it
     ]
     precursor_list = [
-        pre.id if isinstance(pre, SeqSSRecord) else pre
-        for pre in precursor_it
+        pre.id if isinstance(pre, SeqSSRecord) else pre for pre in precursor_it
     ]
     precursors = (extract_precursor(mir, precursor_list) for mir in mir_list)
     csv_dict = {"Mature": mir_list, "Precursor": precursors}
