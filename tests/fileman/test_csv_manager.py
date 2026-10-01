@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from compgenlnc.consts import IS_POSITIVE_FIELD, LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
 from compgenlnc.fileman import (
     load_interactions,
     load_precursors,
@@ -16,14 +17,14 @@ def test_save_interactions(interaction_set, tmp_path):
     assert path.exists()
     df = pd.read_csv(path)
     columns = df.columns.to_numpy()
-    assert np.isin(["lncRNA", "miRNA", "positive"], columns).all()
+    assert np.isin([LNCRNA_FIELD, MIRNA_FIELD, IS_POSITIVE_FIELD], columns).all()
 
 
 def test_load_interactions(interaction_set, tmp_path):
     path = tmp_path / "interactions.csv"
     save_interactions(path, interaction_set)
-    expected = np.sort(interaction_set, order=["lncRNA", "miRNA"])
-    expected = expected[np.argsort(~expected["positive"])]
+    expected = np.sort(interaction_set, order=PAIR_FIELDS)
+    expected = expected[np.argsort(~expected[IS_POSITIVE_FIELD])]
     interactions = load_interactions(path)
     assert np.array_equal(interactions, expected)
 

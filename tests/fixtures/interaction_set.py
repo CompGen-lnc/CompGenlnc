@@ -1,8 +1,9 @@
 import numpy as np
 import pytest
 
-from compgenlnc.typing import dtype_interaction_tuple
+from compgenlnc.consts import IS_POSITIVE_FIELD, PAIR_FIELDS
 from compgenlnc.fileman import load_interactions
+from compgenlnc.typing import dtype_interaction_tuple
 
 from constants import INTERACTIONS_CSV
 
@@ -59,11 +60,11 @@ def interaction_list():
 
 @pytest.fixture
 def interaction_positive_pairs(interaction_set):
-    mask = interaction_set["positive"]
-    return interaction_set[mask][["lncRNA", "miRNA"]]
+    mask = interaction_set[IS_POSITIVE_FIELD]
+    return interaction_set[mask][PAIR_FIELDS]
 
 
 @pytest.fixture
 def interaction_negative_pairs(interaction_set):
-    mask = ~interaction_set["positive"]
-    return interaction_set[mask][["lncRNA", "miRNA"]]
+    mask = ~interaction_set[IS_POSITIVE_FIELD]
+    return interaction_set[mask][PAIR_FIELDS]

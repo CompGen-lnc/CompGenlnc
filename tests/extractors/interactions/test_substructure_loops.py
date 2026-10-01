@@ -1,5 +1,6 @@
 import numpy as np
 
+from compgenlnc.consts import HIGH_POSITION, LOW_POSITION, MIRNA_FIELD, PAIR_FIELDS
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.consts.params import MIRNA_TYPE
 from compgenlnc.extractors.interactions import (
@@ -20,9 +21,9 @@ def test_get_substructure_loops(
     interaction_list, pre_mirna_id_list, precursors_consverter, subtests
 ):
     interactions = interaction_list[
-        ~np.isin(interaction_list["miRNA"], pre_mirna_id_list)
+        ~np.isin(interaction_list[MIRNA_FIELD], pre_mirna_id_list)
     ]
-    for lnc, mir in interactions[["lncRNA", "miRNA"]]:
+    for lnc, mir in interactions[PAIR_FIELDS]:
         precursor = precursors_consverter[mir]
         mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
         binding_zone_path = (
@@ -37,8 +38,8 @@ def test_get_substructure_loops(
                 mir_loops, binding_zone, MIRNA_TYPE
             )
             start, end = binding_zone.mir_start, binding_zone.mir_end
-            mask = (mir_loops.loops["low"] >= start) & (
-                mir_loops.loops["high"] <= end
+            mask = (mir_loops.loops[LOW_POSITION] >= start) & (
+                mir_loops.loops[HIGH_POSITION] <= end
             )
             expected = mir_loops.loops[mask]
             assert np.array_equal(sub_loops.loops, expected)
@@ -50,9 +51,9 @@ def test_get_substructure_loops_from_list(
     loops_list = []
     binding_list = []
     interactions = interaction_list[
-        ~np.isin(interaction_list["miRNA"], pre_mirna_id_list)
+        ~np.isin(interaction_list[MIRNA_FIELD], pre_mirna_id_list)
     ]
-    for lnc, mir in interactions[["lncRNA", "miRNA"]]:
+    for lnc, mir in interactions[PAIR_FIELDS]:
         precursor = precursors_consverter[mir]
         mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
         binding_zone_path = (
@@ -82,9 +83,9 @@ def test_gen_substructure_loops_dict(
     loops_list = []
     binding_list = []
     interactions = interaction_list[
-        ~np.isin(interaction_list["miRNA"], pre_mirna_id_list)
+        ~np.isin(interaction_list[MIRNA_FIELD], pre_mirna_id_list)
     ]
-    for lnc, mir in interactions[["lncRNA", "miRNA"]]:
+    for lnc, mir in interactions[PAIR_FIELDS]:
         precursor = precursors_consverter[mir]
         mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
         binding_zone_path = (

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from compgenlnc.consts.fields import ENERGY_FIELD, KIND_FIELD
 from compgenlnc.typing.numpy_dtypes import dtype_loop_tuple, LoopTuple
 
 
@@ -26,10 +27,10 @@ class LoopCounter:
         if energy is not None:
             self._energy = energy
         else:
-            self._energy = self._loops["energy"].sum() / 100
-        self._hairpin_energy = self.hairpin_loops["energy"].sum() / 100
-        self._stack_energy = self.stack_loops["energy"].sum() / 100
-        self._multi_energy = self.multi_loops["energy"].sum() / 100
+            self._energy = self._loops[ENERGY_FIELD].sum() / 100
+        self._hairpin_energy = self.hairpin_loops[ENERGY_FIELD].sum() / 100
+        self._stack_energy = self.stack_loops[ENERGY_FIELD].sum() / 100
+        self._multi_energy = self.multi_loops[ENERGY_FIELD].sum() / 100
 
     @property
     def energy(self) -> float:
@@ -41,7 +42,7 @@ class LoopCounter:
 
     @property
     def hairpin_loops(self) -> np.typing.NDArray[LoopTuple]:
-        mask = self._loops["kind"] == "Hairpin"
+        mask = self._loops[KIND_FIELD] == "Hairpin"
         return self._loops[mask]
 
     @property
@@ -50,7 +51,7 @@ class LoopCounter:
 
     @property
     def stack_loops(self) -> np.typing.NDArray[LoopTuple]:
-        mask = self._loops["kind"] == "Interior"
+        mask = self._loops[KIND_FIELD] == "Interior"
         return self._loops[mask]
 
     @property
@@ -59,7 +60,7 @@ class LoopCounter:
 
     @property
     def multi_loops(self) -> np.typing.NDArray[LoopTuple]:
-        mask = self._loops["kind"] == "Multi"
+        mask = self._loops[KIND_FIELD] == "Multi"
         return self._loops[mask]
 
     @property

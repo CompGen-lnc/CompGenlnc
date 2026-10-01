@@ -1,5 +1,6 @@
 import numpy as np
 
+from compgenlnc.consts import IS_POSITIVE_FIELD, LNCRNA_FIELD, MIRNA_FIELD
 from compgenlnc.extractors.interactions import (
     extract_interactions,
     filter_interactions,
@@ -85,9 +86,9 @@ def test_filter_interactions(lncrna_id_filter, mirna_id_filter, tmp_path):
     )
     arr = load_interactions(filename)
     expected = load_interactions(INTERACTIONS_CSV)
-    mask = expected["positive"] == expected["positive"]
+    mask = expected[IS_POSITIVE_FIELD] == expected[IS_POSITIVE_FIELD]
     if lncrna_id_filter:
-        mask &= np.isin(expected["lncRNA"], lncrna_id_filter)
+        mask &= np.isin(expected[LNCRNA_FIELD], lncrna_id_filter)
     if mirna_id_filter:
-        mask &= np.isin(expected["miRNA"], mirna_id_filter)
+        mask &= np.isin(expected[MIRNA_FIELD], mirna_id_filter)
     assert np.array_equal(arr, expected[mask])

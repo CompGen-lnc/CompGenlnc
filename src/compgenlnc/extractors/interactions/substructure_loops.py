@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 
+from compgenlnc.consts.fields import HIGH_POSITION, IS_POSITIVE_FIELD, LNCRNA_FIELD, LOW_POSITION, MIRNA_FIELD, PAIR_FIELDS
 from compgenlnc.consts.params import LNCRNA_TYPE, MIRNA_TYPE
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
@@ -25,7 +26,7 @@ def get_substructure_loops(
         start, end = binding_zone.lnc_start, binding_zone.lnc_end
     if molecule == MIRNA_TYPE:
         start, end = binding_zone.mir_start, binding_zone.mir_end
-    mask = (loops_arr["low"] >= start) & (loops_arr["high"] <= end)
+    mask = (loops_arr[LOW_POSITION] >= start) & (loops_arr[HIGH_POSITION] <= end)
     new_loops = loops_arr[mask]
     return LoopCounter(new_loops)
 
@@ -51,12 +52,12 @@ def gen_substructure_loops_dict(
         loops_it, binding_it, molecule
     )
     keys = (
-        f"{interaction['lncRNA']}_{interaction['miRNA']}"
+        f"{interaction[LNCRNA_FIELD]}_{interaction[MIRNA_FIELD]}"
         for interaction in interactions
     )
     values = (
         loop_counter.loops_vectorized
-        if interaction["positive"]
+        if interaction[IS_POSITIVE_FIELD]
         else np.array([-1] * 3 + [0] * 4)
         for loop_counter, interaction in zip(new_loops, interactions)
     )
@@ -75,8 +76,8 @@ def gen_substructure_loops_dict_from_files(
     binding_folder = Path(binding_folder).resolve()
 
     interactions = load_interactions(interactions_file)
-    interactions.sort(order=["lncRNA", "miRNA"])
-    keys = [f"{lnc}_{mir}" for lnc, mir in interactions[["lncRNA", "miRNA"]]]
+    interactions.sort(order=PAIR_FIELDS)
+    keys = [f"{lnc}_{mir}" for lnc, mir in interactions[PAIR_FIELDS]]
 
     def iter_interactions_loops():
         for key in keys:

@@ -1,6 +1,7 @@
 import numpy as np
 from constants import SS_LOOPS_FOLDER
 
+from compgenlnc.consts import ENERGY_FIELD
 from compgenlnc.config.paths import LOOPS_PREFIX
 from compgenlnc.fileman import (
     get_2d_structure_loops_from_folder,
@@ -11,7 +12,7 @@ from compgenlnc.fileman import (
 def test_get_2d_structure_loops(seq_ss_record):
     loops_file = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{seq_ss_record.id}.dat"
     loop_counter = get_2d_struture_loops(loops_file)
-    total_energy = loop_counter.loops["energy"].sum().item() / 100
+    total_energy = loop_counter.loops[ENERGY_FIELD].sum().item() / 100
     assert loop_counter.energy == total_energy
 
 

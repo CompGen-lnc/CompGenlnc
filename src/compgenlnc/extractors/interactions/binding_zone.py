@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
+from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD
 from compgenlnc.config.paths import BINDING_PREFIX, MIRANDA_PREFIX, TEMP_FOLDER
 from compgenlnc.consts.regex import MIRANDA_INFO
 from compgenlnc.fileman.csv_manager import load_interactions
@@ -95,12 +96,12 @@ def predict_miranda_from_files(
     lnc_map = {rec.id: rec for rec in lnc_records}
     mir_map = {rec.id: rec for rec in mir_records}
     lnc_list = np.select(
-        [interactions["lncRNA"] == key for key in lnc_map.keys()],
+        [interactions[LNCRNA_FIELD] == key for key in lnc_map.keys()],
         lnc_map.values(),
         None,
     )
     mir_list = np.select(
-        [interactions["miRNA"] == key for key in mir_map.keys()],
+        [interactions[MIRNA_FIELD] == key for key in mir_map.keys()],
         mir_map.values(),
         None,
     )

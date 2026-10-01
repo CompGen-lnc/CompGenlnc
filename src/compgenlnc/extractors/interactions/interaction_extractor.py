@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
+from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD
 from compgenlnc.fileman.csv_manager import (
     load_interactions,
     save_interactions,
@@ -39,7 +40,7 @@ def extract_interactions(
         with open(file_inter) as file:
             for line in file.readlines():
                 line = line.strip()
-                if not line or line == "lncRNA,miRNA":
+                if not line or ("lncRNA" in line and "miRNA" in line):
                     continue
                 interaction = line.split(separator)
                 interactions_list.append(
@@ -58,8 +59,8 @@ def extract_interactions(
         mir_neg_list = random.choices(mir_list, k=length)
         for i in range(length):
             while True:
-                pair = (pos_list["lncRNA"] == lnc_neg_list[i]) & (
-                    pos_list["miRNA"] == mir_neg_list[i]
+                pair = (pos_list[LNCRNA_FIELD] == lnc_neg_list[i]) & (
+                    pos_list[MIRNA_FIELD] == mir_neg_list[i]
                 )
                 if not pair.any():
                     break
@@ -80,8 +81,8 @@ def filter_interactions(
     interactions = load_interactions(interactions_file)
     if lnc_filter:
         interactions = interactions[
-            np.isin(interactions["lncRNA"], lnc_filter)
+            np.isin(interactions[LNCRNA_FIELD], lnc_filter)
         ]
     if mir_filter:
-        interactions = interactions[np.isin(interactions["miRNA"], mir_filter)]
+        interactions = interactions[np.isin(interactions[MIRNA_FIELD], mir_filter)]
     save_interactions(new_csv, interactions)

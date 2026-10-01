@@ -1,5 +1,6 @@
 import os
 
+from compgenlnc.consts import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
 from compgenlnc.config.paths import (
     BINDING_PREFIX,
     MIRANDA_PREFIX,
@@ -42,11 +43,11 @@ def test_predict_miranda_from_list(
     folder = tmp_path
     lnc_list = map(
         lambda lnc: [rec for rec in lnc_records if rec.id == lnc][0],
-        interaction_set["lncRNA"],
+        interaction_set[LNCRNA_FIELD],
     )
     mir_list = map(
         lambda mir: [rec for rec in mir_records if rec.id == mir][0],
-        interaction_set["miRNA"],
+        interaction_set[MIRNA_FIELD],
     )
     predict_miranda_from_list(lnc_list, mir_list, folder)
     expected_folder = tmp_path / "expected"
@@ -83,7 +84,7 @@ def test_extract_binding_zone(interaction_list, tmp_path, subtests):
     expected_folder = INTERACTIONS_FOLDER / "binding"
     folder = tmp_path
     for interaction in interaction_list:
-        lnc, mir = interaction[["lncRNA", "miRNA"]]
+        lnc, mir = interaction[PAIR_FIELDS]
         extract_binding_zone(lnc, mir, miranda_folder, folder)
         with subtests.test(i=(lnc, mir)):
             filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
@@ -102,7 +103,7 @@ def test_extract_binding_zone_from_folder(
         miranda_folder, folder, lncrna_id_filter, mirna_id_filter
     )
     for interaction in interaction_list:
-        lnc, mir = interaction[["lncRNA", "miRNA"]]
+        lnc, mir = interaction[PAIR_FIELDS]
         filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
         expected = expected_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
 
