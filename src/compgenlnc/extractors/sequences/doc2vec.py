@@ -78,8 +78,7 @@ def get_doc2vec_by_name(
     model_file: str | os.PathLike = "",
 ) -> np.typing.NDArray[np.float32]:
     folder = Path(folder).resolve()
-    filename = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
-    seq = read_sequence(filename, mature_only=mature_only)
+    seq = read_sequence(folder, id_, mature_only=mature_only)
     return get_doc2vec(seq, model=model, model_file=model_file)
 
 

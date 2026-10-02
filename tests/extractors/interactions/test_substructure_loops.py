@@ -28,20 +28,15 @@ def test_get_substructure_loops(
     interactions = interaction_list[
         ~np.isin(interaction_list[MIRNA_FIELD], pre_mirna_id_list)
     ]
-    for lnc, mir in interactions[PAIR_FIELDS]:
+    for interaction in interactions[PAIR_FIELDS]:
+        lnc, mir = interaction
         precursor = precursors_consverter[mir]
         mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
-        binding_zone_path = (
-            INTERACTIONS_FOLDER
-            / "binding"
-            / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
-        )
+        binding_folder = INTERACTIONS_FOLDER / "binding"
         with subtests.test(i=(lnc, mir)):
             mir_loops = get_2d_struture_loops(mir_loops_path)
-            binding_zone = get_binding_zone(binding_zone_path)
-            sub_loops = get_substructure_loops(
-                mir_loops, binding_zone, MIRNA
-            )
+            binding_zone = get_binding_zone(binding_folder, interaction)
+            sub_loops = get_substructure_loops(mir_loops, binding_zone, MIRNA)
             start, end = binding_zone.mir_start, binding_zone.mir_end
             mask = (mir_loops.loops[LOW_POSITION] >= start) & (
                 mir_loops.loops[HIGH_POSITION] <= end
@@ -58,16 +53,13 @@ def test_get_substructure_loops_from_list(
     interactions = interaction_list[
         ~np.isin(interaction_list[MIRNA_FIELD], pre_mirna_id_list)
     ]
-    for lnc, mir in interactions[PAIR_FIELDS]:
+    for interaction in interactions[PAIR_FIELDS]:
+        lnc, mir = interaction
         precursor = precursors_consverter[mir]
         mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
-        binding_zone_path = (
-            INTERACTIONS_FOLDER
-            / "binding"
-            / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
-        )
+        binding_folder = INTERACTIONS_FOLDER / "binding"
         mir_loops = get_2d_struture_loops(mir_loops_path)
-        binding_zone = get_binding_zone(binding_zone_path)
+        binding_zone = get_binding_zone(binding_folder, interaction)
         loops_list.append(mir_loops)
         binding_list.append(binding_zone)
 
@@ -90,16 +82,13 @@ def test_gen_substructure_loops_dict(
     interactions = interaction_list[
         ~np.isin(interaction_list[MIRNA_FIELD], pre_mirna_id_list)
     ]
-    for lnc, mir in interactions[PAIR_FIELDS]:
+    for interaction in interactions[PAIR_FIELDS]:
+        lnc, mir = interaction
         precursor = precursors_consverter[mir]
         mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
-        binding_zone_path = (
-            INTERACTIONS_FOLDER
-            / "binding"
-            / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
-        )
+        binding_folder = INTERACTIONS_FOLDER / "binding"
         mir_loops = get_2d_struture_loops(mir_loops_path)
-        binding_zone = get_binding_zone(binding_zone_path)
+        binding_zone = get_binding_zone(binding_folder, interaction)
         loops_list.append(mir_loops)
         binding_list.append(binding_zone)
 

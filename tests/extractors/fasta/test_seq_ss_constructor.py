@@ -27,6 +27,6 @@ def test_join_seq_ss(record, tmp_path):
     path = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
     assert path.exists()
 
-    new_seq = read_sequence(path)
-    expected = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{id_}.dat")
+    new_seq = read_sequence(folder, id_)
+    expected = read_sequence(SEQ_SS_FOLDER, id_)
     assert new_seq == expected

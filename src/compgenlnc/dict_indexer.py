@@ -3,7 +3,13 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from compgenlnc.consts.fields import LNCRNA_FIELD, MATURE_FIELD, MIRNA_FIELD, PAIR_FIELDS, PRECURSOR_FIELD
+from compgenlnc.consts.fields import (
+    LNCRNA_FIELD,
+    MATURE_FIELD,
+    MIRNA_FIELD,
+    PAIR_FIELDS,
+    PRECURSOR_FIELD,
+)
 from compgenlnc.consts.params import LNCRNA, MATURE, PRECURSOR
 from compgenlnc.typing.numpy_dtypes import dtype_index, Index, InteractionPair
 
@@ -12,6 +18,8 @@ def get_mature_index(
     interaction: InteractionPair, precursor_dict: dict[str, str]
 ) -> Index:
     lnc, mir = interaction[PAIR_FIELDS]
+    if mir not in precursor_dict.keys():
+        return None
     precursor = precursor_dict[mir]
     return np.array((lnc, precursor, mir), dtype=dtype_index)
 
@@ -38,10 +46,16 @@ def gen_indexes(
 
 
 def load_indexes(index_file: str | os.PathLike) -> np.typing.NDArray[Index]:
-    return np.array(np.load(index_file), dtype_index)
+    return np.load(index_file, allow_pickle=True)
 
 
-def dict_to_numpy(np_file: str | os.PathLike, feat_dict: dict[str, np.typing.NDArray], indexes: np.typing.NDArray[Index], *, rna: str = LNCRNA) -> None:
+def dict_to_numpy(
+    np_file: str | os.PathLike,
+    feat_dict: dict[str, np.typing.NDArray],
+    indexes: np.typing.NDArray[Index],
+    *,
+    rna: str = LNCRNA,
+) -> None:
     if rna == LNCRNA:
         index_rna = indexes[LNCRNA_FIELD]
     elif rna == MATURE:
@@ -56,5 +70,4 @@ def dict_to_numpy(np_file: str | os.PathLike, feat_dict: dict[str, np.typing.NDA
             array[i] = feat_dict[index]
         else:
             array[i] = 0
-
-    np.save(np_file)
+    np.save(np_file, array)

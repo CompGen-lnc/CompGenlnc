@@ -8,7 +8,7 @@ from constants import INTERACTIONS_FOLDER
 def test_get_binding_zone(interaction_list, subtests):
     for interaction in interaction_list:
         lnc, mir = interaction[PAIR_FIELDS]
-        folder = INTERACTIONS_FOLDER/ "binding"
+        folder = INTERACTIONS_FOLDER / "binding"
         filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
         with subtests.test(i=(lnc, mir)):
             text = filename.read_text()

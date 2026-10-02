@@ -105,7 +105,7 @@ def test_get_ctd(seq, expected):
 
 def test_get_ctd_by_name(example_id):
     ctd = get_ctd_by_name(example_id, SEQ_SS_FOLDER)
-    seq = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{example_id}.dat")
+    seq = read_sequence(SEQ_SS_FOLDER, example_id)
     expected = get_ctd(seq)
     assert np.array_equal(ctd, expected)
 

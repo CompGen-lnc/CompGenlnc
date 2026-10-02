@@ -66,7 +66,7 @@ def test_get_kmer(seq, k, expected):
 
 def test_get_kmer_by_name(example_id):
     kmers = get_kmer_by_name(example_id, SEQ_SS_FOLDER, 3)
-    seq = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{example_id}.dat")
+    seq = read_sequence(SEQ_SS_FOLDER, example_id)
     expected = get_kmer(seq, 3)
     assert np.array_equal(kmers, expected)
 

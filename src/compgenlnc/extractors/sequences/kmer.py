@@ -72,8 +72,7 @@ def get_kmer_by_name(
     """
     folder = Path(folder).resolve()
 
-    filename = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
-    seq = read_sequence(filename, mature_only=mature_only)
+    seq = read_sequence(folder, id_, mature_only=mature_only)
     return get_kmer(seq, k)
 
 

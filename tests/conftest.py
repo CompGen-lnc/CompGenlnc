@@ -5,4 +5,5 @@ pytest_plugins = [
     "fixtures.seq_ss_set",
     "fixtures.sequence_set",
     "fixtures.structure_set",
+    "fixtures.index_set",
 ]

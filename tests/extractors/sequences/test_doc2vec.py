@@ -35,7 +35,7 @@ def test_get_doc2vec(seq, segments, doc2vec_model_deterministic):
 
 def test_get_doc2vec_by_name(example_id, doc2vec_model_deterministic):
     model = doc2vec_model_deterministic
-    seq = read_sequence(SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{example_id}.dat")
+    seq = read_sequence(SEQ_SS_FOLDER, example_id)
     segments = [seq[i : i + 3] for i in range(len(seq) - 2)]
     vector = get_doc2vec_by_name(example_id, SEQ_SS_FOLDER, model=model)
     expected = model.infer_vector(segments) if segments else [0.0] * 256
