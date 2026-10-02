@@ -119,7 +119,7 @@ def iter_seq_fasta(
 
 
 def read_sequence(
-    filename: str | os.PathLike, mature_only: bool = False
+    folder: str | os.PathLike, id_: str, mature_only: bool = False
 ) -> str:
     """Read the first line of a seq+ss file and normalize to ACGT
     alphabet.
@@ -129,7 +129,8 @@ def read_sequence(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    filename = Path(filename).resolve()
+    folder = Path(folder).resolve()
+    filename = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
 
     with open(filename) as f:
         seq = f.readlines()[0].strip()
@@ -139,7 +140,7 @@ def read_sequence(
 
 
 def read_structure(
-    filename: str | os.PathLike, mature_only: bool = False
+    folder: str | os.PathLike, id_: str, mature_only: bool = False
 ) -> str:
     """Read the first line of a seq+ss file and normalize to ACGT
     alphabet.
@@ -149,7 +150,8 @@ def read_structure(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    filename = Path(filename).resolve()
+    folder = Path(folder).resolve()
+    filename = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
 
     with open(filename) as f:
         ss = f.readlines()[1].strip()
@@ -180,6 +182,7 @@ def iter_seq_ss(
         id_ = os.path.splitext(filename[len(SEQ_SS_PREFIX) :])[0]
         if keep and id_ not in keep:
             continue
-        seq = read_sequence(folder / filename, mature_only)
-        ss = read_structure(folder / filename, mature_only)
+        with open(folder / filename) as file:
+            seq = file.readline()
+            ss = file.readline()
         yield SeqSSRecord(id_, seq, ss)

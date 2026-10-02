@@ -2,14 +2,20 @@ import os
 import re
 from pathlib import Path
 
+from compgenlnc.consts.fields import PAIR_FIELDS
 from compgenlnc.consts.regex import MIRANDA_INFO
+from compgenlnc.config.paths import BINDING_PREFIX
 from compgenlnc.structs.binding_zone import BindingZone
+from compgenlnc.typing.numpy_dtypes import InteractionPair
 
 
 def get_binding_zone(
-    filename: os.PathLike,
+    folder: str | os.PathLike, interaction: InteractionPair
 ) -> BindingZone:
-    text = Path(filename).resolve().read_text()
+    folder = Path(folder).resolve()
+    lnc, mir = interaction[PAIR_FIELDS]
+    filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
+    text = filename.read_text()
     m = re.match(MIRANDA_INFO, text)
     if not m:
         return BindingZone(False)

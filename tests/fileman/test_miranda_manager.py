@@ -6,15 +6,13 @@ from constants import INTERACTIONS_FOLDER
 
 
 def test_get_binding_zone(interaction_list, subtests):
-    for lnc, mir in interaction_list[PAIR_FIELDS]:
-        filename = (
-            INTERACTIONS_FOLDER
-            / "binding"
-            / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
-        )
+    for interaction in interaction_list:
+        lnc, mir = interaction[PAIR_FIELDS]
+        folder = INTERACTIONS_FOLDER/ "binding"
+        filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
         with subtests.test(i=(lnc, mir)):
             text = filename.read_text()
-            binding_zone = get_binding_zone(filename)
+            binding_zone = get_binding_zone(folder, interaction)
             assert (text == "No Hits Found above Threshold") == (
                 not bool(binding_zone)
             )

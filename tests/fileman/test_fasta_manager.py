@@ -82,7 +82,7 @@ def test_read_sequence(record):
     filename = SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{record.id}.dat"
     assert filename.exists()
 
-    seq = read_sequence(filename)
+    seq = read_sequence(SEQ_SS_FOLDER, record.id)
     assert seq == record.seq
 
 
@@ -90,5 +90,5 @@ def test_read_structure(ss_record_identified):
     filename = SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{ss_record_identified.id}.dat"
     assert filename.exists()
 
-    ss = read_structure(filename)
+    ss = read_structure(SEQ_SS_FOLDER, ss_record_identified.id)
     assert ss == ss_record_identified.ss
