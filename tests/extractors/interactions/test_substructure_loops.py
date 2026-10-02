@@ -7,7 +7,7 @@ from compgenlnc.consts import (
     PAIR_FIELDS,
 )
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
-from compgenlnc.consts.params import MIRNA_TYPE
+from compgenlnc.consts.params import MIRNA
 from compgenlnc.extractors.interactions import (
     gen_substructure_loops_dict,
     get_substructure_loops,
@@ -40,7 +40,7 @@ def test_get_substructure_loops(
             mir_loops = get_2d_struture_loops(mir_loops_path)
             binding_zone = get_binding_zone(binding_zone_path)
             sub_loops = get_substructure_loops(
-                mir_loops, binding_zone, MIRNA_TYPE
+                mir_loops, binding_zone, MIRNA
             )
             start, end = binding_zone.mir_start, binding_zone.mir_end
             mask = (mir_loops.loops[LOW_POSITION] >= start) & (
@@ -72,12 +72,12 @@ def test_get_substructure_loops_from_list(
         binding_list.append(binding_zone)
 
     new_loops_list = get_substructure_loops_from_list(
-        loops_list, binding_list, MIRNA_TYPE
+        loops_list, binding_list, MIRNA
     )
     for sub_loops, mir_loops, binding_zone in zip(
         new_loops_list, loops_list, binding_list
     ):
-        expected = get_substructure_loops(mir_loops, binding_zone, MIRNA_TYPE)
+        expected = get_substructure_loops(mir_loops, binding_zone, MIRNA)
         assert sub_loops == expected
 
 
@@ -104,11 +104,11 @@ def test_gen_substructure_loops_dict(
         binding_list.append(binding_zone)
 
     gen_substructure_loops_dict(
-        dict_path, interaction_list, loops_list, binding_list, MIRNA_TYPE
+        dict_path, interaction_list, loops_list, binding_list, MIRNA
     )
     loops_dict = load_dict(dict_path)
     for vector, mir_loops, binding_zone in zip(
         loops_dict.values(), loops_list, binding_list
     ):
-        expected = get_substructure_loops(mir_loops, binding_zone, MIRNA_TYPE)
+        expected = get_substructure_loops(mir_loops, binding_zone, MIRNA)
         assert np.array_equal(vector, expected.loops_vectorized)

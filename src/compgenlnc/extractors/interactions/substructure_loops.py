@@ -12,7 +12,7 @@ from compgenlnc.consts.fields import (
     MIRNA_FIELD,
     PAIR_FIELDS,
 )
-from compgenlnc.consts.params import LNCRNA_TYPE, MIRNA_TYPE
+from compgenlnc.consts.params import LNCRNA, MIRNA
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.dict_manager import save_dict
@@ -29,9 +29,9 @@ def get_substructure_loops(
     if not binding_zone:
         return LoopCounter([], 0)
     loops_arr = loop_counter.loops
-    if molecule == LNCRNA_TYPE:
+    if molecule == LNCRNA:
         start, end = binding_zone.lnc_start, binding_zone.lnc_end
-    if molecule == MIRNA_TYPE:
+    if molecule == MIRNA:
         start, end = binding_zone.mir_start, binding_zone.mir_end
     mask = (loops_arr[LOW_POSITION] >= start) & (
         loops_arr[HIGH_POSITION] <= end

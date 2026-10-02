@@ -2,8 +2,10 @@ import sys
 from multiprocessing import cpu_count
 
 # molecule type
-LNCRNA_TYPE = "lnc"
-MIRNA_TYPE = "mir"
+LNCRNA = "lnc"
+MIRNA = "mir"
+PRECURSOR = "pre"
+MATURE = "mat"
 
 # record mode
 SEQ_MODE = "seq"

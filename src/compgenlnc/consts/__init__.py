@@ -8,6 +8,6 @@ from .fields import (
     MIRNA_FIELD,
     PAIR_FIELDS,
 )
-from .params import LNCRNA_TYPE, MIRNA_TYPE, SEQ_MODE, SS_MODE, WORKERS
+from .params import LNCRNA, MIRNA, SEQ_MODE, SS_MODE, WORKERS
 from .regex import EXTERNAL_LOOP_RE, LOOP_RE, MIRANDA_INFO
 from .sizes import NORMAL_LNCRNA_SEQUENCE_SIZE, NORMAL_MIRNA_SEQUENCE_SIZE
