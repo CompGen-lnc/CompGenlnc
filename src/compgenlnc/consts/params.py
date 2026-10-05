@@ -6,6 +6,7 @@ LNCRNA = "lnc"
 MIRNA = "mir"
 PRECURSOR = "pre"
 MATURE = "mat"
+INTERACTION = "inter"
 
 # record mode
 SEQ_MODE = "seq"

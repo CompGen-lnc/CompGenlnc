@@ -40,13 +40,14 @@ def test_gen_indexes(interaction_set, precursors_consverter, tmp_path):
     gen_indexes(path, interaction_set, precursors_consverter)
     assert path.exists()
     indexes = np.load(path, allow_pickle=True)
-    for lnc, prec, mat in indexes:
+    for lnc, prec, mat, inter in indexes:
         mask: np.ndarray = (interaction_set[LNCRNA_FIELD] == lnc) & (
             interaction_set[MIRNA_FIELD] == mat
         )
         assert mask.any()
         pair = interaction_set[mask][0]
         assert prec == precursors_consverter[pair[MIRNA_FIELD]]
+        assert inter == f"{lnc}_{prec}" or inter == f"{lnc}_{mat}"
 
 
 def test_load_indexes():

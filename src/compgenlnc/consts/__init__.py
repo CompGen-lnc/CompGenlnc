@@ -1,6 +1,7 @@
 from .fields import (
     ENERGY_FIELD,
     HIGH_POSITION,
+    INTERACTION_FIELD,
     IS_POSITIVE_FIELD,
     KIND_FIELD,
     LNCRNA_FIELD,
@@ -10,6 +11,15 @@ from .fields import (
     PAIR_FIELDS,
     PRECURSOR_FIELD,
 )
-from .params import LNCRNA, MATURE, MIRNA, PRECURSOR, SEQ_MODE, SS_MODE, WORKERS
+from .params import (
+    INTERACTION,
+    LNCRNA,
+    MATURE,
+    MIRNA,
+    PRECURSOR,
+    SEQ_MODE,
+    SS_MODE,
+    WORKERS,
+)
 from .regex import EXTERNAL_LOOP_RE, LOOP_RE, MIRANDA_INFO
 from .sizes import NORMAL_LNCRNA_SEQUENCE_SIZE, NORMAL_MIRNA_SEQUENCE_SIZE

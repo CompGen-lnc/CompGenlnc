@@ -4,13 +4,14 @@ from collections.abc import Iterable
 import numpy as np
 
 from compgenlnc.consts.fields import (
+    INTERACTION_FIELD,
     LNCRNA_FIELD,
     MATURE_FIELD,
     MIRNA_FIELD,
     PAIR_FIELDS,
     PRECURSOR_FIELD,
 )
-from compgenlnc.consts.params import LNCRNA, MATURE, PRECURSOR
+from compgenlnc.consts.params import INTERACTION, LNCRNA, MATURE, PRECURSOR
 from compgenlnc.typing.numpy_dtypes import dtype_index, Index, InteractionPair
 
 
@@ -21,7 +22,8 @@ def get_mature_index(
     if mir not in precursor_dict.keys():
         return None
     precursor = precursor_dict[mir]
-    return np.array((lnc, precursor, mir), dtype=dtype_index)
+    inter_str = f"{lnc}_{mir}"
+    return np.array((lnc, precursor, mir, inter_str), dtype=dtype_index)
 
 
 def gen_indexes(
@@ -54,7 +56,7 @@ def dict_to_numpy(
     feat_dict: dict[str, np.typing.NDArray],
     indexes: np.typing.NDArray[Index],
     *,
-    rna: str = LNCRNA,
+    rna: str | tuple[str, str] = LNCRNA,
 ) -> None:
     if rna == LNCRNA:
         index_rna = indexes[LNCRNA_FIELD]
@@ -62,6 +64,8 @@ def dict_to_numpy(
         index_rna = indexes[MATURE_FIELD]
     elif rna == PRECURSOR:
         index_rna = indexes[PRECURSOR_FIELD]
+    elif rna == INTERACTION:
+        index_rna = indexes[INTERACTION_FIELD]
 
     sample_vec = next(iter(feat_dict.values()))
     array = np.empty((len(index_rna), len(sample_vec)), dtype=sample_vec.dtype)

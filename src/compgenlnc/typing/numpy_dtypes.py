@@ -31,6 +31,7 @@ dtype_index = np.dtype(
         (fields.LNCRNA_FIELD, np.dtypes.StringDType),
         (fields.PRECURSOR_FIELD, np.dtypes.StringDType),
         (fields.MATURE_FIELD, np.dtypes.StringDType),
+        (fields.INTERACTION_FIELD, np.dtypes.StringDType),
     ]
 )
 
