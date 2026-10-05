@@ -92,10 +92,12 @@ def gen_doc2vec_dict(
     keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
+    if model is None:
+        model_file = Path(model_file).resolve()
+        if model_file.exists():
+            model = Doc2Vec.load(model_file)
+        else:
+            train_doc2vec_model(record_list, model_file)
 
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=model, model_file=model_file)
@@ -114,16 +116,17 @@ def gen_doc2vec_dict_from_fasta(
     keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    dict_file = Path(dict_file).resolve()
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
-
+    record_list = list(load_fasta(filename, mode="seq", keep=keep))
     if model is None:
-        model = Doc2Vec.load(str(model_file))
+        model_file = Path(model_file).resolve()
+        if model_file.exists():
+            model = Doc2Vec.load(model_file)
+        else:
+            train_doc2vec_model(record_list, model_file)
 
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=model)
-        for record in load_fasta(filename, mode="seq", keep=keep)
+        for record in record_list
     }
     save_dict(dict_file, doc2vec_dict)
 
@@ -138,14 +141,16 @@ def gen_doc2vec_dict_from_folder(
     keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    folder = Path(folder).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
+    record_list = list(iter_seq_ss(folder, keep=keep, mature_only=mature_only))
+    if model is None:
+        model_file = Path(model_file).resolve()
+        if model_file.exists():
+            model = Doc2Vec.load(model_file)
+        else:
+            train_doc2vec_model(record_list, model_file)
 
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=model, model_file=model_file)
-        for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
+        for record in record_list
     }
     save_dict(dict_file, doc2vec_dict)
