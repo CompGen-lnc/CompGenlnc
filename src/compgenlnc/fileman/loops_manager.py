@@ -8,7 +8,9 @@ from compgenlnc.fileman.fasta_manager import iter_seq_ss
 from compgenlnc.structs.loop_counter import LoopCounter
 
 
-def get_2d_structure_loops(folder: str | os.PathLike, id_: str) -> LoopCounter:
+def read_2d_structure_loops(
+    folder: str | os.PathLike, id_: str
+) -> LoopCounter:
     def match_loop(line: str) -> tuple[bool, tuple[str, int, int, int]]:
         m = LOOP_RE.match(line)
         if m:
@@ -37,12 +39,11 @@ def get_2d_structure_loops(folder: str | os.PathLike, id_: str) -> LoopCounter:
     return LoopCounter(id_, loops, energy)
 
 
-def get_2d_structure_loops_from_folder(
+def read_2d_structure_loops_from_folder(
     loops_folder: str | os.PathLike,
     /,
     keep: Iterable[str] | None = None,
 ) -> Iterator[LoopCounter]:
-    loops_folder = Path(loops_folder).resolve()
     for filename in sorted(os.listdir(loops_folder)):
         id_ = filename.split(".")[0][len(LOOPS_PREFIX) :]
         if (
@@ -51,4 +52,4 @@ def get_2d_structure_loops_from_folder(
             or not filename.startswith(LOOPS_PREFIX)
         ):
             continue
-        yield get_2d_structure_loops(loops_folder, id_)
+        yield read_2d_structure_loops(loops_folder, id_)

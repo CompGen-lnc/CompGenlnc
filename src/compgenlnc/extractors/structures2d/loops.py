@@ -8,7 +8,9 @@ from ViennaRNA import fold_compound
 
 from compgenlnc.config.paths import LOOPS_PREFIX
 from compgenlnc.fileman.fasta_manager import iter_seq_ss
-from compgenlnc.fileman.loops_manager import get_2d_structure_loops_from_folder
+from compgenlnc.fileman.loops_manager import (
+    read_2d_structure_loops_from_folder,
+)
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
@@ -61,7 +63,7 @@ def gen_loops_dict(
     record_list, id_list = tee(record_list)
     extract_2d_structure_loops_from_list(record_list, loops_folder)
     keys = sorted(rec.id for rec in id_list)
-    loops_list = get_2d_structure_loops_from_folder(loops_folder, keep=keys)
+    loops_list = read_2d_structure_loops_from_folder(loops_folder, keep=keys)
     values = (counter.loops_vectorized for counter in loops_list)
     save_dict(dict_file, keys=keys, values=values)
 
@@ -72,7 +74,7 @@ def gen_loops_dict_from_folder(
     *,
     keep: Iterable[str] | None = None,
 ) -> None:
-    loops_list = get_2d_structure_loops_from_folder(loops_folder, keep=keep)
+    loops_list = read_2d_structure_loops_from_folder(loops_folder, keep=keep)
     values = (counter.loops_vectorized for counter in loops_list)
     if keep:
         keys = sorted(keep)

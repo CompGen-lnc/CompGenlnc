@@ -1,5 +1,6 @@
 import os
 import re
+from collections.abc import Iterable
 from pathlib import Path
 
 from compgenlnc.consts.fields import PAIR_FIELDS
@@ -9,12 +10,12 @@ from compgenlnc.structs.binding_zone import BindingZone
 from compgenlnc.typing.numpy_dtypes import InteractionPair
 
 
-def get_binding_zone(
-    folder: str | os.PathLike, interaction: InteractionPair
+def read_binding_zone(
+    binding_folder: str | os.PathLike, interaction: InteractionPair
 ) -> BindingZone:
-    folder = Path(folder).resolve()
+    binding_folder = Path(binding_folder).resolve()
     lnc, mir = interaction[PAIR_FIELDS]
-    filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
+    filename = binding_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
     text = filename.read_text()
     m = re.match(MIRANDA_INFO, text)
     if not m:

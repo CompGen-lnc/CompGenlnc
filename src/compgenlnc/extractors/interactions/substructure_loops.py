@@ -16,8 +16,8 @@ from compgenlnc.consts.params import LNCRNA, MIRNA
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.dict_manager import save_dict
-from compgenlnc.fileman.loops_manager import get_2d_structure_loops
-from compgenlnc.fileman.miranda_manager import get_binding_zone
+from compgenlnc.fileman.loops_manager import read_2d_structure_loops
+from compgenlnc.fileman.miranda_manager import read_binding_zone
 from compgenlnc.structs.binding_zone import BindingZone
 from compgenlnc.structs.loop_counter import LoopCounter
 from compgenlnc.typing.numpy_dtypes import InteractionTuple
@@ -94,10 +94,10 @@ def gen_substructure_loops_dict_from_files(
             binding_filename = binding_folder / f"{BINDING_PREFIX}{key}.dat"
             if not loops_filename.exists() or not binding_filename.exists():
                 continue
-            binding_zone = get_binding_zone(binding_filename)
+            binding_zone = read_binding_zone(binding_filename)
             if not binding_zone:
                 yield [-1] * 3 + [0] * 4
-            loop_counter = get_2d_structure_loops(loops_filename)
+            loop_counter = read_2d_structure_loops(loops_filename)
             yield get_substructure_loops(
                 loop_counter, binding_zone, molecule
             ).loops_vectorized
