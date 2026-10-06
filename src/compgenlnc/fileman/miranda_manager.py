@@ -18,7 +18,9 @@ def get_binding_zone(
     text = filename.read_text()
     m = re.match(MIRANDA_INFO, text)
     if not m:
-        return BindingZone(False)
+        return BindingZone("", "", False)
     lnc_range = range(int(m["lnc_first"]) - 1, int(m["lnc_last"]) - 1)
     mir_range = range(int(m["mir_first"]) - 1, int(m["mir_last"]) - 1)
-    return BindingZone(True, float(m["energy"]), lnc_range, mir_range)
+    return BindingZone(
+        lnc, mir, True, float(m["energy"]), lnc_range, mir_range
+    )

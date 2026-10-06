@@ -12,7 +12,7 @@ from .fasta_manager import (
     save_fasta,
 )
 from .loops_manager import (
-    get_2d_struture_loops,
+    get_2d_structure_loops,
     get_2d_structure_loops_from_folder,
 )
 from .miranda_manager import get_binding_zone

@@ -16,7 +16,7 @@ from compgenlnc.consts.params import LNCRNA, MIRNA
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.dict_manager import save_dict
-from compgenlnc.fileman.loops_manager import get_2d_struture_loops
+from compgenlnc.fileman.loops_manager import get_2d_structure_loops
 from compgenlnc.fileman.miranda_manager import get_binding_zone
 from compgenlnc.structs.binding_zone import BindingZone
 from compgenlnc.structs.loop_counter import LoopCounter
@@ -27,7 +27,7 @@ def get_substructure_loops(
     loop_counter: LoopCounter, binding_zone: BindingZone, molecule: str
 ) -> LoopCounter:
     if not binding_zone:
-        return LoopCounter([], 0)
+        return LoopCounter("", [], 0)
     loops_arr = loop_counter.loops
     if molecule == LNCRNA:
         start, end = binding_zone.lnc_start, binding_zone.lnc_end
@@ -37,7 +37,7 @@ def get_substructure_loops(
         loops_arr[HIGH_POSITION] <= end
     )
     new_loops = loops_arr[mask]
-    return LoopCounter(new_loops)
+    return LoopCounter(loop_counter.rna, new_loops)
 
 
 def get_substructure_loops_from_list(
@@ -97,7 +97,7 @@ def gen_substructure_loops_dict_from_files(
             binding_zone = get_binding_zone(binding_filename)
             if not binding_zone:
                 yield [-1] * 3 + [0] * 4
-            loop_counter = get_2d_struture_loops(loops_filename)
+            loop_counter = get_2d_structure_loops(loops_filename)
             yield get_substructure_loops(
                 loop_counter, binding_zone, molecule
             ).loops_vectorized

@@ -14,7 +14,7 @@ from compgenlnc.extractors.interactions import (
     get_substructure_loops_from_list,
 )
 from compgenlnc.fileman import (
-    get_2d_struture_loops,
+    get_2d_structure_loops,
     get_binding_zone,
     load_dict,
 )
@@ -31,10 +31,9 @@ def test_get_substructure_loops(
     for interaction in interactions[PAIR_FIELDS]:
         lnc, mir = interaction
         precursor = precursors_consverter[mir]
-        mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
         binding_folder = INTERACTIONS_FOLDER / "binding"
         with subtests.test(i=(lnc, mir)):
-            mir_loops = get_2d_struture_loops(mir_loops_path)
+            mir_loops = get_2d_structure_loops(SS_LOOPS_FOLDER, precursor)
             binding_zone = get_binding_zone(binding_folder, interaction)
             sub_loops = get_substructure_loops(mir_loops, binding_zone, MIRNA)
             start, end = binding_zone.mir_start, binding_zone.mir_end
@@ -54,11 +53,10 @@ def test_get_substructure_loops_from_list(
         ~np.isin(interaction_list[MIRNA_FIELD], pre_mirna_id_list)
     ]
     for interaction in interactions[PAIR_FIELDS]:
-        lnc, mir = interaction
+        _, mir = interaction
         precursor = precursors_consverter[mir]
-        mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
         binding_folder = INTERACTIONS_FOLDER / "binding"
-        mir_loops = get_2d_struture_loops(mir_loops_path)
+        mir_loops = get_2d_structure_loops(SS_LOOPS_FOLDER, precursor)
         binding_zone = get_binding_zone(binding_folder, interaction)
         loops_list.append(mir_loops)
         binding_list.append(binding_zone)
@@ -83,11 +81,10 @@ def test_gen_substructure_loops_dict(
         ~np.isin(interaction_list[MIRNA_FIELD], pre_mirna_id_list)
     ]
     for interaction in interactions[PAIR_FIELDS]:
-        lnc, mir = interaction
+        _, mir = interaction
         precursor = precursors_consverter[mir]
-        mir_loops_path = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{precursor}.dat"
         binding_folder = INTERACTIONS_FOLDER / "binding"
-        mir_loops = get_2d_struture_loops(mir_loops_path)
+        mir_loops = get_2d_structure_loops(SS_LOOPS_FOLDER, precursor)
         binding_zone = get_binding_zone(binding_folder, interaction)
         loops_list.append(mir_loops)
         binding_list.append(binding_zone)

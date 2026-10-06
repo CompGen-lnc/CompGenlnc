@@ -8,6 +8,8 @@ import numpy as np
 
 @dataclass(slots=True)
 class BindingZone:
+    _lnc_id: str
+    _mir_id: str
     _hint: bool
     _energy: float
     _lnc_range: range
@@ -15,15 +17,27 @@ class BindingZone:
 
     def __init__(
         self,
+        lnc: str,
+        mir: str,
         hint: bool,
         energy: float = 0,
         lnc_range: range = range(0),
         mir_range: range = range(0),
     ) -> None:
+        self._lnc_id = lnc
+        self._mir_id = mir
         self._hint = hint
         self._energy = energy
         self._lnc_range = lnc_range
         self._mir_range = mir_range
+
+    @property
+    def lncrna(self) -> bool:
+        return self._lnc_id
+
+    @property
+    def mirna(self) -> bool:
+        return self._mir_id
 
     @property
     def energy(self) -> bool:

@@ -11,6 +11,7 @@ from compgenlnc.typing.numpy_dtypes import dtype_loop_tuple, LoopTuple
 
 @dataclass(slots=True)
 class LoopCounter:
+    _rna: str
     _energy: float
     _loops: np.typing.NDArray[np.void]
     _hairpin_energy: float
@@ -19,9 +20,11 @@ class LoopCounter:
 
     def __init__(
         self,
+        id_: str,
         loops: Iterable[tuple[str, int, int, int]],
         energy: float | None = None,
     ) -> None:
+        self._rna = id_
         loops_arr = np.array(loops, dtype_loop_tuple)
         self._loops = loops_arr
         if energy is not None:
@@ -31,6 +34,10 @@ class LoopCounter:
         self._hairpin_energy = self.hairpin_loops[ENERGY_FIELD].sum() / 100
         self._stack_energy = self.stack_loops[ENERGY_FIELD].sum() / 100
         self._multi_energy = self.multi_loops[ENERGY_FIELD].sum() / 100
+
+    @property
+    def rna(self) -> float:
+        return self._rna
 
     @property
     def energy(self) -> float:

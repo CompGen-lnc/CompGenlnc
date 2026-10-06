@@ -56,7 +56,7 @@ def dict_to_numpy(
     feat_dict: dict[str, np.typing.NDArray],
     indexes: np.typing.NDArray[Index],
     *,
-    rna: str | tuple[str, str] = LNCRNA,
+    rna: str = LNCRNA,
 ) -> None:
     if rna == LNCRNA:
         index_rna = indexes[LNCRNA_FIELD]

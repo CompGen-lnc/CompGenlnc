@@ -8,7 +8,7 @@ from compgenlnc.extractors.structures2d import (
     gen_loops_dict,
     gen_loops_dict_from_folder,
 )
-from compgenlnc.fileman import get_2d_struture_loops, iter_seq_ss, load_dict
+from compgenlnc.fileman import get_2d_structure_loops, iter_seq_ss, load_dict
 
 from constants import SEQ_SS_FOLDER, SS_LOOPS_FOLDER
 
@@ -44,8 +44,9 @@ def test_gen_loops_dict(seq_ss_list, tmp_path):
     gen_loops_dict(dict_path, seq_ss_list, SS_LOOPS_FOLDER)
     loops_dict = load_dict(dict_path)
     for key, value in loops_dict.items():
-        expected_file = SS_LOOPS_FOLDER / f"{LOOPS_PREFIX}{key}.dat"
-        expected = get_2d_struture_loops(expected_file).loops_vectorized
+        expected = get_2d_structure_loops(
+            SS_LOOPS_FOLDER, key
+        ).loops_vectorized
         assert np.array_equal(value, expected)
 
 

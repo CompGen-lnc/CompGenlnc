@@ -69,8 +69,7 @@ def gen_normalized_matrix_dict(
         ss_vector.append(record.ss)
 
     if normal_size is None:
-        normal_size = math.ceil(np.mean([len(ss) for ss in ss_vector])
-)
+        normal_size = math.ceil(np.mean([len(ss) for ss in ss_vector]))
     mat_it = get_adjacency_matrix_list(ss_vector)
     normal_it = normalize_matrix_list(mat_it, normal_size)
     save_dict(dict_file, keys=id_vector, values=normal_it)
