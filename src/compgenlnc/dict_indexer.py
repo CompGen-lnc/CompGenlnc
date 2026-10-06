@@ -1,5 +1,6 @@
 import os
 from collections.abc import Iterable
+from pathlib import Path
 
 import numpy as np
 
@@ -12,6 +13,7 @@ from compgenlnc.consts.fields import (
     PRECURSOR_FIELD,
 )
 from compgenlnc.consts.params import INTERACTION, LNCRNA, MATURE, PRECURSOR
+from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
 from compgenlnc.typing.numpy_dtypes import dtype_index, Index, InteractionPair
 
 
@@ -44,6 +46,8 @@ def gen_indexes(
     mask = np.ones(len(array), dtype=bool)
     mask[fails] = False
     indexes = np.unique(array[mask])
+    index_file = Path(index_file).resolve()
+    index_file.parent.mkdir(parents=True, exist_ok=True)
     np.save(index_file, indexes)
 
 
