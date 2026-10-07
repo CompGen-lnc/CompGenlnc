@@ -8,6 +8,7 @@ from compgenlnc.config.paths import (
     MAT_MIRNA_FASTA,
     PRE_MIRNA_FASTA,
 )
+from compgenlnc.consts.params import SS_MODE
 from compgenlnc.extractors.structures2d.structure_predictor import (
     extract_2d_structure_identified,
 )
@@ -91,16 +92,19 @@ def gen_fasta_2d(
     keep: Iterable[str] | None = None,
 ) -> None:
     num_processes = max(1, mp.cpu_count() - 2)
-    seq_fasta = Path(seq_fasta).resolve()
     ss_fasta = Path(ss_fasta).resolve()
+    exclude = []
 
-    ss_fasta.parent.mkdir(parents=True, exist_ok=True)
+    if ss_fasta.exists():
+        exclude = [rec.id for rec in load_fasta(ss_fasta, mode=SS_MODE)]
+    else:
+        ss_fasta.parent.mkdir(parents=True, exist_ok=True)
 
     with mp.Pool(processes=num_processes) as pool:
         ss_list = pool.imap(
             extract_2d_structure_identified,
-            load_fasta(seq_fasta, mode="seq", keep=keep),
-            chunksize=10,
+            load_fasta(seq_fasta, mode="seq", keep=keep, exclude=exclude),
+            chunksize=30,
         )
         save_fasta(ss_fasta, ss_list, mode="ss")
 

@@ -16,10 +16,11 @@ def extract_2d_structure(seq: SeqLike) -> StructureRecord:
     if not seq:
         return StructureRecord("")
 
-    raw_ss = bytearray(b'.' * len(seq))
+    raw_ss = bytearray(b"." * len(seq))
+
     def joint_ss(start, end, sub_ss, energy, data):
         idx_start = start - 1
-        for i, caracter in enumerate(sub_ss.encode('ascii')):
+        for i, caracter in enumerate(sub_ss.encode("ascii")):
             if caracter == 40 or caracter == 41:
                 pos = idx_start + i
                 raw_ss[pos] = caracter
@@ -31,7 +32,7 @@ def extract_2d_structure(seq: SeqLike) -> StructureRecord:
     else:
         RNA.Lfold_cb(seq, 300, joint_ss, None)
         ss = raw_ss.decode("ascii")
-        
+
     return StructureRecord(ss)
 
 

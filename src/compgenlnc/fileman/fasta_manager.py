@@ -5,15 +5,16 @@ from pathlib import Path
 from compgenlnc.config.paths import (
     SEQ_SS_PREFIX,
 )
+from compgenlnc.consts.params import SEQ_MODE, SS_MODE
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
 
 def load_fasta(
     filename: str | os.PathLike,
-    /,
     *,
-    mode: str = "seq",
+    mode: str = SEQ_MODE,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
 ) -> Iterator[SeqSSRecord]:
     """Load a FASTA file and iterate the RNA molecules into them.
 
@@ -29,7 +30,7 @@ def load_fasta(
     Raises:
         ValueError: If mode is any other than 'seq' or 'ss'.
     """
-    if mode not in ["seq", "ss"]:
+    if mode not in [SEQ_MODE, SS_MODE]:
         raise ValueError(f"Value {mode} for mode is not allowed")
 
     filename = Path(filename).resolve()
@@ -42,9 +43,9 @@ def load_fasta(
                     value += raw_line.split()[0]
                 continue
 
-            if mode == "seq":
+            if mode == SEQ_MODE:
                 seq = value
-            elif mode == "ss":
+            elif mode == SS_MODE:
                 ss = value
 
             if id_:
@@ -56,7 +57,9 @@ def load_fasta(
                 continue
 
             line = raw_line[1:].split()[0]
-            if keep is None or line in keep:
+            if (not keep or line in keep) and (
+                not exclude or line not in exclude
+            ):
                 id_ = line
 
 
@@ -66,6 +69,7 @@ def save_fasta(
     /,
     *,
     mode: str,
+    overwrite: bool = False,
 ) -> None:
     """Save sequences or 2D structures from a group of RNA molecules into a
     FATSA file.
@@ -79,14 +83,15 @@ def save_fasta(
     Raises:
         ValueError: If mode is any other than 'seq' or 'ss'.
     """
-    if mode not in ["seq", "ss"]:
+    if mode not in [SEQ_MODE, SS_MODE]:
         raise ValueError(f"Value {mode} for mode is not allowed")
 
     filename = Path(filename).resolve()
     filename.parent.mkdir(parents=True, exist_ok=True)
-    with open(filename, "w") as out_file:
+    open_mode = "w" if overwrite else "a"
+    with open(filename, open_mode) as out_file:
         for record in molecules:
-            value = record.seq if mode == "seq" else record.ss
+            value = record.ss if mode == SS_MODE else record.seq
             out_file.write(f">{record.id}\n")
             if not value:
                 continue
@@ -136,7 +141,7 @@ def read_sequence(
         seq = f.readlines()[0].strip()
     if mature_only:
         seq = "".join(c for c in seq if c.isupper())
-    return seq.upper().replace("U", "T")
+    return seq.upper().replace("T", "U")
 
 
 def read_structure(
@@ -157,12 +162,14 @@ def read_structure(
         ss = f.readlines()[1].strip()
     if mature_only:
         ss = "".join(c for c in ss if c.isupper())
-    return ss.upper().replace("U", "T")
+    return ss.upper().replace("T", "U")
 
 
 def iter_seq_ss(
     folder: str | os.PathLike,
+    *,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> Iterator[SeqSSRecord]:
     """Iterate all the seq+ss files from the same folder that fit the
@@ -180,7 +187,7 @@ def iter_seq_ss(
         if not filename.startswith(SEQ_SS_PREFIX):
             continue
         id_ = os.path.splitext(filename[len(SEQ_SS_PREFIX) :])[0]
-        if keep and id_ not in keep:
+        if keep and id_ not in keep or exclude and id_ in exclude:
             continue
         with open(folder / filename) as file:
             seq = file.readline()
