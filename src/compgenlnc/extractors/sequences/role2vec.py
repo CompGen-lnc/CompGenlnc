@@ -8,7 +8,7 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.nn import knn_graph, Node2Vec
 
-from compgenlnc.consts.params import WORKERS
+from compgenlnc.consts.params import SEQ_MODE, WORKERS
 from compgenlnc.extractors.sequences.ctd import get_ctd
 from compgenlnc.extractors.sequences.doc2vec import (
     get_doc2vec,
@@ -59,10 +59,9 @@ def gen_role2vec_dict(
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
-        # return total_loss / len(loader)
 
     embedding = model.embedding.weight.data.numpy(force=True)
-    save_dict(filename, keys=keys, values=embedding)
+    save_dict(filename, keys=keys, values=embedding, overwrite=True)
 
 
 def gen_role2vec_dict_from_files(
@@ -93,27 +92,21 @@ def gen_role2vec_dict_from_fasta(
     keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    filename = Path(filename).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
-
     doc2vec_model = train_doc2vec_model_from_fasta(filename)
 
     kmer_dict = {
         record.id: get_kmer(record.seq, k)
-        for record in load_fasta(filename, "seq")
+        for record in load_fasta(filename, mode=SEQ_MODE)
         if record.id in keep
     }
     ctd_dict = {
         record.id: get_ctd(record.seq)
-        for record in load_fasta(filename, "seq")
+        for record in load_fasta(filename, mode=SEQ_MODE)
         if record.id in keep
     }
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=doc2vec_model)
-        for record in load_fasta(filename, "seq")
+        for record in load_fasta(filename, mode=SEQ_MODE)
         if record.id in keep
     }
 
@@ -129,12 +122,6 @@ def gen_role2vec_dict_from_folder(
     keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    folder = Path(folder).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
-
     doc2vec_model = train_doc2vec_model(
         iter_seq_ss(folder, keep=keep, mature_only=mature_only)
     )

@@ -44,7 +44,7 @@ def load_fasta(
                 continue
 
             if mode == SEQ_MODE:
-                seq = value
+                seq = value.replace("T", "U")
             elif mode == SS_MODE:
                 ss = value
 
@@ -190,6 +190,6 @@ def iter_seq_ss(
         if keep and id_ not in keep or exclude and id_ in exclude:
             continue
         with open(folder / filename) as file:
-            seq = file.readline()
+            seq = file.readline().replace("T", "U")
             ss = file.readline()
         yield SeqSSRecord(id_, seq, ss)

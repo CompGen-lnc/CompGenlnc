@@ -55,4 +55,4 @@ def test_seq_ss_to_fasta(tmp_path):
 
     new_seq_fasta = new_seq_fasta_file.read_text().replace("\n", "")
     seq_fasta = SEQ_FASTA_EXAMPLE.read_text().replace("\n", "")
-    assert new_seq_fasta.upper() == seq_fasta.upper().replace("U", "T")
+    assert new_seq_fasta.upper() == seq_fasta.upper()

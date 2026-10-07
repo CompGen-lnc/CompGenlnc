@@ -50,8 +50,12 @@ def extract_2d_structure_loops_from_folder(
     *,
     keep: Iterable[str] | None = None,
 ) -> np.typing.NDArray[np.float32]:
+    already = [
+        filename[len(LOOPS_PREFIX)].split(".")[0]
+        for filename in os.listdir(loops_folder)
+    ]
     return extract_2d_structure_loops_from_list(
-        iter_seq_ss(seq_ss_folder, keep=keep), loops_folder
+        iter_seq_ss(seq_ss_folder, keep=keep, exclude=already), loops_folder
     )
 
 
@@ -60,10 +64,11 @@ def gen_loops_dict(
     record_list: Iterable[SeqSSRecord],
     loops_folder: str | os.PathLike,
 ) -> None:
-    record_list, id_list = tee(record_list)
+    record_list, record_copy = tee(record_list)
     extract_2d_structure_loops_from_list(record_list, loops_folder)
-    keys = sorted(rec.id for rec in id_list)
-    loops_list = read_2d_structure_loops_from_folder(loops_folder, keep=keys)
+    id_list = set(rec.id for rec in record_copy)
+    loops_list = list(read_2d_structure_loops_from_folder(loops_folder, keep=id_list))
+    keys = (counter.rna for counter in loops_list)
     values = (counter.loops_vectorized for counter in loops_list)
     save_dict(dict_file, keys=keys, values=values)
 
@@ -73,12 +78,14 @@ def gen_loops_dict_from_folder(
     loops_folder: str | os.PathLike,
     *,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
 ) -> None:
-    loops_list = read_2d_structure_loops_from_folder(loops_folder, keep=keep)
+    loops_list = list(read_2d_structure_loops_from_folder(
+        loops_folder, keep=keep, exclude=exclude
+    ))
     values = (counter.loops_vectorized for counter in loops_list)
     if keep:
         keys = sorted(keep)
     else:
-        start = len(LOOPS_PREFIX)
-        keys = sorted(file[start:-4] for file in os.listdir(loops_folder))
+        keys = (loop.rna for loop in loops_list)
     save_dict(dict_file, keys=keys, values=values)

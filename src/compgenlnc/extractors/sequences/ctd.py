@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (
     iter_seq_ss,
@@ -35,23 +36,23 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
     if not seq:
         return np.array([0.0] * 30, np.float32)
 
-    seq = seq.upper().replace("U", "T")
-    codes = {"A": 0, "T": 1, "G": 2, "C": 3}
+    seq = seq.upper().replace("T", "U")
+    codes = {"A": 0, "U": 1, "G": 2, "C": 3}
     n = len(seq)
 
     nums = Counter(seq)
-    num_A, num_T, num_G, num_C = nums["A"], nums["T"], nums["G"], nums["C"]
-    nums_array = np.array([num_A, num_T, num_G, num_C], np.float32) / n
+    num_A, num_U, num_G, num_C = nums["A"], nums["U"], nums["G"], nums["C"]
+    nums_array = np.array([num_A, num_U, num_G, num_C], np.float32) / n
 
     trans = Counter(seq[i : i + 2] for i in range(n - 1))
-    AT_trans = trans["AT"] + trans["TA"]
+    AU_trans = trans["AU"] + trans["UA"]
     AG_trans = trans["AG"] + trans["GA"]
     AC_trans = trans["AC"] + trans["CA"]
-    TG_trans = trans["TG"] + trans["GT"]
-    TC_trans = trans["TC"] + trans["CT"]
+    UG_trans = trans["UG"] + trans["GU"]
+    UC_trans = trans["UC"] + trans["CU"]
     GC_trans = trans["GC"] + trans["CG"]
     trans_array = np.array(
-        [AT_trans, AG_trans, AC_trans, TG_trans, TC_trans, GC_trans],
+        [AU_trans, AG_trans, AC_trans, UG_trans, UC_trans, GC_trans],
         np.float32,
     ) / (n - 1)
 
@@ -106,7 +107,6 @@ def gen_ctd_dict(
     record_list: Iterable[SeqSSRecord],
     dict_file: str | os.PathLike,
     /,
-    keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
     """Get the CTD of a RNA sequences from the seq+ss file of the given
@@ -134,6 +134,7 @@ def gen_ctd_dict_from_fasta(
     dict_file: str | os.PathLike,
     /,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
     """Get the ctd of a RNA sequences from 1 to k from a FASTA file with RNA
@@ -148,18 +149,10 @@ def gen_ctd_dict_from_fasta(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    filename = Path(filename).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
-
-    ctd_dict = {
-        record.id: get_ctd(record.seq)
-        for record in load_fasta(filename, mode="seq")
-        if not keep or record.id in keep
-    }
-    save_dict(dict_file, ctd_dict)
+    record_list = load_fasta(
+        filename, mode=SEQ_MODE, keep=keep, exclude=exclude
+    )
+    gen_ctd_dict(record_list, dict_file)
 
 
 def gen_ctd_dict_from_folder(
@@ -167,6 +160,7 @@ def gen_ctd_dict_from_folder(
     dict_file: str | os.PathLike,
     /,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
     """Get the CTD of a RNA sequences from the seq+ss files.
@@ -178,14 +172,5 @@ def gen_ctd_dict_from_folder(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    folder = Path(folder).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
-
-    ctd_dict = {
-        record.id: get_ctd(record.seq)
-        for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
-    }
-    save_dict(dict_file, ctd_dict)
+    record_list = iter_seq_ss(folder, keep=keep, exclude=exclude)
+    gen_ctd_dict(record_list, dict_file)

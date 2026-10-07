@@ -54,6 +54,6 @@ seq_list = [
     ),
 ]
 
-T_converted_seq_list = [
-    SeqSSRecord(seq.id, seq.seq.convert_to_T(), seq.ss) for seq in seq_list
+U_converted_seq_list = [
+    SeqSSRecord(seq.id, seq.seq.convert_to_U(), seq.ss) for seq in seq_list
 ]

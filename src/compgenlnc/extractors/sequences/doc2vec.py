@@ -1,5 +1,6 @@
 import os
 from collections.abc import Iterable
+from itertools import tee
 from pathlib import Path
 
 import numpy as np
@@ -7,6 +8,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.config.seeds import DOC2VEC_MODEL_SEED
+from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (
     iter_seq_ss,
@@ -44,7 +46,7 @@ def train_doc2vec_model_from_fasta(
 ) -> Doc2Vec:
     filename = Path(filename).resolve()
     model_file = Path(model_file).resolve()
-    return train_doc2vec_model(load_fasta(filename, mode="seq"), model_file)
+    return train_doc2vec_model(load_fasta(filename, mode=SEQ_MODE), model_file)
 
 
 def get_doc2vec(
@@ -89,7 +91,6 @@ def gen_doc2vec_dict(
     *,
     model: Doc2Vec | None = None,
     model_file: str | os.PathLike = "",
-    keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
     if model is None:
@@ -97,7 +98,8 @@ def gen_doc2vec_dict(
         if model_file.exists():
             model = Doc2Vec.load(model_file)
         else:
-            train_doc2vec_model(record_list, model_file)
+            record_list, record_copy = tee(record_list)
+            train_doc2vec_model(record_copy, model_file)
 
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=model, model_file=model_file)
@@ -114,21 +116,15 @@ def gen_doc2vec_dict_from_fasta(
     model: Doc2Vec | None = None,
     model_file: str | os.PathLike = "",
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    record_list = list(load_fasta(filename, mode="seq", keep=keep))
-    if model is None:
-        model_file = Path(model_file).resolve()
-        if model_file.exists():
-            model = Doc2Vec.load(model_file)
-        else:
-            train_doc2vec_model(record_list, model_file)
-
-    doc2vec_dict = {
-        record.id: get_doc2vec(record.seq, model=model)
-        for record in record_list
-    }
-    save_dict(dict_file, doc2vec_dict)
+    record_list = load_fasta(
+        filename, mode=SEQ_MODE, keep=keep, exclude=exclude
+    )
+    gen_doc2vec_dict(
+        record_list, dict_file, model=model, model_file=model_file
+    )
 
 
 def gen_doc2vec_dict_from_folder(
@@ -139,18 +135,10 @@ def gen_doc2vec_dict_from_folder(
     model: Doc2Vec | None = None,
     model_file: str | os.PathLike = "",
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    record_list = list(iter_seq_ss(folder, keep=keep, mature_only=mature_only))
-    if model is None:
-        model_file = Path(model_file).resolve()
-        if model_file.exists():
-            model = Doc2Vec.load(model_file)
-        else:
-            train_doc2vec_model(record_list, model_file)
-
-    doc2vec_dict = {
-        record.id: get_doc2vec(record.seq, model=model, model_file=model_file)
-        for record in record_list
-    }
-    save_dict(dict_file, doc2vec_dict)
+    record_list = iter_seq_ss(folder, keep=keep, exclude=exclude)
+    gen_doc2vec_dict(
+        record_list, dict_file, model=model, model_file=model_file
+    )

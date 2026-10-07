@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
+from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
@@ -81,7 +82,7 @@ def gen_normalized_sequence_dict(
             id_vector, normalize_sequence_list(seq_vector, normal_size)
         )
     }
-    save_dict(dict_file, seq_dict)
+    save_dict(dict_file, seq_dict, overwrite=True)
 
 
 def gen_normalized_sequence_dict_from_fasta(
@@ -92,25 +93,8 @@ def gen_normalized_sequence_dict_from_fasta(
     keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    filename = Path(filename).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_file.parent.mkdir(parents=True, exist_ok=True)
-
-    id_vector = []
-    seq_vector = []
-
-    for record in load_fasta(filename, mode="seq", keep=keep):
-        id_vector.append(record.id)
-        seq_vector.append(recode_sequence(record.seq))
-
-    seq_dict = {
-        pair[0]: pair[1]
-        for pair in zip(
-            id_vector, normalize_sequence_list(seq_vector, normal_size)
-        )
-    }
-    save_dict(dict_file, seq_dict)
+    record_list = load_fasta(filename, mode=SEQ_MODE, keep=keep)
+    gen_normalized_sequence_dict(record_list, dict_file, normal_size)
 
 
 def gen_normalized_sequence_dict_from_folder(
@@ -121,22 +105,5 @@ def gen_normalized_sequence_dict_from_folder(
     keep: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
-    folder = Path(folder).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_file.parent.mkdir(parents=True, exist_ok=True)
-
-    id_vector = []
-    seq_vector = []
-
-    for record in iter_seq_ss(folder, keep):
-        id_vector.append(record.id)
-        seq_vector.append(recode_sequence(record.seq))
-
-    seq_dict = {
-        pair[0]: pair[1]
-        for pair in zip(
-            id_vector, normalize_sequence_list(seq_vector, normal_size)
-        )
-    }
-    save_dict(dict_file, seq_dict)
+    record_list = iter_seq_ss(folder, keep=keep)
+    gen_normalized_sequence_dict(record_list, dict_file, normal_size)

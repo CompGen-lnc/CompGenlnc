@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (
     iter_seq_ss,
@@ -37,13 +38,13 @@ def get_kmer(seq: SeqLike, k: int) -> np.typing.NDArray[np.float32]:
     if isinstance(seq, SeqRecord):
         seq = str(seq)
 
-    seq = seq.upper().replace("U", "T")
+    seq = seq.upper().replace("T", "U")
 
     def get_nmer(seq: str, n: int) -> np.typing.NDArray[np.float32]:
         if not seq or len(seq) < n:
             return np.array([0] * 4**n, np.float32)
         kmers = Counter((seq[i : i + n] for i in range(len(seq) - n + 1)))
-        combinations = ("".join(p) for p in product("ATCG", repeat=n))
+        combinations = ("".join(p) for p in product("AUCG", repeat=n))
         return np.array(
             [kmers[sub_s] / kmers.total() for sub_s in combinations],
             np.float32,
@@ -110,6 +111,7 @@ def gen_kmer_dict_from_fasta(
     k: int,
     /,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
     """Get the k-mers of RNA sequences from 1 to k from a FASTA file with RNA
@@ -124,18 +126,10 @@ def gen_kmer_dict_from_fasta(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    filename = Path(filename).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
-
-    kmer_dict = {
-        record.id: get_kmer(record.seq, k)
-        for record in load_fasta(filename, mode="seq")
-        if not keep or record.id in keep
-    }
-    save_dict(dict_file, kmer_dict)
+    record_list = load_fasta(
+        filename, mode=SEQ_MODE, keep=keep, exclude=exclude
+    )
+    gen_kmer_dict(record_list, dict_file, k)
 
 
 def gen_kmer_dict_from_folder(
@@ -144,6 +138,7 @@ def gen_kmer_dict_from_folder(
     k: int,
     /,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
     mature_only: bool = False,
 ) -> None:
     """Get the k-mers of RNA sequences from 1 to k from the seq+ss
@@ -158,14 +153,5 @@ def gen_kmer_dict_from_folder(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    folder = Path(folder).resolve()
-    dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
-
-    kmer_dict = {
-        record.id: get_kmer(record.seq, k)
-        for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
-    }
-    save_dict(dict_file, kmer_dict)
+    record_list = iter_seq_ss(folder, keep=keep, exclude=exclude)
+    gen_kmer_dict(record_list, dict_file, k)

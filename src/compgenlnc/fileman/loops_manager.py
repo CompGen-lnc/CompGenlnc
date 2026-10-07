@@ -43,13 +43,11 @@ def read_2d_structure_loops_from_folder(
     loops_folder: str | os.PathLike,
     /,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
 ) -> Iterator[LoopCounter]:
     for filename in sorted(os.listdir(loops_folder)):
-        id_ = filename.split(".")[0][len(LOOPS_PREFIX) :]
-        if (
-            keep is not None
-            and id_ not in keep
-            or not filename.startswith(LOOPS_PREFIX)
-        ):
+        id_ = filename[len(LOOPS_PREFIX):].split(".")[0]
+        filtered = keep and id_ not in keep or exclude and id_ in exclude
+        if filtered or not filename.startswith(LOOPS_PREFIX):
             continue
         yield read_2d_structure_loops(loops_folder, id_)

@@ -72,7 +72,7 @@ def gen_normalized_matrix_dict(
         normal_size = math.ceil(np.mean([len(ss) for ss in ss_vector]))
     mat_it = get_adjacency_matrix_list(ss_vector)
     normal_it = normalize_matrix_list(mat_it, normal_size)
-    save_dict(dict_file, keys=id_vector, values=normal_it)
+    save_dict(dict_file, keys=id_vector, values=normal_it, overwrite=True)
 
 
 def gen_normalized_matrix_dict_from_fasta(
@@ -82,7 +82,6 @@ def gen_normalized_matrix_dict_from_fasta(
     /,
     keep: Iterable[str] | None = None,
 ) -> None:
-    filename = Path(filename).resolve()
     record_it = load_fasta(filename, mode="ss", keep=keep)
     gen_normalized_matrix_dict(record_it, dict_file, normal_size)
 
@@ -94,6 +93,5 @@ def gen_normalized_matrix_dict_from_folder(
     /,
     keep: Iterable[str] | None = None,
 ) -> None:
-    folder = Path(folder).resolve()
     record_it = iter_seq_ss(folder, keep=keep)
     gen_normalized_matrix_dict(record_it, dict_file, normal_size)

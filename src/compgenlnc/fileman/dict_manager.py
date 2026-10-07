@@ -48,6 +48,7 @@ def save_dict(
     *,
     keys: Iterable[str] | None = None,
     values: Iterable[np.typing.NDArray] | None = None,
+    overwrite: bool = False,
 ) -> None:
     """Save a dicationary pairs of RNA names and feature vectors into a file.
 
@@ -64,13 +65,13 @@ def save_dict(
         items = zip(keys, values)
     else:
         return
-    with open(filename, "w") as out_file:
+
+    open_mode = "w" if overwrite else "a"
+    with open(filename, open_mode) as out_file:
         for key, value in items:
             if value.ndim == 1:
                 value = value.reshape(1, len(value))
             out_file.write(f"{key}\n")
             out_file.write(
-                f"\t{
-                    '\n\t'.join(','.join(str(x) for x in row) for row in value)
-                }\n"
+                f"\t{'\n\t'.join(','.join(str(x) for x in row) for row in value)}\n"
             )

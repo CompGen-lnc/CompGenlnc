@@ -1,6 +1,6 @@
 import pytest
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
-from params import T_converted_seq_list, seq_list
+from params import U_converted_seq_list, seq_list
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.fileman import (
@@ -55,12 +55,12 @@ def test_iter_seq_fasta_filtered(filter, expected):
 
 
 @pytest.mark.parametrize(
-    "index, expected", list(enumerate(T_converted_seq_list))
+    "index, expected", list(enumerate(U_converted_seq_list))
 )
 def test_iter_seq_ss(index, expected, seq_ss_list):
     record = seq_ss_list[index]
     assert record.id == expected.id
-    assert record.seq == expected.seq
+    assert record.seq.convert_to_U() == expected.seq
 
 
 @pytest.mark.parametrize(
@@ -77,7 +77,7 @@ def test_iter_seq_ss_filtered(keep, expected):
     assert len(records_list) == expected
 
 
-@pytest.mark.parametrize("record", T_converted_seq_list)
+@pytest.mark.parametrize("record", U_converted_seq_list)
 def test_read_sequence(record):
     filename = SEQ_SS_FOLDER / f"{SEQ_SS_PREFIX}{record.id}.dat"
     assert filename.exists()
