@@ -44,7 +44,7 @@ def load_fasta(
                 continue
 
             if mode == SEQ_MODE:
-                seq = value.replace("T", "U")
+                seq = value.upper().replace("T", "U")
             elif mode == SS_MODE:
                 ss = value
 
@@ -162,7 +162,7 @@ def read_structure(
         ss = f.readlines()[1].strip()
     if mature_only:
         ss = "".join(c for c in ss if c.isupper())
-    return ss.upper().replace("T", "U")
+    return ss
 
 
 def iter_seq_ss(
@@ -190,6 +190,6 @@ def iter_seq_ss(
         if keep and id_ not in keep or exclude and id_ in exclude:
             continue
         with open(folder / filename) as file:
-            seq = file.readline().replace("T", "U")
+            seq = file.readline().upper().replace("T", "U")
             ss = file.readline()
         yield SeqSSRecord(id_, seq, ss)
