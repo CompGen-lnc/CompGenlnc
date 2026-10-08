@@ -1,10 +1,11 @@
 import os
+import sys
 from collections.abc import Iterable
 from itertools import tee
 from pathlib import Path
 
 import numpy as np
-from ViennaRNA import fold_compound
+import RNA
 
 from compgenlnc.config.paths import LOOPS_PREFIX
 from compgenlnc.fileman.fasta_manager import iter_seq_ss
@@ -21,11 +22,26 @@ def extract_2d_structure_loops(
     loops_folder = Path(loops_folder).resolve()
     loops_folder.mkdir(parents=True, exist_ok=True)
 
-    fc = fold_compound(str(record.seq))
+    def verify_structure(ss: str) -> bool:
+        if ss.count("(") != ss.count(")"):
+            return False
+        count = 0
+        for char in ss:
+            if char == "(":
+                count += 1
+            elif char == ")":
+                if count <= 0:
+                    return False
+                count -= 1
+        return True
 
     filename = loops_folder / f"{LOOPS_PREFIX}{record.id}.dat"
     with open(filename, "w") as out_file:
-        energy = fc.eval_structure_verbose(str(record.ss), out_file)
+        try:
+            fc = RNA.fold_compound(str(record.seq), None, RNA.OPTION_EVAL_ONLY)
+            energy = fc.eval_structure_verbose(str(record.ss), out_file)
+        except:
+            energy = 0
         out_file.write(f"{'Energy':<40}: {energy:>8.2f}")
     return energy
 
@@ -34,9 +50,6 @@ def extract_2d_structure_loops_from_list(
     record_list: Iterable[SeqSSRecord],
     loops_folder: str | os.PathLike,
 ) -> np.typing.NDArray[np.float32]:
-    loops_folder = Path(loops_folder).resolve()
-    loops_folder.mkdir(parents=True, exist_ok=True)
-
     energy_list = []
     for record in record_list:
         energy_list.append(extract_2d_structure_loops(record, loops_folder))
@@ -49,13 +62,10 @@ def extract_2d_structure_loops_from_folder(
     loops_folder: str | os.PathLike,
     *,
     keep: Iterable[str] | None = None,
+    exclude: Iterable[str] | None = None,
 ) -> np.typing.NDArray[np.float32]:
-    already = [
-        filename[len(LOOPS_PREFIX)].split(".")[0]
-        for filename in os.listdir(loops_folder)
-    ]
     return extract_2d_structure_loops_from_list(
-        iter_seq_ss(seq_ss_folder, keep=keep, exclude=already), loops_folder
+        iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude), loops_folder
     )
 
 
@@ -67,7 +77,9 @@ def gen_loops_dict(
     record_list, record_copy = tee(record_list)
     extract_2d_structure_loops_from_list(record_list, loops_folder)
     id_list = set(rec.id for rec in record_copy)
-    loops_list = list(read_2d_structure_loops_from_folder(loops_folder, keep=id_list))
+    loops_list = list(
+        read_2d_structure_loops_from_folder(loops_folder, keep=id_list)
+    )
     keys = (counter.rna for counter in loops_list)
     values = (counter.loops_vectorized for counter in loops_list)
     save_dict(dict_file, keys=keys, values=values)
@@ -80,9 +92,11 @@ def gen_loops_dict_from_folder(
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
 ) -> None:
-    loops_list = list(read_2d_structure_loops_from_folder(
-        loops_folder, keep=keep, exclude=exclude
-    ))
+    loops_list = list(
+        read_2d_structure_loops_from_folder(
+            loops_folder, keep=keep, exclude=exclude
+        )
+    )
     values = (counter.loops_vectorized for counter in loops_list)
     if keep:
         keys = sorted(keep)

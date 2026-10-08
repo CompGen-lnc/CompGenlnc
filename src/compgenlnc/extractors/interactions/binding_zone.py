@@ -7,12 +7,13 @@ from pathlib import Path
 
 import numpy as np
 
-from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD
+from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
 from compgenlnc.config.paths import BINDING_PREFIX, MIRANDA_PREFIX, TEMP_FOLDER
 from compgenlnc.consts.regex import MIRANDA_INFO
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.fasta_manager import load_fasta
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
+from compgenlnc.typing.numpy_dtypes import InteractionPair
 
 
 def predict_miranda(
@@ -87,8 +88,19 @@ def predict_miranda_from_files(
     pre_mir_fasta: str | os.PathLike,
     mat_mir_fasta: str | os.PathLike,
     folder: str | os.PathLike,
+    *,
+    keep: Iterable[InteractionPair] | None = None,
+    exclude: Iterable[InteractionPair] | None = None,
 ) -> None:
     interactions = load_interactions(interaction_file)
+    pairs = interactions[PAIR_FIELDS]
+    mask = np.ones(len(pairs), np.bool)
+    if keep is not None and len(keep):
+        mask &= np.isin(pairs, keep[PAIR_FIELDS])
+    if exclude is not None and len(exclude):
+        mask &= ~np.isin(pairs, exclude[PAIR_FIELDS])
+    interactions = interactions[mask]
+
     lnc_records = list(load_fasta(lnc_fasta))
     mir_records = list(load_fasta(pre_mir_fasta)) + list(
         load_fasta(mat_mir_fasta)
@@ -137,19 +149,32 @@ def extract_binding_zone_from_folder(
     /,
     lnc_list: Iterable[str] | None = None,
     mir_list: Iterable[str] | None = None,
+    *,
+    keep: Iterable[InteractionPair] | None = [],
+    exclude: Iterable[InteractionPair] | None = [],
 ) -> None:
     miranda_files = os.listdir(miranda_folder)
+    keep = ["_".join(pair[PAIR_FIELDS]) for pair in keep]
+    exclude = ["_".join(pair[PAIR_FIELDS]) for pair in exclude]
     for file in miranda_files:
         prefix = file.find(MIRANDA_PREFIX)
         ext = file.find(".dat")
         if prefix < 0 or ext < 0:
             continue
 
-        [lnc, mir] = file[len(MIRANDA_PREFIX) : ext].split("_")
+        interaction = file[len(MIRANDA_PREFIX) : ext]
         if (
-            lnc_list is not None
+            keep
+            and interaction not in keep
+            or exclude
+            and interaction in exclude
+        ):
+            continue
+        [lnc, mir] = interaction.split("_")
+        if (
+            lnc_list
             and lnc not in lnc_list
-            or mir_list is not None
+            or mir_list
             and mir not in mir_list
         ):
             continue

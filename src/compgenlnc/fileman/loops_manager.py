@@ -46,7 +46,7 @@ def read_2d_structure_loops_from_folder(
     exclude: Iterable[str] | None = None,
 ) -> Iterator[LoopCounter]:
     for filename in sorted(os.listdir(loops_folder)):
-        id_ = filename[len(LOOPS_PREFIX):].split(".")[0]
+        id_ = filename[len(LOOPS_PREFIX) :].split(".")[0]
         filtered = keep and id_ not in keep or exclude and id_ in exclude
         if filtered or not filename.startswith(LOOPS_PREFIX):
             continue
