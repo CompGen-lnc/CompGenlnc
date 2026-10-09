@@ -1,8 +1,10 @@
+import multiprocessing as mp
 import os
 import platform
 import re
 import subprocess
 from collections.abc import Iterable
+from itertools import repeat
 from pathlib import Path
 
 import numpy as np
@@ -76,10 +78,17 @@ def predict_miranda_from_list(
     folder: os.PathLike,
 ) -> None:
     records_list = zip(lnc_list, mir_list)
-    for records in records_list:
-        if None in records:
-            continue
-        predict_miranda(*records, folder)
+    num_processes = mp.cpu_count() - 2
+    with mp.Pool(processes=num_processes) as pool:
+        pool.imap(
+            predict_miranda,
+            (
+                args
+                for args in zip(lnc_list, mir_list, repeat(folder))
+                if None not in args
+            ),
+            chunksize=50,
+        )
 
 
 def predict_miranda_from_files(
