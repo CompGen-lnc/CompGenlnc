@@ -64,7 +64,7 @@ def get_doc2vec(
     doc = [seq[i : i + 3] for i in range(len(seq) - 2)]
 
     if model is None:
-        model = Doc2Vec.load(model_file)
+        model = Doc2Vec.load(str(model_file))
 
     model.random.seed(DOC2VEC_MODEL_SEED)
     return model.infer_vector(doc)
@@ -96,7 +96,7 @@ def gen_doc2vec_dict(
     if model is None:
         model_file = Path(model_file).resolve()
         if model_file.exists():
-            model = Doc2Vec.load(model_file)
+            model = Doc2Vec.load(str(model_file))
         else:
             record_list, record_copy = tee(record_list)
             train_doc2vec_model(record_copy, model_file)
