@@ -1,6 +1,6 @@
 import pytest
 
-from compgenlnc.extractors.molecules import (
+from compgenlnc.extractors.sourcedata import (
     extract_precursor,
     gen_precursors_csv,
     gen_precursors_csv_from_files,
