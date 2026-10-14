@@ -78,4 +78,6 @@ def dict_to_numpy(
             array[i] = feat_dict[index]
         else:
             array[i] = 0
+    np_file = Path(np_file).resolve()
+    np_file.parent.mkdir(parents=True, exist_ok=True)
     np.save(np_file, array)
