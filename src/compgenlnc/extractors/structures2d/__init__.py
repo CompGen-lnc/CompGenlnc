@@ -14,8 +14,3 @@ from .loops import (
     gen_loops_dict_from_folder,
 )
 from .recoded_structure import recode_2d_structure, recode_2d_structure_list
-from .structure_predictor import (
-    extract_2d_structure,
-    extract_2d_structure_identified,
-    extract_2d_structure_list,
-)

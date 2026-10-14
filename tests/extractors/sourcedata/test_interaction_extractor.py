@@ -1,7 +1,7 @@
 import numpy as np
 
 from compgenlnc.consts import IS_POSITIVE_FIELD, LNCRNA_FIELD, MIRNA_FIELD
-from compgenlnc.extractors.interactions import (
+from compgenlnc.extractors.sourcedata import (
     extract_interactions,
     filter_interactions,
 )

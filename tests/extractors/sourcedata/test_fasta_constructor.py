@@ -2,11 +2,11 @@ import pytest
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 
 from compgenlnc.extractors.sourcedata import (
+    extract_2d_structure,
     filter_fasta,
     gen_fasta_2d,
     seq_ss_to_fasta,
 )
-from compgenlnc.extractors.structures2d import extract_2d_structure
 from compgenlnc.fileman import load_fasta
 
 

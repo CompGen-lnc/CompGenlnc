@@ -9,7 +9,7 @@ from compgenlnc.config.paths import (
     PRE_MIRNA_FASTA,
 )
 from compgenlnc.consts.params import SS_MODE
-from compgenlnc.extractors.structures2d.structure_predictor import (
+from compgenlnc.extractors.sourcedata.structure_predictor import (
     extract_2d_structure_identified,
 )
 from compgenlnc.fileman.fasta_manager import (

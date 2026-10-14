@@ -5,10 +5,6 @@ from .binding_zone import (
     predict_miranda_from_files,
     predict_miranda_from_list,
 )
-from .interaction_extractor import (
-    extract_interactions,
-    filter_interactions,
-)
 from .substructure_loops import (
     gen_substructure_loops_dict,
     get_substructure_loops,
