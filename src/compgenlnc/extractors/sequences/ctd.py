@@ -8,7 +8,7 @@ import numpy as np
 
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.consts.params import SEQ_MODE
-from compgenlnc.fileman.dict_manager import save_dict
+from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import (
     iter_seq_ss,
     load_fasta,
@@ -121,9 +121,11 @@ def gen_ctd_dict(
             True.
     """
     dict_file = Path(dict_file).resolve()
-
-    dict_folder = dict_file.parent
-    dict_folder.mkdir(parents=True, exist_ok=True)
+    if dict_file.exists():
+        existing_dict = load_dict(dict_file)
+        record_list = (
+            record for record in record_list if record.id not in existing_dict
+        )
 
     ctd_dict = {record.id: get_ctd(record.seq) for record in record_list}
     save_dict(dict_file, ctd_dict)

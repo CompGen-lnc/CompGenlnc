@@ -9,7 +9,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from compgenlnc.config.paths import SEQ_SS_PREFIX
 from compgenlnc.config.seeds import DOC2VEC_MODEL_SEED
 from compgenlnc.consts.params import SEQ_MODE
-from compgenlnc.fileman.dict_manager import save_dict
+from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import (
     iter_seq_ss,
     load_fasta,
@@ -100,6 +100,13 @@ def gen_doc2vec_dict(
         else:
             record_list, record_copy = tee(record_list)
             train_doc2vec_model(record_copy, model_file)
+
+    dict_file = Path(dict_file).resolve()
+    if model and dict_file.exists():
+        existing_dict = load_dict(dict_file)
+        record_list = (
+            record for record in record_list if record.id not in existing_dict
+        )
 
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=model, model_file=model_file)

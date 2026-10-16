@@ -66,9 +66,6 @@ def gen_normalized_sequence_dict(
     normal_size: int | None = None,
     /,
 ) -> None:
-    dict_file = Path(dict_file).resolve()
-    dict_file.parent.mkdir(parents=True, exist_ok=True)
-
     id_vector = []
     seq_vector = []
 

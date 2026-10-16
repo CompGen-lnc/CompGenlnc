@@ -12,7 +12,7 @@ from compgenlnc.fileman.fasta_manager import iter_seq_ss
 from compgenlnc.fileman.loops_manager import (
     read_2d_structure_loops_from_folder,
 )
-from compgenlnc.fileman.dict_manager import save_dict
+from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
 
@@ -74,6 +74,13 @@ def gen_loops_dict(
     record_list: Iterable[SeqSSRecord],
     loops_folder: str | os.PathLike,
 ) -> None:
+    dict_file = Path(dict_file).resolve()
+    if dict_file.exists():
+        existing_dict = load_dict(dict_file)
+        record_list = (
+            record for record in record_list if record.id not in existing_dict
+        )
+        
     record_list, record_copy = tee(record_list)
     extract_2d_structure_loops_from_list(record_list, loops_folder)
     id_list = set(rec.id for rec in record_copy)
@@ -92,6 +99,14 @@ def gen_loops_dict_from_folder(
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
 ) -> None:
+    dict_file = Path(dict_file).resolve()
+    if dict_file.exists():
+        keys = load_dict(dict_file).keys()
+        if exclude is None:
+            exclude = keys
+        else:
+            exclude = set(exclude) | keys
+        
     loops_list = list(
         read_2d_structure_loops_from_folder(
             loops_folder, keep=keep, exclude=exclude

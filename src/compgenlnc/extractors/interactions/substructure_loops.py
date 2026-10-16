@@ -15,7 +15,7 @@ from compgenlnc.consts.fields import (
 from compgenlnc.consts.params import LNCRNA, MIRNA
 from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
-from compgenlnc.fileman.dict_manager import save_dict
+from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.loops_manager import read_2d_structure_loops
 from compgenlnc.fileman.miranda_manager import read_binding_zone
 from compgenlnc.structs.binding_zone import BindingZone
@@ -57,12 +57,17 @@ def gen_substructure_loops_dict(
     molecule: str,
 ) -> None:
     interactions = list(interactions)
-    new_loops = get_substructure_loops_from_list(
-        loops_it, binding_it, molecule
-    )
     keys = (
         f"{interaction[LNCRNA_FIELD]}_{interaction[MIRNA_FIELD]}"
         for interaction in interactions
+    )
+    dict_file = Path(dict_file).resolve()
+    if dict_file.exists():
+        existing_dict = load_dict(dict_file)
+        keys = (key for key in keys if key not in existing_dict)
+
+    new_loops = get_substructure_loops_from_list(
+        loops_it, binding_it, molecule
     )
     values = (
         loop_counter.loops_vectorized
@@ -87,6 +92,11 @@ def gen_substructure_loops_dict_from_files(
     interactions = load_interactions(interactions_file)
     interactions.sort(order=PAIR_FIELDS)
     keys = [f"{lnc}_{mir}" for lnc, mir in interactions[PAIR_FIELDS]]
+
+    dict_file = Path(dict_file).resolve()
+    if dict_file.exists():
+        existing_dict = load_dict(dict_file)
+        keys = [key for key in keys if key not in existing_dict]
 
     def iter_interactions_loops():
         for key in keys:
