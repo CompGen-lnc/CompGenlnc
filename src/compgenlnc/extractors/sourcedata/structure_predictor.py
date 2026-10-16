@@ -1,5 +1,7 @@
+import io
+import math
+from collections import defaultdict
 from collections.abc import Iterable, Iterator
-from itertools import combinations
 
 import numpy as np
 import RNA
@@ -8,6 +10,73 @@ from compgenlnc.structs.seq_record import SeqRecord
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.structs.structure_record import StructureRecord
 from compgenlnc.typing.molecules import SeqLike
+
+
+def extract_massive_2d_structure(seq: SeqLike) -> str:
+    ss = io.StringIO("." * len(seq))
+    sub_ss_list = []
+    events = []
+    length = 0
+
+    def joint_ss(start, end, sub_ss, energy, data):
+        nonlocal length
+        sub_ss_list.append([sub_ss, range(start - 1, end), energy])
+        events.append((start - 1, True, length))
+        events.append((end, False, length))
+        length += 1
+
+    RNA.Lfold_cb(seq, 300, joint_ss, None)
+    sub_ss_list = np.array(sub_ss_list, dtype=object)
+
+    events.sort()
+    active = set()
+    first_appear, last_appear = {}, {}
+    total_sets = 0
+    ss_started = False
+
+    for _, start, i in events:
+        if start:
+            active.add(i)
+            ss_started = True
+        else:
+            if ss_started:
+                for j in active:
+                    if j not in first_appear.keys():
+                        first_appear[j] = total_sets
+                    last_appear[j] = total_sets
+                total_sets += 1
+                ss_started = False
+            active.discard(i)
+
+    set_beginnings = defaultdict(list)
+    for index, collision_set in first_appear.items():
+        set_beginnings[collision_set].append(index)
+
+    def indexes_from(k):
+        if k == total_sets:
+            yield []
+        else:
+            for i in set_beginnings[k]:
+                for r in indexes_from(last_appear[i] + 1):
+                    yield [*r, i]
+
+    final_indexes = None
+    min_energy = math.inf
+    for indexes in indexes_from(0):
+        if not indexes:
+            continue
+        total_energy = np.sum(sub_ss_list[indexes, 2])
+        if total_energy < min_energy:
+            min_energy = total_energy
+            final_indexes = indexes
+
+    if final_indexes:
+        sub_ss_list = sub_ss_list[final_indexes]
+
+    for sub_ss, sub_range in sub_ss_list[:, :2]:
+        ss.seek(sub_range.start)
+        ss.write(sub_ss)
+    return ss.getvalue()
 
 
 def extract_2d_structure(seq: SeqLike) -> StructureRecord:
@@ -22,42 +91,7 @@ def extract_2d_structure(seq: SeqLike) -> StructureRecord:
         fc = RNA.fold_compound(seq)
         ss, _ = fc.mfe()
     else:
-        raw_ss = bytearray(b"." * len(seq))
-        ss_ranges = []
-        substructures = []
-        energies = []
-
-        def joint_ss(start, end, sub_ss, energy, data):
-            ss_ranges.append(range(start - 1, end))
-            substructures.append(sub_ss.encode("ascii"))
-            energies.append(energy)
-
-        RNA.Lfold_cb(seq, 300, joint_ss, None)
-        energies = np.array(energies, dtype=np.float32)
-
-        length = len(ss_ranges)
-        collisions = np.ones((length, length), dtype=np.uint8)
-        for i, j in combinations(range(length)):
-            ran1 = ss_ranges[i]
-            ran2 = ss_ranges[j]
-            if ran1.start in ran2 or ran1.stop - 1 in ran2:
-                collisions[i, j] = collisions[j, i] = 0
-
-        filtered_indexes = collisions[np.any(collisions == 0, 1)]
-        total_energies = [
-            np.sum(energies[indexes]) for indexes in filtered_indexes
-        ]
-        if total_energies.size:
-            min_energy_idx = np.argsort(total_energies)[0]
-            final_indexes = filtered_indexes[min_energy_idx]
-        else:
-            final_indexes = range(length)
-
-        for i in final_indexes:
-            sub_mfe = substructures[i]
-            sub_range = ss_ranges[i]
-            raw_ss[sub_range.start : sub_range.stop] = sub_mfe[0]
-        ss = raw_ss.decode("ascii")
+        ss = extract_massive_2d_structure(seq)
 
     return StructureRecord(ss)
 
