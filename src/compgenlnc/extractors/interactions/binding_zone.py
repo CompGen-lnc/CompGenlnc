@@ -77,10 +77,9 @@ def predict_miranda_from_list(
     mir_list: Iterable[SeqSSRecord],
     folder: os.PathLike,
 ) -> None:
-    records_list = zip(lnc_list, mir_list)
     num_processes = mp.cpu_count() - 2
     with mp.Pool(processes=num_processes) as pool:
-        pool.imap(
+        pool.starmap(
             predict_miranda,
             (
                 args

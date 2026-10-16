@@ -42,18 +42,18 @@ def test_predict_miranda_from_list(
 ):
     folder = tmp_path
     lnc_list = map(
-        lambda lnc: [rec for rec in lnc_records if rec.id == lnc][0],
+        lambda lnc: next(rec for rec in lnc_records if rec.id == lnc),
         interaction_set[LNCRNA_FIELD],
     )
     mir_list = map(
-        lambda mir: [rec for rec in mir_records if rec.id == mir][0],
+        lambda mir: next(rec for rec in mir_records if rec.id == mir),
         interaction_set[MIRNA_FIELD],
     )
     predict_miranda_from_list(lnc_list, mir_list, folder)
     expected_folder = tmp_path / "expected"
     for lnc, mir, _ in interaction_set:
-        lnc_record = next(filter(lambda rec: rec.id == lnc, lnc_records))
-        mir_record = next(filter(lambda rec: rec.id == mir, mir_records))
+        lnc_record = next(rec for rec in lnc_records if rec.id == lnc)
+        mir_record = next(rec for rec in mir_records if rec.id == mir)
         predict_miranda(lnc_record, mir_record, expected_folder)
         filename = folder / (
             f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
@@ -107,9 +107,9 @@ def test_extract_binding_zone_from_folder(
         filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
         expected = expected_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
 
-        lnc_filtered = not lncrna_id_filter or lnc not in lncrna_id_filter
-        mir_filtered = not mirna_id_filter or mir not in mirna_id_filter
+        lnc_included = not lncrna_id_filter or lnc in lncrna_id_filter
+        mir_included = not mirna_id_filter or mir in mirna_id_filter
         file_exists = (
             filename.exists() and filename.read_text() == expected.read_text()
         )
-        assert (lnc_filtered or mir_filtered) == (not file_exists)
+        assert (lnc_included or mir_included) == file_exists
