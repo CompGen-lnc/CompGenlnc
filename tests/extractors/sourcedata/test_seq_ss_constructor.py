@@ -1,7 +1,7 @@
 import pytest
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
 
-from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.consts.paths import SEQ_SS_PREFIX
 from compgenlnc.extractors.sourcedata import (
     fasta_to_seq_ss,
     join_seq_ss,

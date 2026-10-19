@@ -2,7 +2,7 @@ import pytest
 from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER
 from params import U_converted_seq_list, seq_list
 
-from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.consts.paths import SEQ_SS_PREFIX
 from compgenlnc.fileman import (
     iter_seq_fasta,
     iter_seq_ss,

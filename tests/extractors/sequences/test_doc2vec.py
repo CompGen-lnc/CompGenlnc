@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from constants import SEQ_SS_FOLDER
 
-from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.consts.paths import SEQ_SS_PREFIX
 from compgenlnc.extractors.sequences import (
     gen_doc2vec_dict,
     gen_doc2vec_dict_from_folder,

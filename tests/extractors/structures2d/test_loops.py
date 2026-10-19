@@ -1,6 +1,6 @@
 import numpy as np
 
-from compgenlnc.config.paths import LOOPS_PREFIX
+from compgenlnc.consts.paths import LOOPS_PREFIX
 from compgenlnc.extractors.structures2d import (
     extract_2d_structure_loops,
     extract_2d_structure_loops_from_folder,

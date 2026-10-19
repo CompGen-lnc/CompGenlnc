@@ -1,5 +1,5 @@
 from compgenlnc.consts import PAIR_FIELDS
-from compgenlnc.config.paths import BINDING_PREFIX
+from compgenlnc.consts.paths import BINDING_PREFIX
 from compgenlnc.fileman import read_binding_zone
 
 from constants import INTERACTIONS_FOLDER

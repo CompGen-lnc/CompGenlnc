@@ -1,7 +1,7 @@
 import os
 
 from compgenlnc.consts import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
-from compgenlnc.config.paths import (
+from compgenlnc.consts.paths import (
     BINDING_PREFIX,
     MIRANDA_PREFIX,
 )

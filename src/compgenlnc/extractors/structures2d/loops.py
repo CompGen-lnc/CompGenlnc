@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import RNA
 
-from compgenlnc.config.paths import LOOPS_PREFIX
+from compgenlnc.consts.paths import LOOPS_PREFIX
 from compgenlnc.fileman.fasta_manager import iter_seq_ss
 from compgenlnc.fileman.loops_manager import (
     read_2d_structure_loops,
@@ -73,7 +73,7 @@ def gen_loops_dict(
         record_list = (
             record for record in record_list if record.id not in existing_dict
         )
-        
+
     record_list, record_copy = tee(record_list)
     extract_2d_structure_loops_from_list(record_list, loops_folder)
     id_list = set(rec.id for rec in record_copy)
@@ -99,7 +99,7 @@ def gen_loops_dict_from_folder(
             exclude = keys
         else:
             exclude = set(exclude) | keys
-        
+
     loops_list = list(
         read_2d_structure_loops_from_folder(
             loops_folder, keep=keep, exclude=exclude

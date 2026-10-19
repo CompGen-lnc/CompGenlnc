@@ -13,7 +13,7 @@ from compgenlnc.consts.fields import (
     PAIR_FIELDS,
 )
 from compgenlnc.consts.params import LNCRNA, MIRNA
-from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
+from compgenlnc.consts.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.loops_manager import read_2d_structure_loops

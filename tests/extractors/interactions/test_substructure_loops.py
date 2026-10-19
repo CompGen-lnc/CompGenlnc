@@ -6,7 +6,7 @@ from compgenlnc.consts import (
     MIRNA_FIELD,
     PAIR_FIELDS,
 )
-from compgenlnc.config.paths import BINDING_PREFIX, LOOPS_PREFIX
+from compgenlnc.consts.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.consts.params import MIRNA
 from compgenlnc.extractors.interactions import (
     gen_substructure_loops_dict,

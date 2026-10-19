@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
-from compgenlnc.config.paths import BINDING_PREFIX, MIRANDA_PREFIX, TEMP_FOLDER
+from compgenlnc.consts.paths import BINDING_PREFIX, MIRANDA_PREFIX, TEMP_FOLDER
 from compgenlnc.consts.regex import MIRANDA_INFO
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.fasta_manager import load_fasta

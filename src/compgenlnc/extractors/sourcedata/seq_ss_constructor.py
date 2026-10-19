@@ -2,7 +2,7 @@ import os
 from collections.abc import Iterable
 from pathlib import Path
 
-from compgenlnc.config.paths import (
+from compgenlnc.consts.paths import (
     LNCRNA_FASTA,
     LNCRNA_SEQ_SS_FOLDER,
     MIRNA_SEQ_SS_FOLDER,

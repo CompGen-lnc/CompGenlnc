@@ -2,7 +2,7 @@ import os
 import sys
 from pathlib import Path
 
-from compgenlnc.config.paths import (
+from compgenlnc.consts.paths import (
     CTD_DICT,
     DOC2VEC_DICT,
     KMER_DICT,

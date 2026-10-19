@@ -2,7 +2,7 @@ import os
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
-from compgenlnc.config.paths import (
+from compgenlnc.consts.paths import (
     SEQ_SS_PREFIX,
 )
 from compgenlnc.consts.params import SEQ_MODE, SS_MODE

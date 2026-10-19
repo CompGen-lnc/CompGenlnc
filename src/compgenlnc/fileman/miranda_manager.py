@@ -5,7 +5,7 @@ from pathlib import Path
 
 from compgenlnc.consts.fields import PAIR_FIELDS
 from compgenlnc.consts.regex import MIRANDA_INFO
-from compgenlnc.config.paths import BINDING_PREFIX
+from compgenlnc.consts.paths import BINDING_PREFIX
 from compgenlnc.structs.binding_zone import BindingZone
 from compgenlnc.typing.numpy_dtypes import InteractionPair
 

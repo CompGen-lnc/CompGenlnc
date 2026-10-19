@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from constants import SEQ_SS_FOLDER
 
-from compgenlnc.config.paths import SEQ_SS_PREFIX
+from compgenlnc.consts.paths import SEQ_SS_PREFIX
 from compgenlnc.extractors.sequences import (
     gen_kmer_dict,
     gen_kmer_dict_from_folder,

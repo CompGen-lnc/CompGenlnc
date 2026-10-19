@@ -2,7 +2,7 @@ import os
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
-from compgenlnc.config.paths import LOOPS_PREFIX
+from compgenlnc.consts.paths import LOOPS_PREFIX
 from compgenlnc.consts.regex import EXTERNAL_LOOP_RE, LOOP_RE
 from compgenlnc.fileman.fasta_manager import iter_seq_ss
 from compgenlnc.structs.loop_counter import LoopCounter

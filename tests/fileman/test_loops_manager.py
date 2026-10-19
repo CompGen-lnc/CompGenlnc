@@ -2,7 +2,7 @@ import numpy as np
 from constants import SS_LOOPS_FOLDER
 
 from compgenlnc.consts import ENERGY_FIELD
-from compgenlnc.config.paths import LOOPS_PREFIX
+from compgenlnc.consts.paths import LOOPS_PREFIX
 from compgenlnc.fileman import (
     read_2d_structure_loops_from_folder,
     read_2d_structure_loops,
