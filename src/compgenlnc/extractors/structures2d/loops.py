@@ -10,6 +10,7 @@ import RNA
 from compgenlnc.config.paths import LOOPS_PREFIX
 from compgenlnc.fileman.fasta_manager import iter_seq_ss
 from compgenlnc.fileman.loops_manager import (
+    read_2d_structure_loops,
     read_2d_structure_loops_from_folder,
 )
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
@@ -20,20 +21,12 @@ def extract_2d_structure_loops(
     record: SeqSSRecord, loops_folder: str | os.PathLike
 ) -> float:
     loops_folder = Path(loops_folder).resolve()
-    loops_folder.mkdir(parents=True, exist_ok=True)
-
-    def verify_structure(ss: str) -> bool:
-        if ss.count("(") != ss.count(")"):
-            return False
-        count = 0
-        for char in ss:
-            if char == "(":
-                count += 1
-            elif char == ")":
-                if count <= 0:
-                    return False
-                count -= 1
-        return True
+    if loops_folder.exists():
+        files = os.listdir(loops_folder)
+        if f"{LOOPS_PREFIX}{record.id}.dat" in files:
+            return read_2d_structure_loops(loops_folder, record.id).energy
+    else:
+        loops_folder.mkdir(parents=True, exist_ok=True)
 
     filename = loops_folder / f"{LOOPS_PREFIX}{record.id}.dat"
     with open(filename, "w") as out_file:
