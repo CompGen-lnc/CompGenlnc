@@ -47,7 +47,6 @@ def extract_interactions(
                     tuple((id_.strip() for id_ in interaction))
                 )
 
-        print(interactions_list)
         return np.array(interactions_list, dtype_interaction_pair)
 
     pos_list = read_interactions(pos_file)

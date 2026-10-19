@@ -64,7 +64,6 @@ def predict_miranda(
     try:
         subprocess.run(args, check=True)
     except subprocess.CalledProcessError as e:
-        print(e)
         success = False
 
     os.remove(lnc_file)
