@@ -40,12 +40,12 @@ def extract_interactions(
         with open(file_inter) as file:
             for line in file.readlines():
                 line = line.strip()
-                if not line or ("lncRNA" in line and "miRNA" in line):
+                if not line or "lncRNA" in line or "miRNA" in line:
                     continue
-                interaction = line.split(separator)
-                interactions_list.append(
-                    tuple((id_.strip() for id_ in interaction))
-                )
+                lnc, mir = line.split(separator)[:2]
+                if lnc_list is not None and lnc not in lnc_list or mir_list is not None and mir not in mir_list:
+                    continue
+                interactions_list.append((lnc.strip(), mir.strip()))
 
         return np.array(interactions_list, dtype_interaction_pair)
 

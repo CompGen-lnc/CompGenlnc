@@ -7,4 +7,4 @@ from constants import EMBEDDING_FOLDER
 
 @pytest.fixture(scope="session")
 def index_list():
-    return load_indexes(EMBEDDING_FOLDER / "index.npy")
+    return load_indexes(index_file=EMBEDDING_FOLDER / "index.npy")

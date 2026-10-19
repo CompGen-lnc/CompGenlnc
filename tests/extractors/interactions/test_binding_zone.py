@@ -112,4 +112,4 @@ def test_extract_binding_zone_from_folder(
         file_exists = (
             filename.exists() and filename.read_text() == expected.read_text()
         )
-        assert (lnc_included or mir_included) == file_exists
+        assert (lnc_included and mir_included) == file_exists

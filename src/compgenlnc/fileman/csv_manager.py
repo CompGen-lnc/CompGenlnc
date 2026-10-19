@@ -1,4 +1,5 @@
 import os
+from collections.abc import Sequence
 
 import numpy as np
 import pandas as pd
@@ -43,11 +44,20 @@ def save_interactions(
 
 def load_interactions(
     filename: str | os.PathLike,
+    *,
+    lnc_keep: Sequence[str] | None = None,
+    mir_keep: Sequence[str] | None = None,
 ) -> np.typing.NDArray[InteractionTuple]:
     df = pd.read_csv(filename)
-    return np.fromiter(
+    interactions = np.fromiter(
         df.itertuples(index=False), dtype_interaction_tuple, len(df.index)
     )
+    mask = np.ones(len(interactions), np.bool)
+    if lnc_keep is not None and len(lnc_keep):
+        mask &= np.isin(interactions[LNCRNA_FIELD], lnc_keep)
+    if mir_keep is not None and len(mir_keep):
+        mask &= np.isin(interactions[MIRNA_FIELD], mir_keep)
+    return interactions[mask]
 
 
 def load_precursors(precursors_file: str | os.PathLike) -> dict[str, str]:

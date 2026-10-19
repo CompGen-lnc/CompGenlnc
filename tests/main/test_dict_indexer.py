@@ -37,7 +37,7 @@ def test_get_mature_index(interaction_list, precursors_consverter, subtests):
 
 def test_gen_indexes(interaction_set, precursors_consverter, tmp_path):
     path = tmp_path / "index.npy"
-    gen_indexes(path, interaction_set, precursors_consverter)
+    gen_indexes(interaction_set, precursors_consverter, index_file=path)
     assert path.exists()
     indexes = np.load(path, allow_pickle=True)
     for lnc, prec, mat, inter in indexes:
@@ -52,7 +52,7 @@ def test_gen_indexes(interaction_set, precursors_consverter, tmp_path):
 
 def test_load_indexes():
     path = EMBEDDING_FOLDER / "index.npy"
-    indexes = load_indexes(path)
+    indexes = load_indexes(index_file=path)
     array = np.load(path, allow_pickle=True)
     expected = np.array(array, dtype=dtype_index)
     assert np.array_equal(indexes, expected)
@@ -60,13 +60,14 @@ def test_load_indexes():
 
 def test_dict_to_numpy(index_list, tmp_path, subtests):
     folder = MIRNA_FOLDER / "dict" / "mature"
+    index_path = EMBEDDING_FOLDER / "index.npy"
     dicts = os.listdir(folder)
     for filename in dicts:
         dict_path = folder / filename
         npy_path = tmp_path / filename.replace(".dict", ".npy")
         with subtests.test(i=(filename)):
             dict_ = load_dict(dict_path)
-            dict_to_numpy(npy_path, dict_, index_list, rna=MATURE)
+            dict_to_numpy(npy_path, dict_, index_file=index_path, rna=MATURE)
             feat_array = np.load(npy_path, allow_pickle=True)
             for index, vector in zip(index_list, feat_array):
                 assert np.array_equal(dict_[index[MATURE_FIELD]], vector)

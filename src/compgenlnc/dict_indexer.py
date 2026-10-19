@@ -44,6 +44,8 @@ def get_mature_index(
 def gen_indexes(
     interactions_it: Iterable[InteractionPair],
     precursor_dict: dict[str, str],
+    *,
+    index_file: str | os.PathLike = INDEX_NPY,
 ) -> None:
     interactions_it = list(interactions_it)
     matures = precursor_dict.keys()
@@ -58,8 +60,8 @@ def gen_indexes(
     mask = np.ones(len(array), dtype=bool)
     mask[fails] = False
     _cgl_indexes = np.unique(array[mask])
-    INDEX_NPY.parent.mkdir(parents=True, exist_ok=True)
-    np.save(INDEX_NPY, _cgl_indexes)
+    index_file.parent.mkdir(parents=True, exist_ok=True)
+    np.save(index_file, _cgl_indexes)
 
 
 def gen_indexes_from_files(
@@ -80,10 +82,13 @@ def gen_indexes_from_files(
     gen_indexes(interactions, precursors)
 
 
-def load_indexes(*, rna: str | None = None) -> np.typing.NDArray[Index]:
+def load_indexes(
+    *, index_file: str | os.PathLike = INDEX_NPY, rna: str | None = None
+) -> np.typing.NDArray[Index]:
     global _cgl_indexes
     if _cgl_indexes is None:
-        _cgl_indexes = np.load(INDEX_NPY, allow_pickle=True)
+        _cgl_indexes = np.load(index_file, allow_pickle=True)
+
     if rna == LNCRNA:
         return _cgl_indexes[LNCRNA_FIELD]
     elif rna == MATURE:
@@ -95,10 +100,12 @@ def load_indexes(*, rna: str | None = None) -> np.typing.NDArray[Index]:
     return _cgl_indexes
 
 
-def index_lncrna() -> np.typing.NDArray[np.object_]:
+def index_lncrna(
+    *, index_file: str | os.PathLike = INDEX_NPY
+) -> np.typing.NDArray[np.object_]:
     global _lnc_indexed_records
     if _lnc_indexed_records is None:
-        indexes = load_indexes(rna=LNCRNA)
+        indexes = load_indexes(index_file=index_file, rna=LNCRNA)
         records = {
             rec.id: rec
             for rec in iter_seq_ss(LNCRNA_SEQ_SS_FOLDER, keep=indexes)
@@ -109,10 +116,12 @@ def index_lncrna() -> np.typing.NDArray[np.object_]:
     return _lnc_indexed_records
 
 
-def index_precursor_mirna() -> np.typing.NDArray[np.object_]:
+def index_precursor_mirna(
+    *, index_file: str | os.PathLike = INDEX_NPY
+) -> np.typing.NDArray[np.object_]:
     global _pre_mir_indexed_records
     if _pre_mir_indexed_records is None:
-        indexes = load_indexes(rna=PRECURSOR)
+        indexes = load_indexes(index_file=index_file, rna=PRECURSOR)
         records = {
             rec.id: rec
             for rec in iter_seq_ss(MIRNA_SEQ_SS_FOLDER, keep=indexes)
@@ -123,10 +132,12 @@ def index_precursor_mirna() -> np.typing.NDArray[np.object_]:
     return _pre_mir_indexed_records
 
 
-def index_mature_mirna() -> np.typing.NDArray[np.object_]:
+def index_mature_mirna(
+    *, index_file: str | os.PathLike = INDEX_NPY
+) -> np.typing.NDArray[np.object_]:
     global _mat_mir_indexed_records
     if _mat_mir_indexed_records is None:
-        indexes = load_indexes(rna=MATURE)
+        indexes = load_indexes(index_file=index_file, rna=MATURE)
         records = {
             rec.id: rec for rec in load_fasta(MAT_MIRNA_FASTA, keep=indexes)
         }
@@ -140,9 +151,10 @@ def dict_to_numpy(
     np_file: str | os.PathLike,
     feat_dict: dict[str, np.typing.NDArray],
     *,
+    index_file: str | os.PathLike = INDEX_NPY,
     rna: str = LNCRNA,
 ) -> None:
-    indexes = load_indexes(rna=rna)
+    indexes = load_indexes(index_file=index_file, rna=rna)
 
     sample_vec = next(iter(feat_dict.values()))
     array = np.empty((len(indexes), len(sample_vec)), dtype=sample_vec.dtype)
