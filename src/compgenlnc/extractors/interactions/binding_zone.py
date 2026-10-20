@@ -3,6 +3,7 @@ import os
 import platform
 import re
 import subprocess
+import tempfile
 from collections.abc import Iterable
 from itertools import repeat
 from pathlib import Path
@@ -25,49 +26,42 @@ def predict_miranda(
     folder.mkdir(parents=True, exist_ok=True)
 
     TEMP_FOLDER.mkdir(parents=True, exist_ok=True)
-    lnc_file = TEMP_FOLDER / f"lncrna.fa"
-    mir_file = TEMP_FOLDER / f"mirna.fa"
     filename = folder / f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
 
     def to_wsl(path):
         disk, sub_path = str(path).split(":")
         return "/mnt/" + disk.lower() + sub_path.replace("\\", "/")
 
-    with open(lnc_file, "w") as out_file:
-        out_file.write(f">{lnc_record.id}\n")
-        out_file.write(f"{lnc_record.seq}\n")
-    with open(mir_file, "w") as out_file:
-        out_file.write(f">{mir_record.id}\n")
-        out_file.write(f"{mir_record.seq}\n")
+    def command(mir, lnc, out):
+        return ["conda", "run", "-n", "base", "miranda", mir, lnc, "-out", out]
 
-    command = lambda mir, lnc, out: [
-        "conda",
-        "run",
-        "-n",
-        "base",
-        "miranda",
-        mir,
-        lnc,
-        "-out",
-        out,
-    ]
+    success = False
 
-    if platform.system() in ["Linux", "Darwin"]:
-        args = command(mir_file, lnc_file, filename)
-    elif platform.system() == "Windows":
-        cmd = command(to_wsl(mir_file), to_wsl(lnc_file), to_wsl(filename))
-        args = ["wsl", "bash", "-i", "-c", " ".join(cmd)]
-    else:
-        args = []
+    with (
+        tempfile.NamedTemporaryFile("w", suffix=".txt") as out_lnc,
+        tempfile.NamedTemporaryFile("w", suffix=".txt") as out_mir,
+    ):
+        out_lnc.write(f">{lnc_record.id}\n")
+        out_lnc.write(f"{lnc_record.seq}\n")
+        out_mir.write(f">{mir_record.id}\n")
+        out_mir.write(f"{mir_record.seq}\n")
 
-    success = True
-    try:
-        subprocess.run(args, check=True)
-    except subprocess.CalledProcessError as e:
-        success = False
+        if platform.system() in ["Linux", "Darwin"]:
+            args = command(out_mir.name, out_lnc.name, filename)
+        elif platform.system() == "Windows":
+            cmd = command(
+                to_wsl(out_mir.name), to_wsl(out_lnc.name), to_wsl(filename)
+            )
+            args = ["wsl", "bash", "-i", "-c", " ".join(cmd)]
+        else:
+            args = []
 
-    os.remove(lnc_file)
-    os.remove(mir_file)
+        try:
+            subprocess.run(args, check=True)
+            success = True
+        except subprocess.CalledProcessError as e:
+            pass
+
     return success
 
 
