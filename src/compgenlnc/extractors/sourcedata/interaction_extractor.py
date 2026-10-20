@@ -43,14 +43,20 @@ def extract_interactions(
                 if not line or "lncRNA" in line or "miRNA" in line:
                     continue
                 lnc, mir = line.split(separator)[:2]
-                if lnc_list is not None and lnc not in lnc_list or mir_list is not None and mir not in mir_list:
+                if (
+                    lnc_list is not None
+                    and lnc not in lnc_list
+                    or mir_list is not None
+                    and mir not in mir_list
+                ):
                     continue
                 interactions_list.append((lnc.strip(), mir.strip()))
 
         return np.array(interactions_list, dtype_interaction_pair)
 
     pos_list = read_interactions(pos_file)
-    if neg_file is not None:
+    neg_file = Path(neg_file).resolve()
+    if neg_file is not None and neg_file.exists():
         neg_list = read_interactions(neg_file)
     else:
         length = len(pos_list)

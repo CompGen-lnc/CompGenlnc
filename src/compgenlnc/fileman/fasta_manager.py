@@ -33,6 +33,11 @@ def load_fasta(
     if mode not in [SEQ_MODE, SS_MODE]:
         raise ValueError(f"Value {mode} for mode is not allowed")
 
+    if keep is None:
+        keep = []
+    if exclude is None:
+        exclude = []
+
     filename = Path(filename).resolve()
     id_ = seq = ss = value = ""
     with open(filename) as file:
@@ -57,10 +62,9 @@ def load_fasta(
                 continue
 
             line = raw_line[1:].split()[0]
-            if (not keep or line in keep) and (
-                not exclude or line not in exclude
-            ):
-                id_ = line
+            if len(keep) and line not in keep or line in exclude:
+                continue
+            id_ = line
 
 
 def save_fasta(
@@ -116,9 +120,11 @@ def iter_seq_fasta(
         SeqSSRecord: A record with the sequence and its name.
     """
     filename = Path(filename).resolve()
+    if filter is None:
+        filter = []
 
     for record in load_fasta(filename, mode="seq"):
-        if filter and not any(prefix in record.id for prefix in filter):
+        if len(filter) and not any(prefix in record.id for prefix in filter):
             continue
         yield record
 
@@ -182,12 +188,16 @@ def iter_seq_ss(
             True.
     """
     folder = Path(folder).resolve()
+    if keep is None:
+        keep = []
+    if exclude is None:
+        exclude = []
 
     for filename in sorted(os.listdir(folder)):
         if not filename.startswith(SEQ_SS_PREFIX):
             continue
         id_ = os.path.splitext(filename[len(SEQ_SS_PREFIX) :])[0]
-        if keep and id_ not in keep or exclude and id_ in exclude:
+        if len(keep) and id_ not in keep or id_ in exclude:
             continue
         with open(folder / filename) as file:
             seq = file.readline().upper().replace("T", "U")
