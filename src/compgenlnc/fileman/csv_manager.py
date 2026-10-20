@@ -49,9 +49,7 @@ def load_interactions(
     mir_keep: Sequence[str] | None = None,
 ) -> np.typing.NDArray[InteractionTuple]:
     df = pd.read_csv(filename)
-    interactions = np.fromiter(
-        df.itertuples(index=False), dtype_interaction_tuple, len(df.index)
-    )
+    interactions = df.to_records(index=False)
     mask = np.ones(len(interactions), np.bool)
     if lnc_keep is not None and len(lnc_keep):
         mask &= np.isin(interactions[LNCRNA_FIELD], lnc_keep)

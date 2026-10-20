@@ -72,7 +72,7 @@ def gen_indexes_from_files(
     mir_list: Iterable[str] | None = None,
 ) -> None:
     interactions = load_interactions(interaction_csv)
-    mask = np.ones(interactions.shape[0], dtype=np.bool)
+    mask = np.ones(len(interactions), dtype=np.bool)
     if lnc_list is not None and len(lnc_list):
         mask &= np.isin(interactions[LNCRNA_FIELD], list(lnc_list))
     if mir_list is not None and len(mir_list):
@@ -110,9 +110,8 @@ def index_lncrna(
             rec.id: rec
             for rec in iter_seq_ss(LNCRNA_SEQ_SS_FOLDER, keep=indexes)
         }
-        _lnc_indexed_records = np.apply_along_axis(
-            records.__getitem__, axis=0, arr=indexes
-        )
+        map_index = np.frompyfunc(records.__getitem__, 1, 1)
+        _lnc_indexed_records = map_index(indexes)
     return _lnc_indexed_records
 
 
@@ -126,9 +125,8 @@ def index_precursor_mirna(
             rec.id: rec
             for rec in iter_seq_ss(MIRNA_SEQ_SS_FOLDER, keep=indexes)
         }
-        _pre_mir_indexed_records = np.apply_along_axis(
-            records.__getitem__, axis=0, arr=indexes
-        )
+        map_index = np.frompyfunc(records.__getitem__, 1, 1)
+        _pre_mir_indexed_records = map_index(indexes)
     return _pre_mir_indexed_records
 
 
@@ -141,9 +139,8 @@ def index_mature_mirna(
         records = {
             rec.id: rec for rec in load_fasta(MAT_MIRNA_FASTA, keep=indexes)
         }
-        _mat_mir_indexed_records = np.apply_along_axis(
-            records.__getitem__, axis=0, arr=indexes
-        )
+        map_index = np.frompyfunc(records.__getitem__, 1, 1)
+        _mat_mir_indexed_records = map_index(indexes)
     return _mat_mir_indexed_records
 
 

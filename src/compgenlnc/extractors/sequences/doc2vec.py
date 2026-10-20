@@ -30,7 +30,7 @@ def train_doc2vec_model(
         )
         for i, record in enumerate(sequences)
     ]
-    model = Doc2Vec(vector_size=256, min_count=3, epochs=100, workers=12)
+    model = Doc2Vec(vector_size=256, min_count=10, epochs=16, workers=12)
     model.build_vocab(tokens)
     model.train(tokens, total_examples=model.corpus_count, epochs=model.epochs)
     if model_file:
@@ -102,17 +102,12 @@ def gen_doc2vec_dict(
             train_doc2vec_model(record_copy, model_file)
 
     dict_file = Path(dict_file).resolve()
-    if model and dict_file.exists():
-        existing_dict = load_dict(dict_file)
-        record_list = (
-            record for record in record_list if record.id not in existing_dict
-        )
 
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=model, model_file=model_file)
         for record in record_list
     }
-    save_dict(dict_file, doc2vec_dict)
+    save_dict(dict_file, doc2vec_dict, overwrite=True)
 
 
 def gen_doc2vec_dict_from_fasta(
