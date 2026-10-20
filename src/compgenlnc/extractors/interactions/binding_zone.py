@@ -43,8 +43,10 @@ def predict_miranda(
     ):
         out_lnc.write(f">{lnc_record.id}\n")
         out_lnc.write(f"{lnc_record.seq}\n")
+        out_lnc.flush()
         out_mir.write(f">{mir_record.id}\n")
         out_mir.write(f"{mir_record.seq}\n")
+        out_mir.flush()
 
         if platform.system() in ["Linux", "Darwin"]:
             args = command(out_mir.name, out_lnc.name, filename)
