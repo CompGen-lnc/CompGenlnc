@@ -2,13 +2,12 @@ import math
 import os
 from collections.abc import Iterable, Iterator
 from itertools import tee
-from pathlib import Path
 
 import numpy as np
-
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SeqLike
 
@@ -66,20 +65,22 @@ def gen_normalized_sequence_dict(
     normal_size: int | None = None,
     /,
 ) -> None:
+    send_msg("Generating normalized sequences dictionary\n")
     id_vector = []
     seq_vector = []
 
+    desc = "  Recoding sequences"
+    record_list = track_progress(record_list, desc=desc)
     for record in record_list:
         id_vector.append(record.id)
         seq_vector.append(recode_sequence(record.seq))
 
-    seq_dict = {
-        pair[0]: pair[1]
-        for pair in zip(
-            id_vector, normalize_sequence_list(seq_vector, normal_size)
-        )
-    }
+    desc = "  Normalizing sequences"
+    pairs = zip(id_vector, normalize_sequence_list(seq_vector, normal_size))
+    pairs = track_progress(pairs, desc=desc)
+    seq_dict = {pair[0]: pair[1] for pair in pairs}
     save_dict(dict_file, seq_dict, overwrite=True)
+    send_msg("  Normalized sequences dictionary generated\n")
 
 
 def gen_normalized_sequence_dict_from_fasta(

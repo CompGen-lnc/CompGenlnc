@@ -8,12 +8,13 @@ import numpy as np
 import RNA
 
 from compgenlnc.consts.paths import LOOPS_PREFIX
+from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import iter_seq_ss
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.fileman.loops_manager import (
     read_2d_structure_loops,
     read_2d_structure_loops_from_folder,
 )
-from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
 
@@ -67,22 +68,37 @@ def gen_loops_dict(
     record_list: Iterable[SeqSSRecord],
     loops_folder: str | os.PathLike,
 ) -> None:
+    send_msg("Generating loops dictionary\n")
+    record_list = list(record_list)
+    total = len(record_list)
+
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():
-        existing_dict = load_dict(dict_file)
-        record_list = (
-            record for record in record_list if record.id not in existing_dict
-        )
+        send_msg("  Analyzing existing dictionary...")
 
-    record_list, record_copy = tee(record_list)
-    extract_2d_structure_loops_from_list(record_list, loops_folder)
-    id_list = set(rec.id for rec in record_copy)
+        existing_dict = load_dict(dict_file)
+        record_list = [
+            record for record in record_list if record.id not in existing_dict
+        ]
+
+        send_msg("\r  Existing dictionary analyzed    \n")
+
+    initial = total - len(record_list)
+    desc = "  Calculating loops"
+    record_it = track_progress(
+        record_list, desc=desc, total=total, initial=initial
+    )
+
+    extract_2d_structure_loops_from_list(record_it, loops_folder)
+    id_list = set(rec.id for rec in record_list)
     loops_list = list(
         read_2d_structure_loops_from_folder(loops_folder, keep=id_list)
     )
     keys = (counter.rna for counter in loops_list)
     values = (counter.loops_vectorized for counter in loops_list)
     save_dict(dict_file, keys=keys, values=values)
+
+    send_msg("  Loops dictionary generated\n")
 
 
 def gen_loops_dict_from_folder(

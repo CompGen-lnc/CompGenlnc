@@ -18,6 +18,7 @@ from compgenlnc.fileman.fasta_manager import (
     load_fasta,
     save_fasta,
 )
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 
 
 def filter_fasta(
@@ -91,22 +92,37 @@ def gen_fasta_2d(
     *,
     keep: Iterable[str] | None = None,
 ) -> None:
-    num_processes = max(1, mp.cpu_count() - 2)
+    send_msg("Generating 2D structures for sequences\n")
+
+    if keep is None or not len(keep):
+        total = sum(1 for _ in load_fasta(seq_fasta, mode="seq", keep=keep))
+    else:
+        total = len(keep)
     ss_fasta = Path(ss_fasta).resolve()
     exclude = []
 
     if ss_fasta.exists():
+        send_msg("  Analyzing existing FASTA...")
         exclude = [rec.id for rec in load_fasta(ss_fasta, mode=SS_MODE)]
+        send_msg("\r  Existing FASTA analyzed    \n")
     else:
         ss_fasta.parent.mkdir(parents=True, exist_ok=True)
 
+    num_processes = max(1, mp.cpu_count() - 2)
     with mp.Pool(processes=num_processes) as pool:
         ss_list = pool.imap(
             extract_2d_structure_identified,
             load_fasta(seq_fasta, mode="seq", keep=keep, exclude=exclude),
             chunksize=30,
         )
+        initial = len(exclude)
+        desc = "  Calculating 2D structures"
+        ss_list = track_progress(
+            ss_list, desc=desc, total=total, initial=initial
+        )
         save_fasta(ss_fasta, ss_list, mode="ss")
+
+    send_msg("  2D structure FASTA generated\n")
 
 
 def seq_ss_to_fasta(

@@ -15,6 +15,7 @@ from compgenlnc.consts.paths import BINDING_PREFIX, MIRANDA_PREFIX, TEMP_FOLDER
 from compgenlnc.consts.regex import MIRANDA_INFO
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.fasta_manager import load_fasta
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.numpy_dtypes import InteractionPair
 
@@ -72,17 +73,31 @@ def predict_miranda_from_list(
     mir_list: Iterable[SeqSSRecord],
     folder: os.PathLike,
 ) -> None:
+    send_msg("Calculating binding zone for interactions\n")
+
+    def predict_miranda_with_args(args):
+        return predict_miranda(*args)
+
     num_processes = mp.cpu_count() - 2
     with mp.Pool(processes=num_processes) as pool:
-        pool.starmap(
-            predict_miranda,
-            (
-                args
-                for args in zip(lnc_list, mir_list, repeat(folder))
-                if None not in args
-            ),
+        args_list = [
+            args
+            for args in zip(lnc_list, mir_list, repeat(folder))
+            if None not in args
+        ]
+        it = pool.imap(
+            predict_miranda_with_args,
+            args_list,
             chunksize=50,
         )
+
+        desc = "  Calculating binding zone"
+        track_progress(it, desc=desc, total=len(args_list))
+
+        for _ in it:
+            pass
+
+    send_msg("  Binding zones calculated\n")
 
 
 def predict_miranda_from_files(

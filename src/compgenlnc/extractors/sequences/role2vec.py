@@ -18,6 +18,7 @@ from compgenlnc.extractors.sequences.doc2vec import (
 from compgenlnc.extractors.sequences.kmer import get_kmer
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 
 
 def gen_role2vec_dict(
@@ -27,8 +28,10 @@ def gen_role2vec_dict(
     dict_file: str | os.PathLike,
     /,
 ) -> None:
-    keys = sorted(kmer_dict.keys() & doc2vec_dict.keys() & ctd_dict.keys())
+    send_msg("Generating Role2Vec dictionary\n", flush=False)
+    send_msg("  Extracting vector set")
 
+    keys = sorted(kmer_dict.keys() & doc2vec_dict.keys() & ctd_dict.keys())
     vectors = [
         np.concatenate(
             (ctd_dict[key], doc2vec_dict[key], kmer_dict[key]),
@@ -37,7 +40,9 @@ def gen_role2vec_dict(
         for key in keys
     ]
     tensor = torch.tensor(np.stack(vectors, dtype=np.float32))
+    send_msg("\r  Vector set extracted \n")
 
+    send_msg("  Setting Role2Vec model")
     g = knn_graph(tensor, k=10, num_workers=WORKERS)
     data = Data(edge_index=g, num_nodes=tensor.size(0))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -50,8 +55,11 @@ def gen_role2vec_dict(
     ).to(device)
     loader = model.loader(batch_size=128, shuffle=True, num_workers=0)
     optimizer = torch.optim.SparseAdam(model.parameters())
+    send_msg("\r  Role2Vec model setted \n")
 
-    for epoch in range(16):
+    desc = "  Training Role2Vec model"
+    epochs = track_progress(range(16), desc=desc)
+    for epoch in epochs:
         model.train()
         total_loss = 0
         for pos_rw, neg_rw in loader:
@@ -60,9 +68,11 @@ def gen_role2vec_dict(
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
+        epochs.set_postfix(loss=f"{total_loss:.4f}")
 
     embedding = model.embedding.weight.data.numpy(force=True)
     save_dict(dict_file, keys=keys, values=embedding, overwrite=True)
+    send_msg("  Role2Vec dictionary generated\n")
 
 
 def gen_role2vec_dict_from_files(

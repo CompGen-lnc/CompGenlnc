@@ -14,6 +14,7 @@ from compgenlnc.fileman.fasta_manager import (
     load_fasta,
     read_sequence,
 )
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_record import SeqRecord
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SeqLike
@@ -96,15 +97,31 @@ def gen_kmer_dict(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
+    send_msg("Generating k-mer dictionary\n")
+    record_list = list(record_list)
+    total = len(record_list)
+
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():
+        send_msg("  Analyzing existing dictionary...")
+
         existing_dict = load_dict(dict_file)
-        record_list = (
+        record_list = [
             record for record in record_list if record.id not in existing_dict
-        )
+        ]
+
+        send_msg("\r  Existing dictionary analyzed    \n")
+
+    initial = total - len(record_list)
+    desc = "  Calculating k-mers"
+    record_list = track_progress(
+        record_list, desc=desc, total=total, initial=initial
+    )
 
     kmer_dict = {record.id: get_kmer(record.seq, k) for record in record_list}
     save_dict(dict_file, kmer_dict)
+
+    send_msg("  k-mer dictionary generated\n")
 
 
 def gen_kmer_dict_from_fasta(

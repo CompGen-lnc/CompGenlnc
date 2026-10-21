@@ -6,15 +6,15 @@ from pathlib import Path
 import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
-from compgenlnc.consts.paths import SEQ_SS_PREFIX
-from compgenlnc.config.seeds import DOC2VEC_MODEL_SEED
+from compgenlnc.config.var_config import DOC2VEC_MODEL_SEED
 from compgenlnc.consts.params import SEQ_MODE
-from compgenlnc.fileman.dict_manager import load_dict, save_dict
+from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (
     iter_seq_ss,
     load_fasta,
     read_sequence,
 )
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_record import SeqRecord
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SeqLike
@@ -93,21 +93,31 @@ def gen_doc2vec_dict(
     model_file: str | os.PathLike = "",
     mature_only: bool = False,
 ) -> None:
+    send_msg("Generating Doc2Vec dictionary\n")
+
     if model is None:
         model_file = Path(model_file).resolve()
         if model_file.exists():
+            send_msg("  Loading trained model")
             model = Doc2Vec.load(str(model_file))
+            complete_msg = "\r  Model loaded in memory\n"
         else:
+            send_msg("  Training data model")
             record_list, record_copy = tee(record_list)
             train_doc2vec_model(record_copy, model_file)
+            complete_msg = "\r  Data model trained\n"
+        send_msg(complete_msg)
 
-    dict_file = Path(dict_file).resolve()
+    desc = "  Calculating Doc2Vec"
+    record_list = track_progress(record_list, desc=desc)
 
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=model, model_file=model_file)
         for record in record_list
     }
     save_dict(dict_file, doc2vec_dict, overwrite=True)
+
+    send_msg("  Doc2Vec dictionary generated\n")
 
 
 def gen_doc2vec_dict_from_fasta(

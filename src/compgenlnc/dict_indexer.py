@@ -48,18 +48,19 @@ def gen_indexes(
     index_file: str | os.PathLike = INDEX_NPY,
 ) -> None:
     interactions_it = list(interactions_it)
-    matures = precursor_dict.keys()
     array = np.empty((len(interactions_it), 3), dtype=dtype_index)
     fails = []
     for i, interaction in enumerate(interactions_it):
         mir = interaction[MIRNA_FIELD]
-        if mir in matures:
+        if mir in precursor_dict:
             array[i] = get_mature_index(interaction, precursor_dict)
         else:
             fails.append(i)
     mask = np.ones(len(array), dtype=bool)
     mask[fails] = False
-    _cgl_indexes = np.unique(array[mask])
+    masked_array = array[mask]
+    unique_array, order = np.unique(masked_array, return_index=True)
+    _cgl_indexes = unique_array[np.argsort(order)]
     index_file.parent.mkdir(parents=True, exist_ok=True)
     np.save(index_file, _cgl_indexes)
 

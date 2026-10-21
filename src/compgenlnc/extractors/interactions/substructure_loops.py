@@ -16,6 +16,7 @@ from compgenlnc.consts.params import LNCRNA, MIRNA
 from compgenlnc.consts.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.fileman.loops_manager import read_2d_structure_loops
 from compgenlnc.fileman.miranda_manager import read_binding_zone
 from compgenlnc.structs.binding_zone import BindingZone
@@ -56,18 +57,32 @@ def gen_substructure_loops_dict(
     binding_it: Iterable[BindingZone],
     molecule: str,
 ) -> None:
+    send_msg("Generating loops dictionary\n")
     interactions = list(interactions)
+    total = len(interactions)
+
     keys = (
         f"{interaction[LNCRNA_FIELD]}_{interaction[MIRNA_FIELD]}"
         for interaction in interactions
     )
+
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():
+        send_msg("  Analyzing existing dictionary...")
+
         existing_dict = load_dict(dict_file)
         keys = (key for key in keys if key not in existing_dict)
 
+        send_msg("\r  Existing dictionary analyzed    \n")
+
     new_loops = get_substructure_loops_from_list(
         loops_it, binding_it, molecule
+    )
+
+    initial = total - len(interactions)
+    desc = "  Calculating loops"
+    new_loops = track_progress(
+        new_loops, desc=desc, total=total, initial=initial
     )
     values = (
         loop_counter.loops_vectorized

@@ -6,7 +6,6 @@ from pathlib import Path
 
 import numpy as np
 
-from compgenlnc.consts.paths import SEQ_SS_PREFIX
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import (
@@ -14,6 +13,7 @@ from compgenlnc.fileman.fasta_manager import (
     load_fasta,
     read_sequence,
 )
+from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_record import SeqRecord
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SeqLike
@@ -120,15 +120,31 @@ def gen_ctd_dict(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
+    send_msg("Generating CTD dictionary\n")
+    record_list = list(record_list)
+    total = len(record_list)
+
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():
+        send_msg("  Analyzing existing dictionary...")
+
         existing_dict = load_dict(dict_file)
-        record_list = (
+        record_list = [
             record for record in record_list if record.id not in existing_dict
-        )
+        ]
+
+        send_msg("\r  Existing dictionary analyzed    \n")
+
+    initial = total - len(record_list)
+    desc = "  Calculating CTD"
+    record_list = track_progress(
+        record_list, desc=desc, total=total, initial=initial
+    )
 
     ctd_dict = {record.id: get_ctd(record.seq) for record in record_list}
     save_dict(dict_file, ctd_dict)
+
+    send_msg("  CTD dictionary generated\n")
 
 
 def gen_ctd_dict_from_fasta(
