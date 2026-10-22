@@ -61,17 +61,26 @@ def gen_substructure_loops_dict(
     interactions = list(interactions)
     total = len(interactions)
 
-    keys = (
+    keys = [
         f"{interaction[LNCRNA_FIELD]}_{interaction[MIRNA_FIELD]}"
         for interaction in interactions
-    )
+    ]
 
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():
         send_msg("  Analyzing existing dictionary...")
 
         existing_dict = load_dict(dict_file)
-        keys = (key for key in keys if key not in existing_dict)
+        mask = [key in existing_dict for key in keys]
+        keys = [key for key, existing in zip(keys, mask) if not existing]
+        loops_it = (
+            loops for loops, existing in zip(loops_it, mask) if not existing
+        )
+        binding_it = (
+            binding
+            for binding, existing in zip(binding_it, mask)
+            if not existing
+        )
 
         send_msg("\r  Existing dictionary analyzed    \n")
 
@@ -79,7 +88,7 @@ def gen_substructure_loops_dict(
         loops_it, binding_it, molecule
     )
 
-    initial = total - len(interactions)
+    initial = total - len(keys)
     desc = "  Calculating loops"
     new_loops = track_progress(
         new_loops, desc=desc, total=total, initial=initial
