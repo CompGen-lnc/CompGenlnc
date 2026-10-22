@@ -8,35 +8,36 @@ from compgenlnc.structs import SeqSSRecord
 
 
 def extract_precursor(
-    mir: str | SeqSSRecord, precursor_list: Iterable[str]
+    mir: SeqSSRecord, precursor_list: Iterable[SeqSSRecord]
 ) -> str:
-    if isinstance(mir, SeqSSRecord):
-        mir = mir.id
+    mat_id, mat_seq = mir.id, str(mir.seq)
 
-    if not mir.endswith("p"):
-        return mir
+    if not mat_id.endswith("p"):
+        return mat_id
+    base_precursor = mat_id.rsplit("-", 1)[0].lower()
 
-    last_hyphen = mir.rfind("-")
-    base_precursor = mir[:last_hyphen].lower()
-    matches = [id_ for id_ in precursor_list if base_precursor in id_.lower()]
-    return matches[0] if matches else None
+    def precursor_matched(record):
+        id_, seq = record.id.lower(), record.seq
+        return base_precursor in id_ and mat_seq in seq
+
+    match = next(filter(precursor_matched, precursor_list), None)
+    return match.id if match else match
 
 
 def gen_precursors_csv(
     csv: str | os.PathLike,
-    mir_it: Iterable[str | SeqSSRecord],
-    precursor_it: Iterable[str | SeqSSRecord],
+    mir_it: Iterable[SeqSSRecord],
+    precursor_it: Iterable[SeqSSRecord],
 ) -> None:
-    mir_list = [
-        mir.id if isinstance(mir, SeqSSRecord) else mir for mir in mir_it
-    ]
-    precursor_list = [
-        pre.id if isinstance(pre, SeqSSRecord) else pre for pre in precursor_it
-    ]
+    mir_list = list(mir_it)
+    precursor_list = list(precursor_it)
     precursors = [extract_precursor(mir, precursor_list) for mir in mir_list]
-    csv_dict = {"Mature": mir_list, "Precursor": precursors}
+    csv_dict = {
+        "Mature": [rec.id for rec in mir_list],
+        "Precursor": precursors,
+    }
     df = pd.DataFrame.from_dict(csv_dict)
-    df[~df["Precursor"].isna()].to_csv(csv, index=False)
+    df[df["Precursor"].notna()].to_csv(csv, index=False)
 
 
 def gen_precursors_csv_from_files(
