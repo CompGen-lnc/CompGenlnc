@@ -36,6 +36,7 @@ from compgenlnc.extractors.sequences.role2vec import (
 from compgenlnc.extractors.interactions import gen_substructure_loops_dict
 from compgenlnc.fileman.dict_manager import load_dict
 from compgenlnc.fileman.loops_manager import read_2d_structure_loops
+from compgenlnc.fileman.miranda_manager import get_subrecord_list
 from compgenlnc.structs.binding_zone import BindingZone
 from compgenlnc.structs.loop_counter import LoopCounter
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
@@ -147,34 +148,11 @@ def gen_interaction_database(
     precursor_map: dict[str, str],
     binding_list: Sequence[BindingZone],
 ) -> None:
-    def subrecord(rec, lnc, mir, b_range):
-        # print(lnc, mir, rec)
-        return SeqSSRecord(
-            f"{lnc}_{mir}",
-            rec.seq[b_range.start : b_range.stop],
-            rec.ss[b_range.start : b_range.stop],
-        )
-
-    def get_range(binging_zone, rna):
-        return (
-            binging_zone._lnc_range
-            if rna == LNCRNA
-            else binging_zone._mir_range
-        )
-
-    def get_subrecord_list(record_list, rna) -> Sequence[SeqSSRecord]:
+    def subrecords(record_list, rna) -> Sequence[SeqSSRecord]:
         count = len(record_list)
         subrecord_list = np.fromiter(
-            (
-                subrecord(
-                    rec,
-                    inter[LNCRNA_FIELD],
-                    inter[MIRNA_FIELD],
-                    get_range(binding, rna),
-                )
-                for rec, inter, binding in zip(
-                    record_list, interaction_list, binding_list
-                )
+            get_subrecord_list(
+                record_list, interaction_list, binding_list, rna=rna
             ),
             dtype=object,
             count=count,
@@ -182,7 +160,7 @@ def gen_interaction_database(
         return subrecord_list
 
     gen_lncrna_interaction_features(
-        get_subrecord_list(lnc_records, LNCRNA),
+        subrecords(lnc_records, LNCRNA),
         interaction_list,
         (
             read_2d_structure_loops(LNCRNA_LOOPS_FOLDER, lnc)
@@ -191,7 +169,7 @@ def gen_interaction_database(
         binding_list,
     )
     gen_mirna_interaction_features(
-        get_subrecord_list(mir_records, MIRNA),
+        subrecords(mir_records, MIRNA),
         pre_mir_records,
         interaction_list,
         (
