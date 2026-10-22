@@ -4,6 +4,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD
 from compgenlnc.fileman.csv_manager import (
@@ -73,6 +74,8 @@ def extract_interactions(
                 mir_neg_list[i] = random.choice(mir_list)
         neg_interactions = set(zip(lnc_neg_list, mir_neg_list))
         neg_list = np.array(list(neg_interactions), dtype_interaction_pair)
+        df = pd.DataFrame.from_records(neg_list)
+        df.to_csv(neg_file, index=False)
     save_interactions(new_csv, pos_list=pos_list, neg_list=neg_list)
 
 
