@@ -11,13 +11,16 @@ from pathlib import Path
 import numpy as np
 
 from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
-from compgenlnc.consts.paths import BINDING_PREFIX, MIRANDA_PREFIX, TEMP_FOLDER
+from compgenlnc.consts.paths import BINDING_PREFIX, MIRANDA_PREFIX
 from compgenlnc.consts.regex import MIRANDA_INFO
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.fasta_manager import load_fasta
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
-from compgenlnc.typing.numpy_dtypes import InteractionPair
+from compgenlnc.typing.numpy_dtypes import (
+    dtype_interaction_pair,
+    InteractionPair,
+)
 
 
 def predict_miranda(
@@ -26,7 +29,6 @@ def predict_miranda(
     folder = Path(folder).resolve()
     folder.mkdir(parents=True, exist_ok=True)
 
-    TEMP_FOLDER.mkdir(parents=True, exist_ok=True)
     filename = folder / f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
 
     def to_wsl(path):
@@ -68,31 +70,55 @@ def predict_miranda(
     return success
 
 
+def _predict_miranda_with_args(args):
+    return predict_miranda(*args)
+
+
 def predict_miranda_from_list(
     lnc_list: Iterable[SeqSSRecord],
     mir_list: Iterable[SeqSSRecord],
     folder: os.PathLike,
+    *,
+    keep: Iterable[InteractionPair] | None = None,
+    exclude: Iterable[InteractionPair] | None = None,
 ) -> None:
     send_msg("Calculating binding zone for interactions\n")
+    args_list = np.fromiter(
+        (list(args) for args in zip(lnc_list, mir_list, repeat(folder))),
+        dtype=object,
+        count=min(len(lnc_list), len(mir_list)),
+    )
+    mask = np.fromiter(
+        (None not in row for row in args_list),
+        dtype=np.bool,
+        count=len(args_list),
+    )
+    id_list = np.fromiter(
+        ((lnc.id, mir.id) for lnc, mir, _ in args_list),
+        dtype=dtype_interaction_pair,
+        count=len(args_list),
+    )
+    if keep is not None and len(keep):
+        mask &= np.isin(id_list, keep[PAIR_FIELDS])
 
-    def predict_miranda_with_args(args):
-        return predict_miranda(*args)
+    total = mask.sum()
+    initial = 0
+
+    if exclude is not None and len(exclude):
+        mask &= np.isin(id_list, exclude[PAIR_FIELDS], invert=True)
+        initial = len(exclude)
+    args_list = args_list[mask]
 
     num_processes = mp.cpu_count() - 2
     with mp.Pool(processes=num_processes) as pool:
-        args_list = [
-            args
-            for args in zip(lnc_list, mir_list, repeat(folder))
-            if None not in args
-        ]
-        it = pool.imap(
-            predict_miranda_with_args,
+        it = pool.imap_unordered(
+            _predict_miranda_with_args,
             args_list,
             chunksize=50,
         )
 
         desc = "  Calculating binding zone"
-        track_progress(it, desc=desc, total=len(args_list))
+        it = track_progress(it, desc=desc, total=total, initial=initial)
 
         for _ in it:
             pass
@@ -111,13 +137,6 @@ def predict_miranda_from_files(
     exclude: Iterable[InteractionPair] | None = None,
 ) -> None:
     interactions = load_interactions(interaction_file)
-    pairs = interactions[PAIR_FIELDS]
-    mask = np.ones(len(pairs), np.bool)
-    if keep is not None and len(keep):
-        mask &= np.isin(pairs, keep[PAIR_FIELDS])
-    if exclude is not None and len(exclude):
-        mask &= ~np.isin(pairs, exclude[PAIR_FIELDS])
-    interactions = interactions[mask]
 
     lnc_records = list(load_fasta(lnc_fasta))
     mir_records = list(load_fasta(pre_mir_fasta)) + list(
@@ -135,7 +154,9 @@ def predict_miranda_from_files(
         mir_map.values(),
         None,
     )
-    predict_miranda_from_list(lnc_list, mir_list, folder)
+    predict_miranda_from_list(
+        lnc_list, mir_list, folder, keep=keep, exclude=exclude
+    )
 
 
 def extract_binding_zone(

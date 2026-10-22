@@ -52,7 +52,7 @@ def extract_interactions(
                     continue
                 interactions_list.append((lnc.strip(), mir.strip()))
 
-        return np.array(interactions_list, dtype_interaction_pair)
+        return np.unique(np.array(interactions_list, dtype_interaction_pair))
 
     pos_list = read_interactions(pos_file)
     neg_file = Path(neg_file).resolve()
