@@ -32,15 +32,15 @@ class BindingZone:
         self._mir_range = mir_range
 
     @property
-    def lncrna(self) -> bool:
+    def lncrna(self) -> str:
         return self._lnc_id
 
     @property
-    def mirna(self) -> bool:
+    def mirna(self) -> str:
         return self._mir_id
 
     @property
-    def energy(self) -> bool:
+    def energy(self) -> float:
         return self._energy
 
     @property
@@ -64,8 +64,13 @@ class BindingZone:
             self._mir_range.start + start, self._mir_range.stop + start
         )
         return BindingZone(
-            self._hint, self._energy, self._lnc_range, new_range
+            self._lnc_id,
+            self._mir_id,
+            self._hint,
+            self._energy,
+            self._lnc_range,
+            new_range,
         )
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self._hint
