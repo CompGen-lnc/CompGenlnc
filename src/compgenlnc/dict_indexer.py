@@ -21,7 +21,12 @@ from compgenlnc.consts.fields import (
 from compgenlnc.consts.params import INTERACTION, LNCRNA, MATURE, PRECURSOR
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
-from compgenlnc.typing.numpy_dtypes import dtype_index, Index, InteractionPair
+from compgenlnc.typing.numpy_dtypes import (
+    dtype_index,
+    dtype_interaction_pair,
+    Index,
+    InteractionPair,
+)
 
 
 _cgl_indexes = None
@@ -143,6 +148,12 @@ def index_mature_mirna(
         map_index = np.frompyfunc(records.__getitem__, 1, 1)
         _mat_mir_indexed_records = map_index(indexes)
     return _mat_mir_indexed_records
+
+
+def interactions_from_index() -> np.typing.NDArray[InteractionPair]:
+    indexes = load_indexes(rna=INTERACTION)
+    it = (tuple(interaction.split("_")) for interaction in indexes)
+    return np.fromiter(it, dtype=dtype_interaction_pair, count=len(indexes))
 
 
 def dict_to_numpy(

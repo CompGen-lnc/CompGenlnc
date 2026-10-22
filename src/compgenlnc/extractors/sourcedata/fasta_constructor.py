@@ -95,7 +95,7 @@ def gen_fasta_2d(
     send_msg("Generating 2D structures for sequences\n")
 
     if keep is None or not len(keep):
-        total = sum(1 for _ in load_fasta(seq_fasta, mode="seq", keep=keep))
+        total = sum(1 for _ in load_fasta(seq_fasta, mode="seq"))
     else:
         total = len(keep)
     ss_fasta = Path(ss_fasta).resolve()
@@ -110,7 +110,7 @@ def gen_fasta_2d(
 
     num_processes = max(1, mp.cpu_count() - 2)
     with mp.Pool(processes=num_processes) as pool:
-        ss_list = pool.imap(
+        ss_list = pool.imap_unordered(
             extract_2d_structure_identified,
             load_fasta(seq_fasta, mode="seq", keep=keep, exclude=exclude),
             chunksize=30,
