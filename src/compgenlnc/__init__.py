@@ -9,3 +9,9 @@ from .dict_indexer import (
     interactions_from_index,
     load_indexes,
 )
+from .feat_loader import (
+    get_feature_vectors,
+    get_interactions_features,
+    get_seq_features,
+    get_ss_features,
+)
