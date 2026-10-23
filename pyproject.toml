@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 # Build settings
 [project]
 name = "compgenlnc"
-dynamic = ["version"]
+version = "0.1.0"
 authors = []
 description = "A features extractor from lncRNA-miRNA interactions based on sequences and 2D structures"
 requires-python = ">= 3.12"
