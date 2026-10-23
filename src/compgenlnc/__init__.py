@@ -1,3 +1,6 @@
+from ._version import __version__
+
+
 from .database_generator import gen_database, gen_source_data, load_source_data
 from .dict_indexer import (
     dict_to_numpy,
