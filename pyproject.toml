@@ -36,7 +36,8 @@ license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 readme = "README.md"
 
-[tool.setuptools-scm]
+[tool.setuptools.packages.find]
+where = ["src"]
 
 # Pytest settings
 [tool.pytest]
