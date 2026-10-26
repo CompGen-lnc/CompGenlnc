@@ -56,8 +56,7 @@ def extract_interactions(
         return np.unique(np.array(interactions_list, dtype_interaction_pair))
 
     pos_list = read_interactions(pos_file)
-    neg_file = Path(neg_file).resolve()
-    if neg_file is not None and neg_file.exists():
+    if neg_file is not None and Path(neg_file).resolve().exists():
         neg_list = read_interactions(neg_file)
     else:
         length = len(pos_list)
@@ -75,7 +74,8 @@ def extract_interactions(
         neg_interactions = set(zip(lnc_neg_list, mir_neg_list))
         neg_list = np.array(list(neg_interactions), dtype_interaction_pair)
         df = pd.DataFrame.from_records(neg_list)
-        df.to_csv(neg_file, index=False)
+        if neg_file is not None:
+            df.to_csv(neg_file, index=False)
     save_interactions(new_csv, pos_list=pos_list, neg_list=neg_list)
 
 

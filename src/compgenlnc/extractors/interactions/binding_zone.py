@@ -83,8 +83,10 @@ def predict_miranda_from_list(
     exclude: Iterable[InteractionPair] | None = None,
 ) -> None:
     send_msg("Calculating binding zone for interactions\n")
+    lnc_list = list(lnc_list)
+    mir_list = list(mir_list)
     args_list = np.fromiter(
-        (list(args) for args in zip(lnc_list, mir_list, repeat(folder))),
+        (args for args in zip(lnc_list, mir_list, repeat(folder))),
         dtype=object,
         count=min(len(lnc_list), len(mir_list)),
     )

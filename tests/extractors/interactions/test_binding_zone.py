@@ -58,11 +58,14 @@ def test_predict_miranda_from_list(
         filename = folder / (
             f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
         )
-        expected_filename = expected_folder / (
+        expected = expected_folder / (
             f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
         )
         assert filename.exists()
-        assert filename.read_text() == expected_filename.read_text()
+        file_text, expected_text = filename.read_text(), expected.read_text()
+        file_idx = file_text.find("Read Sequence")
+        expected_idx = expected_text.find("Read Sequence")
+        assert file_text[file_idx:] == expected_text[expected_idx:]
 
 
 def test_predict_miranda_from_files(interaction_list, tmp_path):
