@@ -47,7 +47,7 @@ def load_feature_set(
     keep: Collection[Index] | None = None,
     exclude: Collection[Index] | None = None,
 ) -> np.typing.NDArray[np.float32]:
-    feature_set = np.load(set_path, allow_pickle=True)
+    feature_set = np.load(set_path)
     mask = np.ones(len(feature_set), np.bool)
     indexes = load_indexes()
     if keep is not None and len(keep):
@@ -99,7 +99,7 @@ def get_seq_features(
         feat = dictname.split(".", 1)[0]
         features_dict[feat] = load_feature_set(get_npy_path(dictname))
 
-    if rna != MATURE:
+    if rna != PRECURSOR:
         features_dict["recoded sequence"] = recode_sequence_list(sequences)
         normal_file = get_npy_path(NORMAL_SEQ_DICT)
         features_dict["normal sequence"] = load_feature_set(normal_file)

@@ -66,7 +66,7 @@ def gen_indexes(
     masked_array = array[mask]
     unique_array, order = np.unique(masked_array, return_index=True)
     _cgl_indexes = unique_array[np.argsort(order)]
-    index_file.parent.mkdir(parents=True, exist_ok=True)
+    Path(index_file).parent.mkdir(parents=True, exist_ok=True)
     np.save(index_file, _cgl_indexes)
 
 
@@ -174,4 +174,4 @@ def dict_to_numpy(
             array[i] = 0
     np_file = Path(np_file).resolve()
     np_file.parent.mkdir(parents=True, exist_ok=True)
-    np.save(np_file, array)
+    np.save(np_file, array, allow_pickle=False)

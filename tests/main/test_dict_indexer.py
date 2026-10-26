@@ -68,6 +68,6 @@ def test_dict_to_numpy(index_list, tmp_path, subtests):
         with subtests.test(i=(filename)):
             dict_ = load_dict(dict_path)
             dict_to_numpy(npy_path, dict_, index_file=index_path, rna=MATURE)
-            feat_array = np.load(npy_path, allow_pickle=True)
+            feat_array = np.load(npy_path)
             for index, vector in zip(index_list, feat_array):
                 assert np.array_equal(dict_[index[MATURE_FIELD]], vector)
