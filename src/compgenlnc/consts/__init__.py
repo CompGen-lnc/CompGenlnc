@@ -22,4 +22,28 @@ from .params import (
     WORKERS,
 )
 from .regex import EXTERNAL_LOOP_RE, LOOP_RE, MIRANDA_INFO
-from .sizes import NORMAL_LNCRNA_SEQUENCE_SIZE, NORMAL_MIRNA_SEQUENCE_SIZE
+
+__all__ = [
+    "ENERGY_FIELD",
+    "EXTERNAL_LOOP_RE",
+    "HIGH_POSITION",
+    "INTERACTION",
+    "INTERACTION_FIELD",
+    "IS_POSITIVE_FIELD",
+    "KIND_FIELD",
+    "LNCRNA",
+    "LNCRNA_FIELD",
+    "LOOP_RE",
+    "LOW_POSITION",
+    "MATURE",
+    "MATURE_FIELD",
+    "MIRANDA_INFO",
+    "MIRNA",
+    "MIRNA_FIELD",
+    "PAIR_FIELDS",
+    "PRECURSOR",
+    "PRECURSOR_FIELD",
+    "SEQ_MODE",
+    "SS_MODE",
+    "WORKERS",
+]
