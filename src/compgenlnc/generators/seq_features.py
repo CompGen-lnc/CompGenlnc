@@ -2,6 +2,7 @@ import os
 from collections.abc import Sequence
 from pathlib import Path
 
+from compgenlnc.consts.params import LNCRNA, MATURE, PRECURSOR
 from compgenlnc.consts.paths import (
     CTD_DICT,
     DATASET_FOLDER,
@@ -16,7 +17,6 @@ from compgenlnc.consts.paths import (
     PRE_MIRNA_DOC2VEC_MODEL,
     ROLE2VEC_DICT,
 )
-from compgenlnc.consts.params import LNCRNA, MATURE, PRECURSOR
 from compgenlnc.dict_indexer import dict_to_numpy
 from compgenlnc.extractors.sequences.ctd import gen_ctd_dict
 from compgenlnc.extractors.sequences.doc2vec import gen_doc2vec_dict

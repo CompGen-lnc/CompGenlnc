@@ -4,7 +4,6 @@ import numpy as np
 
 import compgenlnc.consts.fields as fields
 
-
 dtype_loop_tuple = np.dtype(
     [
         (fields.KIND_FIELD, "U10"),

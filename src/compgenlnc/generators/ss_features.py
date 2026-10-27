@@ -2,6 +2,7 @@ import os
 from collections.abc import Sequence
 from pathlib import Path
 
+from compgenlnc.consts.params import LNCRNA, PRECURSOR
 from compgenlnc.consts.paths import (
     DATASET_FOLDER,
     LNCRNA_DICTS_FOLDER,
@@ -10,7 +11,6 @@ from compgenlnc.consts.paths import (
     MIRNA_LOOPS_FOLDER,
     PRE_MIRNA_DICTS_FOLDER,
 )
-from compgenlnc.consts.params import LNCRNA, PRECURSOR
 from compgenlnc.dict_indexer import dict_to_numpy
 from compgenlnc.extractors.structures2d.loops import gen_loops_dict
 from compgenlnc.fileman.dict_manager import load_dict
@@ -29,9 +29,9 @@ def gen_ss_features(
 
     loops_path = dicts_folder / LOOPS_DICT
     gen_loops_dict(loops_path, record_list, loops_folder)
-    path_to_npy = lambda filename: (
-        DATASET_FOLDER / f"{rna}_{filename}"
-    ).with_suffix(".npy")
+
+    def path_to_npy(filename):
+        return (DATASET_FOLDER / f"{rna}_{filename}").with_suffix(".npy")
     loops_npy = path_to_npy(LOOPS_DICT)
     dict_to_numpy(loops_npy, load_dict(loops_path), rna=rna)
 

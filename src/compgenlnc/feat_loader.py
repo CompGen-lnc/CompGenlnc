@@ -5,6 +5,7 @@ from typing import Annotated
 import numpy as np
 import pandas as pd
 
+from compgenlnc.consts.params import LNCRNA, MATURE, MIRNA, PRECURSOR
 from compgenlnc.consts.paths import (
     BINDING_FOLDER,
     CTD_DICT,
@@ -15,7 +16,6 @@ from compgenlnc.consts.paths import (
     NORMAL_SEQ_DICT,
     ROLE2VEC_DICT,
 )
-from compgenlnc.consts.params import LNCRNA, PRECURSOR, MATURE, MIRNA
 from compgenlnc.dict_indexer import (
     index_lncrna,
     index_mature_mirna,
@@ -26,12 +26,12 @@ from compgenlnc.dict_indexer import (
 from compgenlnc.extractors.sequences.normal_sequence import (
     recode_sequence_list,
 )
-from compgenlnc.extractors.structures2d.recoded_structure import (
-    recode_2d_structure_list,
-)
 from compgenlnc.extractors.structures2d.adjacency_matrix import (
     get_adjacency_matrix_list,
     normalize_matrix_list,
+)
+from compgenlnc.extractors.structures2d.recoded_structure import (
+    recode_2d_structure_list,
 )
 from compgenlnc.fileman.miranda_manager import (
     get_subrecord_list,

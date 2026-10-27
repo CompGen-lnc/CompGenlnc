@@ -18,8 +18,8 @@ from compgenlnc.fileman.fasta_manager import load_fasta
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.numpy_dtypes import (
-    dtype_interaction_pair,
     InteractionPair,
+    dtype_interaction_pair,
 )
 
 

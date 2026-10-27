@@ -3,12 +3,12 @@ import os
 from collections.abc import Iterable
 from pathlib import Path
 
+from compgenlnc.consts.params import SS_MODE
 from compgenlnc.consts.paths import (
     LNCRNA_FASTA,
     MAT_MIRNA_FASTA,
     PRE_MIRNA_FASTA,
 )
-from compgenlnc.consts.params import SS_MODE
 from compgenlnc.extractors.sourcedata.structure_predictor import (
     extract_2d_structure_identified,
 )

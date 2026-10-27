@@ -12,8 +12,8 @@ from compgenlnc.fileman.csv_manager import (
     save_interactions,
 )
 from compgenlnc.typing.numpy_dtypes import (
-    dtype_interaction_pair,
     InteractionPair,
+    dtype_interaction_pair,
 )
 
 

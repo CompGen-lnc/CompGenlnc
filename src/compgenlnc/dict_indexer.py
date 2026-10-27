@@ -4,12 +4,6 @@ from pathlib import Path
 
 import numpy as np
 
-from compgenlnc.consts.paths import (
-    INDEX_NPY,
-    LNCRNA_SEQ_SS_FOLDER,
-    MAT_MIRNA_FASTA,
-    MIRNA_SEQ_SS_FOLDER,
-)
 from compgenlnc.consts.fields import (
     INTERACTION_FIELD,
     LNCRNA_FIELD,
@@ -19,15 +13,20 @@ from compgenlnc.consts.fields import (
     PRECURSOR_FIELD,
 )
 from compgenlnc.consts.params import INTERACTION, LNCRNA, MATURE, PRECURSOR
+from compgenlnc.consts.paths import (
+    INDEX_NPY,
+    LNCRNA_SEQ_SS_FOLDER,
+    MAT_MIRNA_FASTA,
+    MIRNA_SEQ_SS_FOLDER,
+)
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
 from compgenlnc.typing.numpy_dtypes import (
-    dtype_index,
-    dtype_interaction_pair,
     Index,
     InteractionPair,
+    dtype_index,
+    dtype_interaction_pair,
 )
-
 
 _cgl_indexes = None
 _lnc_indexed_records = None

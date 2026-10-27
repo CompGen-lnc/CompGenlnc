@@ -4,6 +4,8 @@ from pathlib import Path
 
 import numpy as np
 
+from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD
+from compgenlnc.consts.params import INTERACTION, LNCRNA, MIRNA
 from compgenlnc.consts.paths import (
     BINDING_PREFIX,
     CTD_DICT,
@@ -14,16 +16,14 @@ from compgenlnc.consts.paths import (
     LNCRNA_INTERACTION_DOV2VEC_MODEL,
     LNCRNA_LOOPS_FOLDER,
     LOOPS_DICT,
-    LOOPS_PREFIX,
     MIRNA_DICTS_FOLDER,
     MIRNA_INTERACTION_DOV2VEC_MODEL,
     MIRNA_LOOPS_FOLDER,
     NORMAL_SEQ_DICT,
     ROLE2VEC_DICT,
 )
-from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD
-from compgenlnc.consts.params import INTERACTION, LNCRNA, MIRNA
 from compgenlnc.dict_indexer import dict_to_numpy
+from compgenlnc.extractors.interactions import gen_substructure_loops_dict
 from compgenlnc.extractors.sequences.ctd import gen_ctd_dict
 from compgenlnc.extractors.sequences.doc2vec import gen_doc2vec_dict
 from compgenlnc.extractors.sequences.kmer import gen_kmer_dict
@@ -33,7 +33,6 @@ from compgenlnc.extractors.sequences.normal_sequence import (
 from compgenlnc.extractors.sequences.role2vec import (
     gen_role2vec_dict_from_files,
 )
-from compgenlnc.extractors.interactions import gen_substructure_loops_dict
 from compgenlnc.fileman.dict_manager import load_dict
 from compgenlnc.fileman.loops_manager import read_2d_structure_loops
 from compgenlnc.fileman.miranda_manager import get_subrecord_list

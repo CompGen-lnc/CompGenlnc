@@ -6,7 +6,6 @@ from pathlib import Path
 
 import numpy as np
 
-from compgenlnc.consts.paths import SEQ_SS_PREFIX
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import (

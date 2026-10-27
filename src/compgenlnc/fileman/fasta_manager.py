@@ -3,10 +3,10 @@ import textwrap
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
+from compgenlnc.consts.params import SEQ_MODE, SS_MODE
 from compgenlnc.consts.paths import (
     SEQ_SS_PREFIX,
 )
-from compgenlnc.consts.params import SEQ_MODE, SS_MODE
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
 

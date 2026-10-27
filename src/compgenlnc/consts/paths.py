@@ -8,6 +8,7 @@ BINDING_PREFIX = "binding_"
 
 BASE_PATH: Final[Path] = Path(__file__).resolve().parent.parent
 
+
 class DyPath(Path):
     def __new__(cls, relative_subpath=""):
         return super().__new__(cls)
@@ -22,14 +23,19 @@ class DyPath(Path):
 
     def __str__(self):
         return str(self._real_path)
+
     def __repr__(self):
         return repr(self._real_path)
+
     def __fspath__(self):
         return str(self._real_path)
+
     def __truediv__(self, other):
         return DyPath(Path(self._relative_subpath) / other)
+
     def __getattr__(self, name):
         return getattr(self._real_path, name)
+
 
 # Main data folders
 DATA_FOLDER = DyPath("data")
@@ -92,6 +98,7 @@ NORMAL_SEQ_DICT = "normal_seq.dict"
 
 LOOPS_DICT = "loops.dict"
 NORMAL_MAT_DICT = "normal_matrix.dict"
+
 
 def set_base_path(path):
     global BASE_PATH

@@ -1,31 +1,25 @@
 import math
 import os
-from collections.abc import Iterable, Sequence
 
 import numpy as np
 import pandas as pd
 
-from compgenlnc.dict_indexer import (
-    gen_indexes_from_files,
-    index_lncrna,
-    index_mature_mirna,
-    index_precursor_mirna,
-    load_indexes,
+from compgenlnc.consts.fields import (
+    INTERACTION_FIELD,
+    PAIR_FIELDS,
+    PRECURSOR_FIELD,
 )
+from compgenlnc.consts.params import SEQ_MODE, SS_MODE
 from compgenlnc.consts.paths import (
     BINDING_FOLDER,
     BINDING_PREFIX,
     DATA_MIRNA,
-    INDEX_NPY,
     LNCRNA_FASTA,
-    LNCRNA_LOOPS_FOLDER,
     LNCRNA_SEQ_SS_FOLDER,
     LNCRNA_SS_FASTA,
-    LOOPS_PREFIX,
     MAT_MIRNA_FASTA,
     MIRANDA_FOLDER,
     MIRANDA_PREFIX,
-    MIRNA_LOOPS_FOLDER,
     MIRNA_SEQ_SS_FOLDER,
     MIRNA_SS_FASTA,
     PAIRS_FILE,
@@ -33,30 +27,25 @@ from compgenlnc.consts.paths import (
     PAIRS_FILE_POSITIVE,
     PRE_MIRNA_FASTA,
 )
-from compgenlnc.consts.fields import (
-    INTERACTION_FIELD,
-    LNCRNA_FIELD,
-    MATURE_FIELD,
-    MIRNA_FIELD,
-    PAIR_FIELDS,
-    PRECURSOR_FIELD,
+from compgenlnc.dict_indexer import (
+    gen_indexes_from_files,
+    index_lncrna,
+    index_mature_mirna,
+    index_precursor_mirna,
+    load_indexes,
 )
-from compgenlnc.consts.params import SEQ_MODE, SS_MODE
 from compgenlnc.extractors.interactions.binding_zone import (
     extract_binding_zone_from_folder,
     predict_miranda_from_files,
 )
 from compgenlnc.extractors.sourcedata.fasta_constructor import gen_fasta_2d
-from compgenlnc.extractors.sourcedata.mature_to_precursor import (
-    gen_precursors_csv_from_files,
-)
 from compgenlnc.extractors.sourcedata.interaction_extractor import (
     extract_interactions,
 )
-from compgenlnc.extractors.sourcedata.seq_ss_constructor import fasta_to_seq_ss
-from compgenlnc.extractors.structures2d.loops import (
-    extract_2d_structure_loops_from_folder,
+from compgenlnc.extractors.sourcedata.mature_to_precursor import (
+    gen_precursors_csv_from_files,
 )
+from compgenlnc.extractors.sourcedata.seq_ss_constructor import fasta_to_seq_ss
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
 from compgenlnc.fileman.fasta_manager import (
     iter_seq_ss,
@@ -67,9 +56,6 @@ from compgenlnc.fileman.miranda_manager import read_binding_zone
 from compgenlnc.generators.interaction_features import gen_interaction_database
 from compgenlnc.generators.seq_features import gen_seq_database
 from compgenlnc.generators.ss_features import gen_ss_database
-from compgenlnc.structs.binding_zone import BindingZone
-from compgenlnc.structs.seq_ss_record import SeqSSRecord
-from compgenlnc.typing.numpy_dtypes import Index, InteractionPair
 
 
 def load_source_data(

@@ -4,8 +4,8 @@ from collections.abc import Iterable, Iterator
 from itertools import tee
 from pathlib import Path
 
-import numpy as np
 import cv2
+import numpy as np
 
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta

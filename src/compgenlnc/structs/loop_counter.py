@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from compgenlnc.consts.fields import ENERGY_FIELD, KIND_FIELD
-from compgenlnc.typing.numpy_dtypes import dtype_loop_tuple, LoopTuple
+from compgenlnc.typing.numpy_dtypes import LoopTuple, dtype_loop_tuple
 
 
 @dataclass(slots=True)

@@ -1,12 +1,11 @@
 import os
 from collections.abc import Iterable
-from multiprocessing import cpu_count
 from pathlib import Path
 
 import numpy as np
 import torch
 from torch_geometric.data import Data
-from torch_geometric.nn import knn_graph, Node2Vec
+from torch_geometric.nn import Node2Vec, knn_graph
 
 from compgenlnc.consts.params import SEQ_MODE, WORKERS
 from compgenlnc.extractors.sequences.ctd import get_ctd

@@ -11,9 +11,9 @@ from compgenlnc.consts.fields import (
     PAIR_FIELDS,
 )
 from compgenlnc.typing.numpy_dtypes import (
-    dtype_interaction_tuple,
     InteractionPair,
     InteractionTuple,
+    dtype_interaction_tuple,
 )
 
 
