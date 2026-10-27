@@ -1,3 +1,4 @@
+import csv
 import os
 from collections.abc import Iterable, Iterator
 from itertools import tee
@@ -68,10 +69,11 @@ def save_dict(
 
     open_mode = "w" if overwrite else "a"
     with open(filename, open_mode) as out_file:
+        wrapper = csv.writer(out_file)
         for key, value in items:
             if value.ndim == 1:
                 value = value.reshape(1, len(value))
-            out_file.write(f"{key}\n")
-            out_file.write(
-                f"\t{'\n\t'.join(','.join(str(x) for x in row) for row in value)}\n"
-            )
+            out_file.write(f"{key}\n\t")
+            for row in value:
+                out_file.write("\t")
+                wrapper.writerow(row)

@@ -1,4 +1,5 @@
 import os
+import textwrap
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
@@ -99,9 +100,7 @@ def save_fasta(
             out_file.write(f">{record.id}\n")
             if not value:
                 continue
-            out_file.write(
-                f"{'\n'.join([value[i : i + 60] for i in range(0, len(value), 60)])}\n"
-            )
+            out_file.write(f"{textwrap.fill(value, 60)}\n")
 
 
 def iter_seq_fasta(
