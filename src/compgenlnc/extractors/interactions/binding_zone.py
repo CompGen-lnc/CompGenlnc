@@ -64,7 +64,7 @@ def predict_miranda(
         try:
             subprocess.run(args, check=True)
             success = True
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             pass
 
     return success

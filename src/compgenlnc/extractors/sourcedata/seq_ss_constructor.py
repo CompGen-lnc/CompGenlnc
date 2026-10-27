@@ -71,7 +71,7 @@ def fasta_to_seq_ss(
             ss = ss_dict[id_]
             join_seq_ss(seq, ss, id_, folder)
             total += 1
-        except:
+        except Exception:
             pass
 
     return total

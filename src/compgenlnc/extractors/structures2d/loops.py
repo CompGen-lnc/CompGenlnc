@@ -1,7 +1,5 @@
 import os
-import sys
 from collections.abc import Iterable
-from itertools import tee
 from pathlib import Path
 
 import numpy as np
@@ -34,7 +32,7 @@ def extract_2d_structure_loops(
         try:
             fc = RNA.fold_compound(str(record.seq), None, RNA.OPTION_EVAL_ONLY)
             energy = fc.eval_structure_verbose(str(record.ss), out_file)
-        except:
+        except Exception:
             energy = 0
         out_file.write(f"{'Energy':<40}: {energy:>8.2f}")
     return energy
