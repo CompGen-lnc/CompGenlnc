@@ -67,7 +67,6 @@ def gen_role2vec_dict(
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
-        epochs.set_postfix(loss=f"{total_loss:.4f}")
 
     embedding = model.embedding.weight.data.numpy(force=True)
     save_dict(dict_file, keys=keys, values=embedding, overwrite=True)

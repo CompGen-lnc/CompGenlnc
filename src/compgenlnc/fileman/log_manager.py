@@ -30,6 +30,9 @@ def track_progress(
 ) -> Iterator[T]:
     if LOG_FILE is None:
         return it
+    if total is None:
+        it = list(it)
+        total = len(it)
     progress = tqdm(
         desc=desc, total=total, file=LOG_FILE, unit=unit, initial=initial
     )
