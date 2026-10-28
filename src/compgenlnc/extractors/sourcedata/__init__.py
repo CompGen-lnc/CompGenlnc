@@ -1,3 +1,9 @@
+from .basefile_fetcher import (
+    fetch_file,
+    fetch_interaction_files,
+    fetch_lncrna_files,
+    fetch_mirna_files,
+)
 from .fasta_constructor import (
     filter_fasta,
     gen_fasta_2d,
@@ -29,6 +35,10 @@ __all__ = [
     "extract_interactions",
     "extract_precursor",
     "fasta_to_seq_ss",
+    "fetch_file",
+    "fetch_interaction_files",
+    "fetch_lncrna_files",
+    "fetch_mirna_files",
     "filter_fasta",
     "filter_interactions",
     "gen_fasta_2d",

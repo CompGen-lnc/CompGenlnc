@@ -32,6 +32,7 @@ def gen_ss_features(
 
     def path_to_npy(filename):
         return (DATASET_FOLDER / f"{rna}_{filename}").with_suffix(".npy")
+
     loops_npy = path_to_npy(LOOPS_DICT)
     dict_to_numpy(loops_npy, load_dict(loops_path), rna=rna)
 

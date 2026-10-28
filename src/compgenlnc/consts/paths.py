@@ -98,8 +98,3 @@ NORMAL_SEQ_DICT = "normal_seq.dict"
 
 LOOPS_DICT = "loops.dict"
 NORMAL_MAT_DICT = "normal_matrix.dict"
-
-
-def set_base_path(path):
-    global BASE_PATH
-    BASE_PATH = Path(path)

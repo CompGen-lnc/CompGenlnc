@@ -1,3 +1,4 @@
+from . import paths
 from .fields import (
     ENERGY_FIELD,
     HIGH_POSITION,
@@ -12,6 +13,11 @@ from .fields import (
     PRECURSOR_FIELD,
 )
 from .params import (
+    GIT_LNCRNA_FASTA,
+    GIT_MAT_MIRNA_FASTA,
+    GIT_PRE_MIRNA_FASTA,
+    GIT_DATA_MIRNA,
+    GIT_POSITIVE_PAIRS,
     INTERACTION,
     LNCRNA,
     MATURE,
@@ -26,6 +32,11 @@ from .regex import EXTERNAL_LOOP_RE, LOOP_RE, MIRANDA_INFO
 __all__ = [
     "ENERGY_FIELD",
     "EXTERNAL_LOOP_RE",
+    "GIT_LNCRNA_FASTA",
+    "GIT_MAT_MIRNA_FASTA",
+    "GIT_PRE_MIRNA_FASTA",
+    "GIT_DATA_MIRNA",
+    "GIT_POSITIVE_PAIRS",
     "HIGH_POSITION",
     "INTERACTION",
     "INTERACTION_FIELD",
@@ -46,4 +57,5 @@ __all__ = [
     "SEQ_MODE",
     "SS_MODE",
     "WORKERS",
+    "paths",
 ]

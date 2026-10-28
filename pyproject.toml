@@ -23,10 +23,12 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
-  "numpy>=2.5.0",
-  "pandas>=3.1.0",
   "gensim>=4.4.0",
+  "numpy>=2.5.0",
   "opencv_python>=5.0.0.93",
+  "pandas>=3.1.0",
+  "pyg-lib",
+  "requests>=2.34.2",
   "torch>=2.12.0",
   "torch_geometric>=2.8.1",
   "tqdm>=4.70.1",
