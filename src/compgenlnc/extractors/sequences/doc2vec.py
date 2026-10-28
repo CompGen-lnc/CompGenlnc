@@ -109,7 +109,7 @@ def gen_doc2vec_dict(
         send_msg(complete_msg)
 
     desc = "  Calculating Doc2Vec"
-    record_list = track_progress(record_list, desc=desc)
+    record_list = track_progress(record_list, desc, unit="seq")
 
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=model, model_file=model_file)

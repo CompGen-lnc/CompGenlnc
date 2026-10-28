@@ -117,9 +117,7 @@ def gen_fasta_2d(
         )
         initial = len(exclude)
         desc = "  Calculating 2D structures"
-        ss_list = track_progress(
-            ss_list, desc=desc, total=total, initial=initial
-        )
+        ss_list = track_progress(ss_list, desc, total, "seq", initial)
         save_fasta(ss_fasta, ss_list, mode="ss")
 
     send_msg("  2D structure FASTA generated\n")

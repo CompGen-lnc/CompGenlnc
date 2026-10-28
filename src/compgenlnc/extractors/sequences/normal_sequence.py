@@ -78,7 +78,7 @@ def gen_normalized_sequence_dict(
 
     desc = "  Normalizing sequences"
     pairs = zip(id_vector, normalize_sequence_list(seq_vector, normal_size))
-    pairs = track_progress(pairs, desc=desc)
+    pairs = track_progress(pairs, desc, unit="seq")
     seq_dict = {pair[0]: pair[1] for pair in pairs}
     save_dict(dict_file, seq_dict, overwrite=True)
     send_msg("  Normalized sequences dictionary generated\n")

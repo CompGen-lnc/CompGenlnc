@@ -137,9 +137,7 @@ def gen_ctd_dict(
 
     initial = total - len(record_list)
     desc = "  Calculating CTD"
-    record_list = track_progress(
-        record_list, desc=desc, total=total, initial=initial
-    )
+    record_list = track_progress(record_list, desc, total, "seq", initial)
 
     ctd_dict = {record.id: get_ctd(record.seq) for record in record_list}
     save_dict(dict_file, ctd_dict)

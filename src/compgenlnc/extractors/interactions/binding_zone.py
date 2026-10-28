@@ -120,7 +120,7 @@ def predict_miranda_from_list(
         )
 
         desc = "  Calculating binding zone"
-        it = track_progress(it, desc=desc, total=total, initial=initial)
+        it = track_progress(it, desc, total, "pairs", initial)
 
         for _ in it:
             pass

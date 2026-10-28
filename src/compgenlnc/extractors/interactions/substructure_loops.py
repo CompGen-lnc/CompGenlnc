@@ -90,9 +90,7 @@ def gen_substructure_loops_dict(
 
     initial = total - len(keys)
     desc = "  Calculating loops"
-    new_loops = track_progress(
-        new_loops, desc=desc, total=total, initial=initial
-    )
+    new_loops = track_progress(new_loops, desc, total, "ss", initial)
     values = (
         loop_counter.loops_vectorized
         if interaction[IS_POSITIVE_FIELD]

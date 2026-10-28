@@ -113,9 +113,7 @@ def gen_kmer_dict(
 
     initial = total - len(record_list)
     desc = "  Calculating k-mers"
-    record_list = track_progress(
-        record_list, desc=desc, total=total, initial=initial
-    )
+    record_list = track_progress(record_list, desc, total, "seq", initial)
 
     kmer_dict = {record.id: get_kmer(record.seq, k) for record in record_list}
     save_dict(dict_file, kmer_dict)

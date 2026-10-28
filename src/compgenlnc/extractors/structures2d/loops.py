@@ -83,9 +83,7 @@ def gen_loops_dict(
 
     initial = total - len(record_list)
     desc = "  Calculating loops"
-    record_it = track_progress(
-        record_list, desc=desc, total=total, initial=initial
-    )
+    record_it = track_progress(record_list, desc, total, "ss", initial)
 
     extract_2d_structure_loops_from_list(record_it, loops_folder)
     id_list = set(rec.id for rec in record_list)
