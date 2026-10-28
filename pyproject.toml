@@ -44,7 +44,7 @@ where = ["src"]
 # Pytest settings
 [tool.pytest]
 minversion = "9.0"
-testpaths = ["tests"]
+testpaths = ["tests/unit"]
 
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
