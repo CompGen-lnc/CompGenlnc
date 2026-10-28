@@ -100,7 +100,7 @@ def save_fasta(
             out_file.write(f">{record.id}\n")
             if not value:
                 continue
-            out_file.write(f"{textwrap.fill(value, 60)}\n")
+            out_file.write(f"{textwrap.fill(str(value), 60)}\n")
 
 
 def iter_seq_fasta(
