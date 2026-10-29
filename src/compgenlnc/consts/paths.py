@@ -58,12 +58,8 @@ MIRNA_INTERACTION_DOV2VEC_MODEL = MODELS_FOLDER / "binding_mir_doc2vec.model"
 
 # Interactions
 PAIRS_FILE = INTERACTIONS_FOLDER / "interactions.csv"
-PAIRS_FILE_POSITIVE = (
-    INTERACTIONS_FOLDER / "pairs" / "validated_pairs_positive.csv"
-)
-PAIRS_FILE_NEGATIVE = (
-    INTERACTIONS_FOLDER / "pairs" / "validated_pairs_negative.csv"
-)
+PAIRS_FILE_NEGATIVE = INTERACTIONS_FOLDER / "pairs" / "negative_pairs.csv"
+PAIRS_FILE_POSITIVE = INTERACTIONS_FOLDER / "pairs" / "positive_pairs.csv"
 
 BINDING_FOLDER = INTERACTIONS_FOLDER / "binding"
 MIRANDA_FOLDER = INTERACTIONS_FOLDER / "miranda"
