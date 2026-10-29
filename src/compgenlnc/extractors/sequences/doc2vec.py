@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
-from compgenlnc.config.var_config import DOC2VEC_MODEL_SEED
+from compgenlnc.config import DOC2VEC_MODEL_SEED
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (

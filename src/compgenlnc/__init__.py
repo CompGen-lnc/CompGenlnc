@@ -1,5 +1,12 @@
-from . import config, consts, extractors, fileman, generators, structs, typing
-from .config import *
+from . import consts, extractors, fileman, generators, structs, typing
+from .config import (
+    BASE_PATH,
+    DOC2VEC_MODEL_SEED,
+    LOG_FILE,
+    set_base_path,
+    set_doc2vec_seed,
+    set_log_file,
+)
 from .consts import *
 from .database_generator import gen_database, gen_source_data, load_source_data
 from .dict_indexer import (
@@ -24,6 +31,9 @@ from .generators import *
 from .version import __version__
 
 __all__ = [
+    "BASE_PATH",
+    "DOC2VEC_MODEL_SEED",
+    "LOG_FILE",
     "dict_to_numpy",
     "get_feature_vectors",
     "get_interactions_features",
@@ -39,8 +49,10 @@ __all__ = [
     "interactions_from_index",
     "load_indexes",
     "load_source_data",
+    "set_base_path",
+    "set_doc2vec_seed",
+    "set_log_file",
 ]
-__all__.extend(config.__all__)
 __all__.extend(consts.__all__)
 __all__.extend(extractors.__all__)
 __all__.extend(fileman.__all__)

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from compgenlnc.config.var_config import BASE_PATH
+from compgenlnc import config
 
 SEQ_SS_PREFIX = "seq+ss_join_"
 LOOPS_PREFIX = "loops_"
@@ -17,8 +17,7 @@ class DyPath(Path):
 
     @property
     def _real_path(self) -> Path:
-        global BASE_PATH
-        return BASE_PATH / self._relative_subpath
+        return config.BASE_PATH / self._relative_subpath
 
     def __str__(self):
         return str(self._real_path)
@@ -34,6 +33,9 @@ class DyPath(Path):
 
     def __getattr__(self, name):
         return getattr(self._real_path, name)
+
+    def __reduce__(self):
+        return Path, (str(self._real_path),)
 
 
 # Main data folders

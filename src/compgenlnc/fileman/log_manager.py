@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from tqdm import tqdm
 
-from compgenlnc.config.var_config import LOG_FILE
+from compgenlnc.config import LOG_FILE
 
 T = TypeVar("T")
 
