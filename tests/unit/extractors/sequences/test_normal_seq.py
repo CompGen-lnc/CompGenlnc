@@ -2,6 +2,7 @@ import math
 
 import numpy as np
 import pytest
+from constants import SEQ_SS_FOLDER
 
 from compgenlnc.extractors.sequences import (
     gen_normalized_sequence_dict,
@@ -10,10 +11,8 @@ from compgenlnc.extractors.sequences import (
     recode_sequence,
     recode_sequence_list,
 )
-from compgenlnc.fileman import load_dict, iter_seq_ss
+from compgenlnc.fileman import iter_seq_ss, load_dict
 from compgenlnc.structs import SeqRecord, SeqSSRecord
-
-from constants import SEQ_SS_FOLDER
 
 
 @pytest.mark.parametrize(

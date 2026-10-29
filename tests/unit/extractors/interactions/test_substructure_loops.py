@@ -1,4 +1,5 @@
 import numpy as np
+from constants import INTERACTIONS_FOLDER, SS_LOOPS_FOLDER
 
 from compgenlnc.consts import (
     HIGH_POSITION,
@@ -6,7 +7,6 @@ from compgenlnc.consts import (
     MIRNA_FIELD,
     PAIR_FIELDS,
 )
-from compgenlnc.consts.paths import BINDING_PREFIX, LOOPS_PREFIX
 from compgenlnc.consts.params import MIRNA
 from compgenlnc.extractors.interactions import (
     gen_substructure_loops_dict,
@@ -14,12 +14,10 @@ from compgenlnc.extractors.interactions import (
     get_substructure_loops_from_list,
 )
 from compgenlnc.fileman import (
+    load_dict,
     read_2d_structure_loops,
     read_binding_zone,
-    load_dict,
 )
-
-from constants import INTERACTIONS_FOLDER, SS_LOOPS_FOLDER
 
 
 def test_get_substructure_loops(

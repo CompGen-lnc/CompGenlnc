@@ -1,4 +1,9 @@
 import numpy as np
+from constants import (
+    INTERACTIONS_CSV,
+    NEG_INTERACTIONS_CSV,
+    POS_INTERACTIONS_CSV,
+)
 
 from compgenlnc.consts import IS_POSITIVE_FIELD, LNCRNA_FIELD, MIRNA_FIELD
 from compgenlnc.extractors.sourcedata import (
@@ -10,12 +15,6 @@ from compgenlnc.fileman import (
     save_interactions,
 )
 from compgenlnc.typing import dtype_interaction_tuple
-
-from constants import (
-    INTERACTIONS_CSV,
-    NEG_INTERACTIONS_CSV,
-    POS_INTERACTIONS_CSV,
-)
 
 
 def test_save_interactions(

@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from constants import MIRNA_FOLDER
 
 from compgenlnc.consts import (
     IS_POSITIVE_FIELD,
@@ -12,8 +13,6 @@ from compgenlnc.fileman import (
     load_precursors,
     save_interactions,
 )
-
-from constants import MIRNA_FOLDER
 
 
 def test_save_interactions(interaction_set, tmp_path):

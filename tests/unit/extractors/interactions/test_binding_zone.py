@@ -1,4 +1,11 @@
-import os
+
+from constants import (
+    INTERACTIONS_CSV,
+    INTERACTIONS_FOLDER,
+    LNCRNA_FASTA,
+    MAT_MIRNA_FASTA,
+    PRE_MIRNA_FASTA,
+)
 
 from compgenlnc.consts import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
 from compgenlnc.consts.paths import (
@@ -11,15 +18,6 @@ from compgenlnc.extractors.interactions import (
     predict_miranda,
     predict_miranda_from_files,
     predict_miranda_from_list,
-)
-from compgenlnc.fileman import load_interactions
-
-from constants import (
-    INTERACTIONS_CSV,
-    INTERACTIONS_FOLDER,
-    LNCRNA_FASTA,
-    MAT_MIRNA_FASTA,
-    PRE_MIRNA_FASTA,
 )
 
 

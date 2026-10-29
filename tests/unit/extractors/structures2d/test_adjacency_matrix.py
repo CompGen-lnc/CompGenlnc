@@ -2,6 +2,7 @@ import math
 
 import numpy as np
 import pytest
+from constants import SEQ_SS_FOLDER
 
 from compgenlnc.extractors.structures2d import (
     gen_normalized_matrix_dict,
@@ -10,10 +11,8 @@ from compgenlnc.extractors.structures2d import (
     get_adjacency_matrix_list,
     normalize_matrix_list,
 )
-from compgenlnc.structs import SeqSSRecord, StructureRecord
 from compgenlnc.fileman import iter_seq_ss, load_dict
-
-from constants import SEQ_SS_FOLDER
+from compgenlnc.structs import SeqSSRecord, StructureRecord
 
 
 @pytest.mark.parametrize(

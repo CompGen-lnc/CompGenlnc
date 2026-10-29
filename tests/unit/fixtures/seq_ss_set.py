@@ -1,7 +1,4 @@
 import pytest
-
-from compgenlnc.fileman import iter_seq_ss, load_fasta
-
 from constants import (
     LNCRNA_FASTA,
     MAT_MIRNA_FASTA,
@@ -9,6 +6,8 @@ from constants import (
     SEQ_SS_FOLDER,
 )
 from params import id_list
+
+from compgenlnc.fileman import iter_seq_ss, load_fasta
 
 
 @pytest.fixture(params=list(iter_seq_ss(SEQ_SS_FOLDER)))

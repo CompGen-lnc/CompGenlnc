@@ -2,7 +2,6 @@ import numpy as np
 import pytest
 from constants import SEQ_SS_FOLDER
 
-from compgenlnc.consts.paths import SEQ_SS_PREFIX
 from compgenlnc.extractors.sequences import (
     gen_ctd_dict,
     gen_ctd_dict_from_folder,

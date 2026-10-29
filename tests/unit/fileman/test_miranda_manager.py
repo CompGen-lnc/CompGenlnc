@@ -1,8 +1,8 @@
+from constants import INTERACTIONS_FOLDER
+
 from compgenlnc.consts import PAIR_FIELDS
 from compgenlnc.consts.paths import BINDING_PREFIX
 from compgenlnc.fileman import read_binding_zone
-
-from constants import INTERACTIONS_FOLDER
 
 
 def test_read_binding_zone(interaction_list, subtests):

@@ -1,4 +1,5 @@
-import pytest
+
+from constants import MAT_MIRNA_FASTA, PRE_MIRNA_FASTA
 
 from compgenlnc.extractors.sourcedata import (
     extract_precursor,
@@ -6,8 +7,6 @@ from compgenlnc.extractors.sourcedata import (
     gen_precursors_csv_from_files,
 )
 from compgenlnc.fileman import load_precursors
-
-from constants import MAT_MIRNA_FASTA, PRE_MIRNA_FASTA
 
 
 def test_extract_precursor(

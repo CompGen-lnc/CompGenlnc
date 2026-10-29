@@ -13,11 +13,11 @@ from .fields import (
     PRECURSOR_FIELD,
 )
 from .params import (
+    GIT_DATA_MIRNA,
     GIT_LNCRNA_FASTA,
     GIT_MAT_MIRNA_FASTA,
-    GIT_PRE_MIRNA_FASTA,
-    GIT_DATA_MIRNA,
     GIT_POSITIVE_PAIRS,
+    GIT_PRE_MIRNA_FASTA,
     INTERACTION,
     LNCRNA,
     MATURE,

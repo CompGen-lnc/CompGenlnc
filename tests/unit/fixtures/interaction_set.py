@@ -1,11 +1,10 @@
 import numpy as np
 import pytest
+from constants import INTERACTIONS_CSV
 
 from compgenlnc.consts import IS_POSITIVE_FIELD, PAIR_FIELDS
 from compgenlnc.fileman import load_interactions
 from compgenlnc.typing import dtype_interaction_tuple
-
-from constants import INTERACTIONS_CSV
 
 
 @pytest.fixture(

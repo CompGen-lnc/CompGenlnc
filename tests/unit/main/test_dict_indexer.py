@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+from constants import EMBEDDING_FOLDER, MIRNA_FOLDER
 
 from compgenlnc import (
     dict_to_numpy,
@@ -18,8 +19,6 @@ from compgenlnc.consts import (
 )
 from compgenlnc.fileman import load_dict
 from compgenlnc.typing import dtype_index
-
-from constants import EMBEDDING_FOLDER, MIRNA_FOLDER
 
 
 def test_get_mature_index(interaction_list, precursors_consverter, subtests):

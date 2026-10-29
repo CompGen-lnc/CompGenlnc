@@ -1,8 +1,7 @@
 import pytest
+from constants import EMBEDDING_FOLDER
 
 from compgenlnc import load_indexes
-
-from constants import EMBEDDING_FOLDER
 
 
 @pytest.fixture(scope="session")

@@ -1,4 +1,5 @@
 import numpy as np
+from constants import SEQ_SS_FOLDER, SS_LOOPS_FOLDER
 
 from compgenlnc.consts.paths import LOOPS_PREFIX
 from compgenlnc.extractors.structures2d import (
@@ -8,9 +9,7 @@ from compgenlnc.extractors.structures2d import (
     gen_loops_dict,
     gen_loops_dict_from_folder,
 )
-from compgenlnc.fileman import read_2d_structure_loops, iter_seq_ss, load_dict
-
-from constants import SEQ_SS_FOLDER, SS_LOOPS_FOLDER
+from compgenlnc.fileman import iter_seq_ss, load_dict, read_2d_structure_loops
 
 
 def test_extract_2d_structure_loops(seq_ss_record, tmp_path):

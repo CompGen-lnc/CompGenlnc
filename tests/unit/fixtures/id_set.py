@@ -1,14 +1,13 @@
 import pytest
-
-from compgenlnc.fileman import load_fasta, load_precursors
-
 from constants import (
-    SEQ_FASTA_EXAMPLE,
     LNCRNA_FASTA,
     MAT_MIRNA_FASTA,
     MIRNA_FOLDER,
     PRE_MIRNA_FASTA,
+    SEQ_FASTA_EXAMPLE,
 )
+
+from compgenlnc.fileman import load_fasta, load_precursors
 
 
 @pytest.fixture(params=[rec.id for rec in load_fasta(SEQ_FASTA_EXAMPLE)])
