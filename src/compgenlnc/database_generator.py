@@ -1,5 +1,6 @@
 import math
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -14,6 +15,7 @@ from compgenlnc.consts.paths import (
     BINDING_FOLDER,
     BINDING_PREFIX,
     DATA_MIRNA,
+    INDEX_NPY,
     LNCRNA_FASTA,
     LNCRNA_SEQ_SS_FOLDER,
     LNCRNA_SS_FASTA,
@@ -59,6 +61,7 @@ from compgenlnc.generators.ss_features import gen_ss_database
 
 
 def load_source_data(
+    base_folder: str | os.PathLike | None = None,
     *,
     lnc_seq_fasta: str | os.PathLike | None = None,
     lnc_ss_fasta: str | os.PathLike | None = None,
@@ -70,33 +73,49 @@ def load_source_data(
     pos_interactions_csv: str | os.PathLike | None = None,
     neg_interactions_csv: str | os.PathLike | None = None,
 ) -> None:
-    if lnc_seq_fasta is not None:
-        record_it = load_fasta(lnc_seq_fasta, mode=SEQ_MODE)
-        save_fasta(LNCRNA_FASTA, record_it, mode=SEQ_MODE, overwrite=True)
-    if lnc_ss_fasta is not None:
-        record_it = load_fasta(lnc_ss_fasta, mode=SS_MODE)
-        save_fasta(LNCRNA_SS_FASTA, record_it, mode=SS_MODE, overwrite=True)
-    if pre_mir_seq_fasta is not None:
-        record_it = load_fasta(pre_mir_seq_fasta, mode=SEQ_MODE)
-        save_fasta(PRE_MIRNA_FASTA, record_it, mode=SEQ_MODE, overwrite=True)
-    if mat_mir_seq_fasta is not None:
-        record_it = load_fasta(mat_mir_seq_fasta, mode=SEQ_MODE)
-        save_fasta(MAT_MIRNA_FASTA, record_it, mode=SEQ_MODE, overwrite=True)
-    if mir_ss_fasta is not None:
-        record_it = load_fasta(mir_ss_fasta, mode=SS_MODE)
-        save_fasta(MIRNA_SS_FASTA, record_it, mode=SS_MODE, overwrite=True)
-    if data_mirna_csv is not None:
-        df = pd.read_csv(data_mirna_csv)
-        df.to_csv(DATA_MIRNA, index=False)
-    if interactions_csv is not None:
-        df = pd.read_csv(interactions_csv)
-        df.to_csv(PAIRS_FILE, index=False)
-    if pos_interactions_csv is not None:
-        df = pd.read_csv(pos_interactions_csv)
-        df.to_csv(PAIRS_FILE_POSITIVE, index=False)
-    if neg_interactions_csv is not None:
-        df = pd.read_csv(neg_interactions_csv)
-        df.to_csv(PAIRS_FILE_NEGATIVE, index=False)
+    if base_folder is not None:
+        base_folder = Path(base_folder).resolve()
+
+        def get_path(name, default):
+            if default is not None:
+                return default
+            return base_folder / name
+
+        lnc_seq_fasta = get_path(LNCRNA_FASTA.name, lnc_seq_fasta)
+        lnc_ss_fasta = get_path(LNCRNA_SS_FASTA.name, lnc_ss_fasta)
+        pre_mir_seq_fasta = get_path(PRE_MIRNA_FASTA.name, pre_mir_seq_fasta)
+        mat_mir_seq_fasta = get_path(MAT_MIRNA_FASTA.name, mat_mir_seq_fasta)
+        mir_ss_fasta = get_path(MIRNA_SS_FASTA.name, mir_ss_fasta)
+        data_mirna_csv = get_path(DATA_MIRNA.name, data_mirna_csv)
+        interactions_csv = get_path(PAIRS_FILE.name, interactions_csv)
+        pos_interactions_csv = get_path(
+            PAIRS_FILE_POSITIVE.name, pos_interactions_csv
+        )
+        neg_interactions_csv = get_path(
+            PAIRS_FILE_NEGATIVE.name, neg_interactions_csv
+        )
+
+    def load_fasta_if_exists(old_fasta, new_fasta, mode):
+        if old_fasta is not None and Path(old_fasta).resolve().exists():
+            record_it = load_fasta(old_fasta, mode=mode)
+            save_fasta(new_fasta, record_it, mode=mode, overwrite=True)
+
+    load_fasta_if_exists(lnc_seq_fasta, LNCRNA_FASTA, mode=SEQ_MODE)
+    load_fasta_if_exists(lnc_ss_fasta, LNCRNA_SS_FASTA, mode=SS_MODE)
+    load_fasta_if_exists(pre_mir_seq_fasta, PRE_MIRNA_FASTA, mode=SEQ_MODE)
+    load_fasta_if_exists(mat_mir_seq_fasta, MAT_MIRNA_FASTA, mode=SEQ_MODE)
+    load_fasta_if_exists(mir_ss_fasta, MIRNA_SS_FASTA, mode=SS_MODE)
+
+    def load_csv_if_exists(old_csv, new_csv):
+        if old_csv is not None and Path(old_csv).resolve().exists():
+            df = pd.read_csv(old_csv)
+            Path(new_csv).resolve().parent.mkdir(parents=True, exist_ok=True)
+            df.to_csv(new_csv, index=False)
+
+    load_csv_if_exists(data_mirna_csv, DATA_MIRNA)
+    load_csv_if_exists(interactions_csv, PAIRS_FILE)
+    load_csv_if_exists(pos_interactions_csv, PAIRS_FILE_POSITIVE)
+    load_csv_if_exists(neg_interactions_csv, PAIRS_FILE_NEGATIVE)
 
 
 def gen_source_data(
@@ -108,11 +127,11 @@ def gen_source_data(
         gen_precursors_csv_from_files(
             DATA_MIRNA, MAT_MIRNA_FASTA, PRE_MIRNA_FASTA
         )
-        lnc_list = list(
-            rec.id
-            for rec in load_fasta(LNCRNA_FASTA)
-            if len(rec.seq) <= max_size
-        )
+    lnc_list = list(
+        rec.id
+        for rec in load_fasta(LNCRNA_FASTA)
+        if len(rec.seq) <= max_size
+    )
     mir_list = list(rec.id for rec in load_fasta(MAT_MIRNA_FASTA))
     if not keep_data or not PAIRS_FILE.exists():
         extract_interactions(
@@ -123,7 +142,7 @@ def gen_source_data(
             lnc_list=lnc_list,
             mir_list=mir_list,
         )
-    if not keep_data or not PAIRS_FILE.exists():
+    if not keep_data or not INDEX_NPY.exists():
         gen_indexes_from_files(
             PAIRS_FILE, DATA_MIRNA, lnc_list=lnc_list, mir_list=mir_list
         )

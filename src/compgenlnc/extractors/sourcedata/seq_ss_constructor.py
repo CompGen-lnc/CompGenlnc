@@ -61,7 +61,7 @@ def fasta_to_seq_ss(
     }
     id_list = seq_dict.keys() & ss_dict.keys()
     if keep is not None:
-        id_list &= keep
+        id_list &= set(keep)
     folder.mkdir(parents=True, exist_ok=True)
     total = 0
 
