@@ -1,4 +1,3 @@
-
 from constants import MAT_MIRNA_FASTA, PRE_MIRNA_FASTA
 
 from compgenlnc.extractors.sourcedata import (

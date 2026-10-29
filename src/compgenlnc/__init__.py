@@ -1,4 +1,5 @@
-from . import consts, extractors, fileman, generators, structs, typing
+from . import config, consts, extractors, fileman, generators, structs, typing
+from .config import *
 from .consts import *
 from .database_generator import gen_database, gen_source_data, load_source_data
 from .dict_indexer import (
@@ -39,6 +40,7 @@ __all__ = [
     "load_indexes",
     "load_source_data",
 ]
+__all__.extend(config.__all__)
 __all__.extend(consts.__all__)
 __all__.extend(extractors.__all__)
 __all__.extend(fileman.__all__)

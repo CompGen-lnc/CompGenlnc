@@ -27,7 +27,7 @@ def test_get_mature_index(interaction_list, precursors_consverter, subtests):
         lnc, mir = interaction
         with subtests.test(i=(lnc, mir)):
             if mir not in precursors_consverter:
-                assert index == None
+                assert index is None
             else:
                 assert index[LNCRNA_FIELD] == lnc
                 assert index[MATURE_FIELD] == mir

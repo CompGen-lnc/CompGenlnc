@@ -1,12 +1,11 @@
 from pathlib import Path
-from typing import Final
+
+from compgenlnc.config.var_config import BASE_PATH
 
 SEQ_SS_PREFIX = "seq+ss_join_"
 LOOPS_PREFIX = "loops_"
 MIRANDA_PREFIX = "miranda_"
 BINDING_PREFIX = "binding_"
-
-BASE_PATH: Final[Path] = Path(__file__).resolve().parent.parent
 
 
 class DyPath(Path):

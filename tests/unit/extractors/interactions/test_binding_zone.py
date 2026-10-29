@@ -1,4 +1,3 @@
-
 from constants import (
     INTERACTIONS_CSV,
     INTERACTIONS_FOLDER,
