@@ -1,13 +1,13 @@
 import pytest
-from constants import SEQ_FASTA_EXAMPLE
 
-from compgenlnc.extractors.sequences import train_doc2vec_model
-from compgenlnc.fileman import iter_seq_fasta
+import compgenlnc as cgl
 
 
 @pytest.fixture(scope="session")
 def doc2vec_model():
-    return train_doc2vec_model(iter_seq_fasta(SEQ_FASTA_EXAMPLE))
+    return cgl.train_doc2vec_model(
+        cgl.iter_seq_fasta(cgl.paths.PRE_MIRNA_FASTA)
+    )
 
 
 @pytest.fixture

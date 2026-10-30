@@ -1,20 +1,6 @@
 import numpy as np
-from constants import (
-    INTERACTIONS_CSV,
-    NEG_INTERACTIONS_CSV,
-    POS_INTERACTIONS_CSV,
-)
 
-from compgenlnc.consts import IS_POSITIVE_FIELD, LNCRNA_FIELD, MIRNA_FIELD
-from compgenlnc.extractors.sourcedata import (
-    extract_interactions,
-    filter_interactions,
-)
-from compgenlnc.fileman import (
-    load_interactions,
-    save_interactions,
-)
-from compgenlnc.typing import dtype_interaction_tuple
+import compgenlnc as cgl
 
 
 def test_save_interactions(
@@ -24,10 +10,10 @@ def test_save_interactions(
     tmp_path,
 ):
     filename = tmp_path / "interaction.csv"
-    save_interactions(filename, interaction_set)
+    cgl.save_interactions(filename, interaction_set)
     assert filename.exists()
     joint_filename = tmp_path / "joint_interaction.csv"
-    save_interactions(
+    cgl.save_interactions(
         joint_filename,
         pos_list=interaction_positive_pairs,
         neg_list=interaction_negative_pairs,
@@ -39,14 +25,14 @@ def test_save_interactions(
     for line, expected in zip(lines[1:], interaction_set):
         values = line.split(",")
         values[2] = values[2] == "True"
-        arr = np.array(tuple(values), dtype_interaction_tuple)
+        arr = np.array(tuple(values), cgl.dtype_interaction_tuple)
         assert np.array_equal(arr, expected)
 
 
 def test_load_interactions(interaction_set, tmp_path):
     filename = tmp_path / "interaction.csv"
-    save_interactions(filename, interaction_set)
-    loaded_list = load_interactions(filename)
+    cgl.save_interactions(filename, interaction_set)
+    loaded_list = cgl.load_interactions(filename)
     assert np.array_equal(loaded_list, interaction_set)
 
 
@@ -54,9 +40,9 @@ def test_extract_interactions_without_negavites(
     lncrna_id_list, mirna_id_list, tmp_path
 ):
     filename = tmp_path / "interaction.csv"
-    extract_interactions(
+    cgl.extract_interactions(
         filename,
-        POS_INTERACTIONS_CSV,
+        cgl.paths.PAIRS_FILE_POSITIVE,
         separator=",",
         lnc_list=lncrna_id_list,
         mir_list=mirna_id_list,
@@ -66,28 +52,32 @@ def test_extract_interactions_without_negavites(
 
 def test_extract_interactions_with_negavites(tmp_path):
     filename = tmp_path / "interaction.csv"
-    extract_interactions(
-        filename, POS_INTERACTIONS_CSV, NEG_INTERACTIONS_CSV, separator=","
+    cgl.extract_interactions(
+        filename,
+        cgl.paths.PAIRS_FILE_POSITIVE,
+        cgl.paths.PAIRS_FILE_NEGATIVE,
+        separator=",",
     )
     assert filename.exists()
     assert np.array_equal(
-        load_interactions(filename), load_interactions(INTERACTIONS_CSV)
+        cgl.load_interactions(filename),
+        cgl.load_interactions(cgl.paths.PAIRS_FILE),
     )
 
 
 def test_filter_interactions(lncrna_id_filter, mirna_id_filter, tmp_path):
     filename = tmp_path / "interaction.csv"
-    filter_interactions(
+    cgl.filter_interactions(
         filename,
-        INTERACTIONS_CSV,
+        cgl.paths.PAIRS_FILE,
         lnc_filter=lncrna_id_filter,
         mir_filter=mirna_id_filter,
     )
-    arr = load_interactions(filename)
-    expected = load_interactions(INTERACTIONS_CSV)
-    mask = expected[IS_POSITIVE_FIELD] == expected[IS_POSITIVE_FIELD]
+    arr = cgl.load_interactions(filename)
+    expected = cgl.load_interactions(cgl.paths.PAIRS_FILE)
+    mask = expected[cgl.IS_POSITIVE_FIELD] == expected[cgl.IS_POSITIVE_FIELD]
     if lncrna_id_filter:
-        mask &= np.isin(expected[LNCRNA_FIELD], lncrna_id_filter)
+        mask &= np.isin(expected[cgl.LNCRNA_FIELD], lncrna_id_filter)
     if mirna_id_filter:
-        mask &= np.isin(expected[MIRNA_FIELD], mirna_id_filter)
+        mask &= np.isin(expected[cgl.MIRNA_FIELD], mirna_id_filter)
     assert np.array_equal(arr, expected[mask])

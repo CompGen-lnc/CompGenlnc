@@ -1,132 +1,54 @@
 import pytest
-from constants import (
-    LNCRNA_FASTA,
-    MAT_MIRNA_FASTA,
-    MIRNA_FOLDER,
-    PRE_MIRNA_FASTA,
-    SEQ_FASTA_EXAMPLE,
-)
 
-from compgenlnc.fileman import load_fasta, load_precursors
+import compgenlnc as cgl
 
 
-@pytest.fixture(params=[rec.id for rec in load_fasta(SEQ_FASTA_EXAMPLE)])
-def example_id(request):
-    return request.param
+@pytest.fixture(scope="session")
+def example_id_list():
+    records = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA)
+    return [rec.id for rec in records]
 
 
-@pytest.fixture(
-    params=[
-        [],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(SEQ_FASTA_EXAMPLE))
-            if i in [0, 1, 2]
-        ],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(SEQ_FASTA_EXAMPLE))
-            if i in [2, 4, 6, 8]
-        ],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(SEQ_FASTA_EXAMPLE))
-            if i in [7, 8]
-        ],
-    ]
-)
-def example_id_filter(request):
-    return request.param
+@pytest.fixture(params=[[], range(50), range(0, 200, 2), range(300, 350)])
+def example_id_filter(request, example_id_list):
+    filter = request.param
+    return [example_id_list[i] for i in filter]
 
 
 @pytest.fixture(scope="session")
 def lncrna_id_list():
-    records = load_fasta(LNCRNA_FASTA)
+    records = cgl.load_fasta(cgl.paths.LNCRNA_FASTA)
     return [rec.id for rec in records]
 
 
-@pytest.fixture(
-    params=[
-        [],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(LNCRNA_FASTA))
-            if i in [0, 1, 2]
-        ],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(LNCRNA_FASTA))
-            if i in [2, 4, 6, 8]
-        ],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(LNCRNA_FASTA))
-            if i in [7, 8]
-        ],
-    ],
-)
-def lncrna_id_filter(request):
-    return request.param
+@pytest.fixture(params=[[], range(50), range(0, 200, 2), range(300, 350)])
+def lncrna_id_filter(request, lncrna_id_list):
+    filter = request.param
+    return [lncrna_id_list[i] for i in filter]
 
 
 @pytest.fixture(scope="session")
 def pre_mirna_id_list():
-    records = load_fasta(PRE_MIRNA_FASTA)
+    records = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA)
     return [rec.id for rec in records]
 
 
-@pytest.fixture(
-    params=[
-        [],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(PRE_MIRNA_FASTA))
-            if i in [0, 1, 2]
-        ],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(PRE_MIRNA_FASTA))
-            if i in [2, 4, 6, 8]
-        ],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(PRE_MIRNA_FASTA))
-            if i in [7, 8]
-        ],
-    ],
-)
-def pre_mirna_id_filter(request):
-    return request.param
+@pytest.fixture(params=[[], range(50), range(0, 200, 2), range(300, 350)])
+def pre_mirna_id_filter(request, pre_mirna_id_list):
+    filter = request.param
+    return [pre_mirna_id_list[i] for i in filter]
 
 
 @pytest.fixture(scope="session")
 def mat_mirna_id_list():
-    records = load_fasta(MAT_MIRNA_FASTA)
+    records = cgl.load_fasta(cgl.paths.MAT_MIRNA_FASTA)
     return [rec.id for rec in records]
 
 
-@pytest.fixture(
-    params=[
-        [],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(MAT_MIRNA_FASTA))
-            if i in [0, 1, 2, 10, 11]
-        ],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(MAT_MIRNA_FASTA))
-            if i in [2, 4, 6, 8, 10, 12, 14]
-        ],
-        [
-            rec.id
-            for i, rec in enumerate(load_fasta(MAT_MIRNA_FASTA))
-            if i in [7, 8, 13, 14]
-        ],
-    ],
-)
-def mat_mirna_id_filter(request):
-    return request.param
+@pytest.fixture(params=[[], range(50), range(0, 200, 2), range(300, 350)])
+def mat_mirna_id_filter(request, mat_mirna_id_list):
+    filter = request.param
+    return [mat_mirna_id_list[i] for i in filter]
 
 
 @pytest.fixture(scope="session")
@@ -141,4 +63,4 @@ def mirna_id_filter(pre_mirna_id_filter, mat_mirna_id_filter):
 
 @pytest.fixture(scope="session")
 def precursors_consverter():
-    return load_precursors(MIRNA_FOLDER / "data_miRNA.csv")
+    return cgl.load_precursors(cgl.paths.DATA_MIRNA)

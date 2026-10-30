@@ -1,32 +1,28 @@
-import pytest
-from constants import SEQ_FASTA_EXAMPLE, SEQ_SS_FOLDER, SS_FASTA_EXAMPLE
-
-from compgenlnc.consts.paths import SEQ_SS_PREFIX
-from compgenlnc.extractors.sourcedata import (
-    fasta_to_seq_ss,
-    join_seq_ss,
-)
-from compgenlnc.fileman.fasta_manager import iter_seq_fasta, read_sequence
+import compgenlnc as cgl
 
 
 def test_fasta_to_seq_ss(tmp_path):
     folder = tmp_path / "seq+ss_join"
-    total = fasta_to_seq_ss(SEQ_FASTA_EXAMPLE, SS_FASTA_EXAMPLE, folder)
-    assert total == 10
+    total = cgl.fasta_to_seq_ss(
+        cgl.paths.PRE_MIRNA_FASTA, cgl.paths.MIRNA_SS_FASTA, folder
+    )
+    assert total == 387
 
 
-@pytest.mark.parametrize("record", list(iter_seq_fasta(SEQ_FASTA_EXAMPLE)))
-def test_join_seq_ss(record, tmp_path):
-    seq = str(record.seq)
-    ss = ""
-    id_ = record.id
-    folder = tmp_path / "seq+ss_join"
-    folder.mkdir(parents=True, exist_ok=True)
-    join_seq_ss(seq, ss, id_, folder)
+def test_join_seq_ss(tmp_path):
+    records = cgl.iter_seq_fasta(cgl.paths.PRE_MIRNA_FASTA)
 
-    path = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
-    assert path.exists()
+    for record in records:
+        seq = str(record.seq)
+        ss = ""
+        id_ = record.id
+        folder = tmp_path / "seq+ss_join"
+        folder.mkdir(parents=True, exist_ok=True)
+        cgl.join_seq_ss(seq, ss, id_, folder)
 
-    new_seq = read_sequence(folder, id_)
-    expected = read_sequence(SEQ_SS_FOLDER, id_)
-    assert new_seq == expected
+        path = folder / f"{cgl.paths.SEQ_SS_PREFIX}{id_}.dat"
+        assert path.exists()
+
+        new_seq = cgl.read_sequence(folder, id_)
+        expected = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_FOLDER, id_)
+        assert new_seq == expected

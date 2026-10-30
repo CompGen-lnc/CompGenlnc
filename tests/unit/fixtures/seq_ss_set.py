@@ -1,54 +1,28 @@
 import pytest
-from constants import (
-    LNCRNA_FASTA,
-    MAT_MIRNA_FASTA,
-    PRE_MIRNA_FASTA,
-    SEQ_SS_FOLDER,
-)
-from params import id_list
 
-from compgenlnc.fileman import iter_seq_ss, load_fasta
-
-
-@pytest.fixture(params=list(iter_seq_ss(SEQ_SS_FOLDER)))
-def seq_ss_record(request):
-    return request.param
+import compgenlnc as cgl
 
 
 @pytest.fixture(scope="session")
 def seq_ss_list():
-    return list(iter_seq_ss(SEQ_SS_FOLDER))
-
-
-@pytest.fixture(
-    params=[
-        list(iter_seq_ss(SEQ_SS_FOLDER)),
-        list(iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [0, 1, 2]])),
-        list(
-            iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [2, 4, 6, 8]])
-        ),
-        list(iter_seq_ss(SEQ_SS_FOLDER, keep=[id_list[i] for i in [7, 8]])),
-    ]
-)
-def seq_ss_filtered_list(request):
-    return request.param
+    return list(cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER))
 
 
 @pytest.fixture(scope="session")
 def lnc_records():
-    return list(load_fasta(LNCRNA_FASTA))
+    return list(cgl.load_fasta(cgl.paths.LNCRNA_FASTA))
 
 
 @pytest.fixture(scope="session")
 def pre_mir_records():
-    return list(load_fasta(PRE_MIRNA_FASTA))
+    return list(cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA))
 
 
 @pytest.fixture(scope="session")
 def mat_mir_records():
-    return list(load_fasta(MAT_MIRNA_FASTA))
+    return list(cgl.load_fasta(cgl.paths.MAT_MIRNA_FASTA))
 
 
 @pytest.fixture(scope="session")
-def mir_records(pre_mir_records, mat_mir_records):
-    return pre_mir_records + mat_mir_records
+def mir_records(mat_mir_records):
+    return mat_mir_records

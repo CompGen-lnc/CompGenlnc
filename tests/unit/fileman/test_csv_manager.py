@@ -1,43 +1,35 @@
 import numpy as np
 import pandas as pd
-from constants import MIRNA_FOLDER
 
-from compgenlnc.consts import (
-    IS_POSITIVE_FIELD,
-    LNCRNA_FIELD,
-    MIRNA_FIELD,
-    PAIR_FIELDS,
-)
-from compgenlnc.fileman import (
-    load_interactions,
-    load_precursors,
-    save_interactions,
-)
+import compgenlnc as cgl
 
 
 def test_save_interactions(interaction_set, tmp_path):
     path = tmp_path / "interactions.csv"
-    save_interactions(path, interaction_set)
+    cgl.save_interactions(path, interaction_set)
     assert path.exists()
     df = pd.read_csv(path)
     columns = df.columns.to_numpy()
     assert np.isin(
-        [LNCRNA_FIELD, MIRNA_FIELD, IS_POSITIVE_FIELD], columns
+        [cgl.LNCRNA_FIELD, cgl.MIRNA_FIELD, cgl.IS_POSITIVE_FIELD], columns
     ).all()
 
 
 def test_load_interactions(interaction_set, tmp_path):
     path = tmp_path / "interactions.csv"
-    save_interactions(path, interaction_set)
-    expected = np.sort(interaction_set, order=PAIR_FIELDS)
-    expected = expected[np.argsort(~expected[IS_POSITIVE_FIELD])]
-    interactions = load_interactions(path)
+    cgl.save_interactions(path, interaction_set)
+    positives = interaction_set[interaction_set[cgl.IS_POSITIVE_FIELD]]
+    negatives = interaction_set[~interaction_set[cgl.IS_POSITIVE_FIELD]]
+    positives.sort(order=cgl.PAIR_FIELDS)
+    negatives.sort(order=cgl.PAIR_FIELDS)
+    expected = np.concatenate((positives, negatives), axis=None)
+    interactions = cgl.load_interactions(path)
     assert np.array_equal(interactions, expected)
 
 
 def test_load_precursors():
-    path = MIRNA_FOLDER / "data_miRNA.csv"
-    precursor_dict = load_precursors(path)
+    path = cgl.paths.MIRNA_FOLDER / "data_miRNA.csv"
+    precursor_dict = cgl.load_precursors(path)
     lines = path.read_text().split("\n")
     headers = lines.pop(0)
     assert "Mature" in headers and "Precursor" in headers

@@ -1,11 +1,6 @@
 import pytest
 
-from compgenlnc.extractors.sourcedata import (
-    extract_2d_structure,
-    extract_2d_structure_identified,
-    extract_2d_structure_list,
-)
-from compgenlnc.structs import SeqRecord, SeqSSRecord, StructureRecord
+import compgenlnc as cgl
 
 
 @pytest.mark.parametrize(
@@ -16,17 +11,17 @@ from compgenlnc.structs import SeqRecord, SeqSSRecord, StructureRecord
                 "UGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACC"
                 "CACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUA"
             ),
-            StructureRecord(
+            cgl.structs.StructureRecord(
                 "(((((.(((((((((((((((((((((.....(((...(("
                 "((....)))).)))))))))))))))))))))))))))))"
             ),
         ),
         (
-            SeqRecord(
+            cgl.structs.SeqRecord(
                 "AGGUUGAGGUAGUAGGUUGUAUAGUUUAGAAUUACA"
                 "UCAAGGGAGAUAACUGUACAGCCUCCUAGCUUUCCU"
             ),
-            StructureRecord(
+            cgl.structs.StructureRecord(
                 "(((..(((.(((.(((((((((((((.........("
                 "((......)))))))))))))))).))).))).)))"
             ),
@@ -36,7 +31,7 @@ from compgenlnc.structs import SeqRecord, SeqSSRecord, StructureRecord
                 "GGGUGAGGUAGUAGGUUGUAUAGUUUGGGGCUCUGCC"
                 "CUGCUAUGGGAUAACUAUACAAUCUACUGUCUUUCCU"
             ),
-            StructureRecord(
+            cgl.structs.StructureRecord(
                 "(((.(((((((((((((((((((((((((((...)))"
                 "))).........))))))))))))))))))))).)))"
             ),
@@ -44,7 +39,7 @@ from compgenlnc.structs import SeqRecord, SeqSSRecord, StructureRecord
     ],
 )
 def test_extract_2d_structure(seq, expected):
-    ss = extract_2d_structure(seq)
+    ss = cgl.extract_2d_structure(seq)
     assert len(seq) == len(ss)
     assert ss == expected
 
@@ -53,13 +48,13 @@ def test_extract_2d_structure(seq, expected):
     "seq, expected",
     [
         (
-            SeqSSRecord(
+            cgl.structs.SeqSSRecord(
                 "hsa-let-7a-1",
                 "UGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACC"
                 "CACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUA",
                 "",
             ),
-            SeqSSRecord(
+            cgl.structs.SeqSSRecord(
                 "hsa-let-7a-1",
                 "UGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACC"
                 "CACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUA",
@@ -68,13 +63,13 @@ def test_extract_2d_structure(seq, expected):
             ),
         ),
         (
-            SeqSSRecord(
+            cgl.structs.SeqSSRecord(
                 "hsa-let-7a-2",
                 "AGGUUGAGGUAGUAGGUUGUAUAGUUUAGAAUUACA"
                 "UCAAGGGAGAUAACUGUACAGCCUCCUAGCUUUCCU",
                 "",
             ),
-            SeqSSRecord(
+            cgl.structs.SeqSSRecord(
                 "hsa-let-7a-2",
                 "AGGUUGAGGUAGUAGGUUGUAUAGUUUAGAAUUACA"
                 "UCAAGGGAGAUAACUGUACAGCCUCCUAGCUUUCCU",
@@ -83,13 +78,13 @@ def test_extract_2d_structure(seq, expected):
             ),
         ),
         (
-            SeqSSRecord(
+            cgl.structs.SeqSSRecord(
                 "hsa-let-7a-3",
                 "GGGUGAGGUAGUAGGUUGUAUAGUUUGGGGCUCUGCC"
                 "CUGCUAUGGGAUAACUAUACAAUCUACUGUCUUUCCU",
                 "",
             ),
-            SeqSSRecord(
+            cgl.structs.SeqSSRecord(
                 "hsa-let-7a-3",
                 "GGGUGAGGUAGUAGGUUGUAUAGUUUGGGGCUCUGCC"
                 "CUGCUAUGGGAUAACUAUACAAUCUACUGUCUUUCCU",
@@ -100,13 +95,13 @@ def test_extract_2d_structure(seq, expected):
     ],
 )
 def test_extract_2d_structure_identified(seq, expected):
-    ss = extract_2d_structure_identified(seq)
+    ss = cgl.extract_2d_structure_identified(seq)
     assert len(seq.seq) == len(ss.ss)
     assert ss == expected
 
 
-def test_extract_2d_structure_list(seq_ss_filtered_list):
-    ss_list = extract_2d_structure_list(seq_ss_filtered_list)
+def test_extract_2d_structure_list(seq_ss_list):
+    ss_list = cgl.extract_2d_structure_list(seq_ss_list)
     for i, expected in enumerate(ss_list):
-        ss = extract_2d_structure(seq_ss_filtered_list[i])
+        ss = cgl.extract_2d_structure(seq_ss_list[i])
         assert ss == expected

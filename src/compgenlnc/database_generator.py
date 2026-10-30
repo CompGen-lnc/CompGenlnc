@@ -128,9 +128,7 @@ def gen_source_data(
             DATA_MIRNA, MAT_MIRNA_FASTA, PRE_MIRNA_FASTA
         )
     lnc_list = list(
-        rec.id
-        for rec in load_fasta(LNCRNA_FASTA)
-        if len(rec.seq) <= max_size
+        rec.id for rec in load_fasta(LNCRNA_FASTA) if len(rec.seq) <= max_size
     )
     mir_list = list(rec.id for rec in load_fasta(MAT_MIRNA_FASTA))
     if not keep_data or not PAIRS_FILE.exists():

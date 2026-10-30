@@ -62,7 +62,7 @@ def save_dict(
     if dict_ is not None:
         items = dict_.items()
     elif keys is not None and values is not None:
-        items = zip(keys, values)
+        items = zip(keys, values, strict=True)
     else:
         return
 

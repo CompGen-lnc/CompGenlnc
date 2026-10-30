@@ -1,18 +1,14 @@
-from constants import INTERACTIONS_FOLDER
-
-from compgenlnc.consts import PAIR_FIELDS
-from compgenlnc.consts.paths import BINDING_PREFIX
-from compgenlnc.fileman import read_binding_zone
+import compgenlnc as cgl
 
 
 def test_read_binding_zone(interaction_list, subtests):
     for interaction in interaction_list:
-        lnc, mir = interaction[PAIR_FIELDS]
-        folder = INTERACTIONS_FOLDER / "binding"
-        filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
+        lnc, mir = interaction[cgl.PAIR_FIELDS]
+        folder = cgl.paths.INTERACTIONS_FOLDER / "binding"
+        filename = folder / f"{cgl.paths.BINDING_PREFIX}{lnc}_{mir}.dat"
         with subtests.test(i=(lnc, mir)):
             text = filename.read_text()
-            binding_zone = read_binding_zone(folder, interaction)
+            binding_zone = cgl.read_binding_zone(folder, interaction)
             assert (text == "No Hits Found above Threshold") == (
                 not bool(binding_zone)
             )

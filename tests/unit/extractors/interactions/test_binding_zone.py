@@ -1,62 +1,53 @@
-from constants import (
-    INTERACTIONS_CSV,
-    INTERACTIONS_FOLDER,
-    LNCRNA_FASTA,
-    MAT_MIRNA_FASTA,
-    PRE_MIRNA_FASTA,
-)
+import random
 
-from compgenlnc.consts import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
-from compgenlnc.consts.paths import (
-    BINDING_PREFIX,
-    MIRANDA_PREFIX,
-)
-from compgenlnc.extractors.interactions import (
-    extract_binding_zone,
-    extract_binding_zone_from_folder,
-    predict_miranda,
-    predict_miranda_from_files,
-    predict_miranda_from_list,
-)
+import compgenlnc as cgl
 
 
 def test_predict_miranda(
     interaction_set, lnc_records, mir_records, tmp_path, subtests
 ):
     folder = tmp_path
-    for lnc, mir, _ in interaction_set:
+    count = len(interaction_set)
+    samples = random.sample(range(count), min(10, count))
+    for lnc, mir, _ in interaction_set[samples]:
         with subtests.test(i=(lnc, mir)):
             lnc_record = next(filter(lambda rec: rec.id == lnc, lnc_records))
             mir_record = next(filter(lambda rec: rec.id == mir, mir_records))
-            predict_miranda(lnc_record, mir_record, folder)
-            assert (
-                folder / f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
-            ).exists()
+            cgl.predict_miranda(lnc_record, mir_record, folder)
+            filename = (
+                f"{cgl.paths.MIRANDA_PREFIX}"
+                f"{lnc_record.id}_{mir_record.id}.dat"
+            )
+            assert (folder / filename).exists()
 
 
 def test_predict_miranda_from_list(
     interaction_set, lnc_records, mir_records, tmp_path
 ):
+    count = len(interaction_set)
+    samples = random.sample(range(count), min(10, count))
+    interactions = interaction_set[samples]
+
     folder = tmp_path
     lnc_list = map(
         lambda lnc: next(rec for rec in lnc_records if rec.id == lnc),
-        interaction_set[LNCRNA_FIELD],
+        interactions[cgl.LNCRNA_FIELD],
     )
     mir_list = map(
         lambda mir: next(rec for rec in mir_records if rec.id == mir),
-        interaction_set[MIRNA_FIELD],
+        interactions[cgl.MIRNA_FIELD],
     )
-    predict_miranda_from_list(lnc_list, mir_list, folder)
+    cgl.predict_miranda_from_list(lnc_list, mir_list, folder)
     expected_folder = tmp_path / "expected"
-    for lnc, mir, _ in interaction_set:
+    for lnc, mir, _ in interactions:
         lnc_record = next(rec for rec in lnc_records if rec.id == lnc)
         mir_record = next(rec for rec in mir_records if rec.id == mir)
-        predict_miranda(lnc_record, mir_record, expected_folder)
+        cgl.predict_miranda(lnc_record, mir_record, expected_folder)
         filename = folder / (
-            f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
+            f"{cgl.paths.MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
         )
         expected = expected_folder / (
-            f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
+            f"{cgl.paths.MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
         )
         assert filename.exists()
         file_text, expected_text = filename.read_text(), expected.read_text()
@@ -66,46 +57,55 @@ def test_predict_miranda_from_list(
 
 
 def test_predict_miranda_from_files(interaction_list, tmp_path):
+    count = len(interaction_list)
+    samples = random.sample(range(count), min(10, count))
+    interactions = interaction_list[samples]
+
     folder = tmp_path
-    predict_miranda_from_files(
-        INTERACTIONS_CSV,
-        LNCRNA_FASTA,
-        PRE_MIRNA_FASTA,
-        MAT_MIRNA_FASTA,
+    cgl.predict_miranda_from_files(
+        cgl.paths.PAIRS_FILE,
+        cgl.paths.LNCRNA_FASTA,
+        cgl.paths.PRE_MIRNA_FASTA,
+        cgl.paths.MAT_MIRNA_FASTA,
         folder,
+        keep=interactions,
     )
-    for lnc, mir, _ in interaction_list:
-        filename = folder / f"{MIRANDA_PREFIX}{lnc}_{mir}.dat"
+    for lnc, mir, _ in interactions:
+        filename = folder / f"{cgl.paths.MIRANDA_PREFIX}{lnc}_{mir}.dat"
         assert filename.exists()
 
 
 def test_extract_binding_zone(interaction_list, tmp_path, subtests):
-    miranda_folder = INTERACTIONS_FOLDER / "miranda"
-    expected_folder = INTERACTIONS_FOLDER / "binding"
+    miranda_folder = cgl.paths.INTERACTIONS_FOLDER / "miranda"
+    expected_folder = cgl.paths.INTERACTIONS_FOLDER / "binding"
     folder = tmp_path
     for interaction in interaction_list:
-        lnc, mir = interaction[PAIR_FIELDS]
-        extract_binding_zone(lnc, mir, miranda_folder, folder)
+        lnc, mir = interaction[cgl.PAIR_FIELDS]
+        cgl.extract_binding_zone(lnc, mir, miranda_folder, folder)
         with subtests.test(i=(lnc, mir)):
-            filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
+            filename = folder / f"{cgl.paths.BINDING_PREFIX}{lnc}_{mir}.dat"
             assert filename.exists()
-            expected = expected_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
+            expected = (
+                expected_folder / f"{cgl.paths.BINDING_PREFIX}{lnc}_{mir}.dat"
+            )
             assert filename.read_text() == expected.read_text()
 
 
 def test_extract_binding_zone_from_folder(
     interaction_list, lncrna_id_filter, mirna_id_filter, tmp_path
 ):
-    miranda_folder = INTERACTIONS_FOLDER / "miranda"
-    expected_folder = INTERACTIONS_FOLDER / "binding"
+    miranda_folder = cgl.paths.MIRANDA_FOLDER
+    expected_folder = cgl.paths.BINDING_FOLDER
     folder = tmp_path
-    extract_binding_zone_from_folder(
+    cgl.extract_binding_zone_from_folder(
         miranda_folder, folder, lncrna_id_filter, mirna_id_filter
     )
     for interaction in interaction_list:
-        lnc, mir = interaction[PAIR_FIELDS]
-        filename = folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
-        expected = expected_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
+        lnc, mir = interaction[cgl.PAIR_FIELDS]
+        filename = folder / f"{cgl.paths.BINDING_PREFIX}{lnc}_{mir}.dat"
+        expected = (
+            expected_folder / f"{cgl.paths.BINDING_PREFIX}{lnc}_{mir}.dat"
+        )
 
         lnc_included = not lncrna_id_filter or lnc in lncrna_id_filter
         mir_included = not mirna_id_filter or mir in mirna_id_filter

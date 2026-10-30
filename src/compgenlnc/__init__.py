@@ -28,6 +28,12 @@ from .feat_loader import (
 )
 from .fileman import *
 from .generators import *
+from .typing import (
+    dtype_index,
+    dtype_interaction_pair,
+    dtype_interaction_tuple,
+    dtype_loop_tuple,
+)
 from .version import __version__
 
 __all__ = [
@@ -35,6 +41,10 @@ __all__ = [
     "DOC2VEC_MODEL_SEED",
     "LOG_FILE",
     "dict_to_numpy",
+    "dtype_index",
+    "dtype_interaction_pair",
+    "dtype_interaction_tuple",
+    "dtype_loop_tuple",
     "get_feature_vectors",
     "get_interactions_features",
     "get_mature_index",

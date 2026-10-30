@@ -16,6 +16,7 @@ __all__ = [
     "InteractionTuple",
     "LoopTuple",
     "SeqLike",
+    "SeqSSRecord",
     "SSLike",
     "dtype_index",
     "dtype_interaction_pair",

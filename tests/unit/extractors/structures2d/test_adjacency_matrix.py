@@ -2,17 +2,8 @@ import math
 
 import numpy as np
 import pytest
-from constants import SEQ_SS_FOLDER
 
-from compgenlnc.extractors.structures2d import (
-    gen_normalized_matrix_dict,
-    gen_normalized_matrix_dict_from_folder,
-    get_adjacency_matrix,
-    get_adjacency_matrix_list,
-    normalize_matrix_list,
-)
-from compgenlnc.fileman import iter_seq_ss, load_dict
-from compgenlnc.structs import SeqSSRecord, StructureRecord
+import compgenlnc as cgl
 
 
 @pytest.mark.parametrize(
@@ -31,7 +22,7 @@ from compgenlnc.structs import SeqSSRecord, StructureRecord
             ),
         ),
         (
-            StructureRecord("(..)."),
+            cgl.structs.StructureRecord("(..)."),
             np.array(
                 [
                     [0, 0, 0, 1, 0],
@@ -44,7 +35,7 @@ from compgenlnc.structs import SeqSSRecord, StructureRecord
             ),
         ),
         (
-            SeqSSRecord("", "", "(.())."),
+            cgl.structs.SeqSSRecord("", "", "(.())."),
             np.array(
                 [
                     [0, 0, 0, 0, 1, 0],
@@ -60,20 +51,20 @@ from compgenlnc.structs import SeqSSRecord, StructureRecord
     ],
 )
 def test_get_adjacency_matrix(ss, expected):
-    matrix = get_adjacency_matrix(ss)
+    matrix = cgl.get_adjacency_matrix(ss)
     assert np.array_equal(matrix, expected)
 
 
 def test_get_adjacency_matrix_list(ss_fasta_list):
-    matrix_it = get_adjacency_matrix_list(ss_fasta_list)
+    matrix_it = cgl.get_adjacency_matrix_list(ss_fasta_list)
     for i, (record, expected) in enumerate(zip(ss_fasta_list, matrix_it)):
-        assert np.array_equal(get_adjacency_matrix(record.ss), expected)
+        assert np.array_equal(cgl.get_adjacency_matrix(record.ss), expected)
 
 
 @pytest.mark.parametrize("normal_size", [None, 100, 50, 73])
 def test_normalize_matrix_list(normal_size, ss_fasta_list):
-    matrix_it = get_adjacency_matrix_list(ss_fasta_list)
-    normal_it = normalize_matrix_list(matrix_it, normal_size)
+    matrix_it = cgl.get_adjacency_matrix_list(ss_fasta_list)
+    normal_it = cgl.normalize_matrix_list(matrix_it, normal_size)
     if normal_size is None:
         normal_size = math.ceil(np.mean([len(ss.ss) for ss in ss_fasta_list]))
 
@@ -81,14 +72,14 @@ def test_normalize_matrix_list(normal_size, ss_fasta_list):
         assert mat.shape == (normal_size, normal_size)
 
 
-def test_gen_normalized_matrix_dict(seq_ss_filtered_list, tmp_path):
+def test_gen_normalized_matrix_dict(seq_ss_list, tmp_path):
     dict_file = tmp_path / "kmer.dict"
-    gen_normalized_matrix_dict(seq_ss_filtered_list, dict_file)
+    cgl.gen_normalized_matrix_dict(seq_ss_list, dict_file)
     assert dict_file.exists()
 
-    matrix_it = get_adjacency_matrix_list(seq_ss_filtered_list)
-    normal_it = normalize_matrix_list(matrix_it)
-    normal_dict = load_dict(dict_file)
+    matrix_it = cgl.get_adjacency_matrix_list(seq_ss_list)
+    normal_it = cgl.normalize_matrix_list(matrix_it)
+    normal_dict = cgl.load_dict(dict_file)
 
     for mat, expected in zip(normal_dict.values(), normal_it):
         assert np.array_equal(mat, expected)
@@ -96,16 +87,16 @@ def test_gen_normalized_matrix_dict(seq_ss_filtered_list, tmp_path):
 
 def test_gen_normalized_matrix_dict_from_folder(example_id_filter, tmp_path):
     dict_file = tmp_path / "kmer.dict"
-    gen_normalized_matrix_dict_from_folder(
-        SEQ_SS_FOLDER, dict_file, keep=example_id_filter
+    cgl.gen_normalized_matrix_dict_from_folder(
+        cgl.paths.MIRNA_SEQ_SS_FOLDER, dict_file, keep=example_id_filter
     )
     assert dict_file.exists()
 
-    matrix_it = get_adjacency_matrix_list(
-        iter_seq_ss(SEQ_SS_FOLDER, keep=example_id_filter)
+    matrix_it = cgl.get_adjacency_matrix_list(
+        cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER, keep=example_id_filter)
     )
-    normal_it = normalize_matrix_list(matrix_it)
-    normal_dict = load_dict(dict_file)
+    normal_it = cgl.normalize_matrix_list(matrix_it)
+    normal_dict = cgl.load_dict(dict_file)
 
     for mat, expected in zip(normal_dict.values(), normal_it):
         assert np.array_equal(mat, expected)

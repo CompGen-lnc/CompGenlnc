@@ -1,3 +1,9 @@
+from pathlib import Path
+
+import compgenlnc as cgl
+
+cgl.set_base_path(Path(__file__).resolve().parent)
+
 pytest_plugins = [
     "fixtures.deterministic_models",
     "fixtures.id_set",
