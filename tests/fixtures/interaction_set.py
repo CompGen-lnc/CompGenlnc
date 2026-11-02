@@ -5,7 +5,7 @@ import pytest
 import compgenlnc as cgl
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def interaction_list():
     return cgl.load_interactions(cgl.paths.PAIRS_FILE)
 

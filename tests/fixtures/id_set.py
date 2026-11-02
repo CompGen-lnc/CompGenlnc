@@ -3,7 +3,7 @@ import pytest
 import compgenlnc as cgl
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def example_id_list():
     records = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA)
     return [rec.id for rec in records]
@@ -15,7 +15,7 @@ def example_id_filter(request, example_id_list):
     return [example_id_list[i] for i in filter]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def lncrna_id_list():
     records = cgl.load_fasta(cgl.paths.LNCRNA_FASTA)
     return [rec.id for rec in records]
@@ -27,7 +27,7 @@ def lncrna_id_filter(request, lncrna_id_list):
     return [lncrna_id_list[i] for i in filter]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def pre_mirna_id_list():
     records = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA)
     return [rec.id for rec in records]
@@ -39,7 +39,7 @@ def pre_mirna_id_filter(request, pre_mirna_id_list):
     return [pre_mirna_id_list[i] for i in filter]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def mat_mirna_id_list():
     records = cgl.load_fasta(cgl.paths.MAT_MIRNA_FASTA)
     return [rec.id for rec in records]
@@ -51,16 +51,16 @@ def mat_mirna_id_filter(request, mat_mirna_id_list):
     return [mat_mirna_id_list[i] for i in filter]
 
 
-@pytest.fixture(scope="session")
-def mirna_id_list(pre_mirna_id_list, mat_mirna_id_list):
-    return pre_mirna_id_list + mat_mirna_id_list
+@pytest.fixture(scope="module")
+def mirna_id_list(mat_mirna_id_list):
+    return mat_mirna_id_list
 
 
 @pytest.fixture
-def mirna_id_filter(pre_mirna_id_filter, mat_mirna_id_filter):
-    return pre_mirna_id_filter + mat_mirna_id_filter
+def mirna_id_filter(mat_mirna_id_filter):
+    return mat_mirna_id_filter
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def precursors_consverter():
     return cgl.load_precursors(cgl.paths.DATA_MIRNA)

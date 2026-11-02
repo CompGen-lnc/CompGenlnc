@@ -3,7 +3,7 @@ import pytest
 import compgenlnc as cgl
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def doc2vec_model():
     return cgl.train_doc2vec_model(
         cgl.iter_seq_fasta(cgl.paths.PRE_MIRNA_FASTA)

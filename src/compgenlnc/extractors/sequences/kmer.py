@@ -32,7 +32,6 @@ def get_kmer(seq: SeqLike, k: int) -> np.typing.NDArray[np.float32]:
         NDArray: A concatenated numpy array with the k-mers of the
             sequence.
     """
-    # Get the kmers of length n for the sequence
     if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
     if isinstance(seq, SeqRecord):
@@ -40,6 +39,7 @@ def get_kmer(seq: SeqLike, k: int) -> np.typing.NDArray[np.float32]:
 
     seq = seq.upper().replace("T", "U")
 
+    # Get the kmers of length n for the sequence
     def get_nmer(seq: str, n: int) -> np.typing.NDArray[np.float32]:
         if not seq or len(seq) < n:
             return np.array([0] * 4**n, np.float32)

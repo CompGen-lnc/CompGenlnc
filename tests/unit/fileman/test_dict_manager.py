@@ -5,44 +5,39 @@ import compgenlnc as cgl
 
 
 @pytest.mark.parametrize(
-    "dict_gen, args, type_, expected",
+    "dict_gen, args, type_, expected_factory",
     [
         (
             cgl.gen_ctd_dict_from_folder,
             [],
             np.float32,
-            {
+            lambda: {
                 record.id: cgl.get_ctd(record.seq)
-                for record in cgl.load_fasta(
-                    cgl.paths.PRE_MIRNA_FASTA, mode="seq"
-                )
+                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
             },
         ),
         (
             cgl.gen_kmer_dict_from_folder,
             [3],
             np.float32,
-            {
+            lambda: {
                 record.id: cgl.get_kmer(record.seq, 3)
-                for record in cgl.load_fasta(
-                    cgl.paths.PRE_MIRNA_FASTA, mode="seq"
-                )
+                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
             },
         ),
         (
             cgl.gen_kmer_dict_from_folder,
             [4],
             np.float32,
-            {
+            lambda: {
                 record.id: cgl.get_kmer(record.seq, 4)
-                for record in cgl.load_fasta(
-                    cgl.paths.PRE_MIRNA_FASTA, mode="seq"
-                )
+                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
             },
         ),
     ],
 )
-def test_load_dict(dict_gen, args, type_, expected, tmp_path):
+def test_load_dict(dict_gen, args, type_, expected_factory, tmp_path):
+    expected = expected_factory()
     filename = tmp_path / "example.dict"
     dict_gen(cgl.paths.MIRNA_SEQ_SS_FOLDER, filename, *args)
     assert filename.exists()

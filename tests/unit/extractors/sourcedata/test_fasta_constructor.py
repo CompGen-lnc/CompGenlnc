@@ -4,28 +4,33 @@ import compgenlnc as cgl
 
 
 @pytest.mark.parametrize(
-    "filter, expected",
+    "filter, expected_factory",
     [
-        (["7a"], ["hsa-let-7a-1", "hsa-mir-4477a", "hsa-mir-517a"]),
-        (["7f", "7c"], ["hsa-let-7c", "hsa-let-7f-1", "hsa-let-7f-2"]),
+        (["7a"], lambda: ["hsa-let-7a-1", "hsa-mir-4477a", "hsa-mir-517a"]),
+        (["7f", "7c"], lambda: ["hsa-let-7c", "hsa-let-7f-1", "hsa-let-7f-2"]),
         (
             ["hsa"],
-            [
+            lambda: [
                 record.id
                 for record in cgl.load_fasta(
                     cgl.paths.PRE_MIRNA_FASTA, mode="seq"
                 )
             ],
         ),
-        (["non"], []),
+        (["non"], lambda: []),
     ],
 )
-def test_filter_seq_fasta(filter, expected, tmp_path):
+def test_filter_seq_fasta(filter, expected_factory, tmp_path):
+    expected = expected_factory()
     new_fasta = tmp_path / "new_fasta.fa"
     cgl.filter_fasta(cgl.paths.PRE_MIRNA_FASTA, new_fasta, filter)
     assert new_fasta.exists()
+    print(cgl.paths.PRE_MIRNA_FASTA)
 
     ids = [record.id for record in cgl.load_fasta(new_fasta, mode="seq")]
+    expected2 = [record.id for record in cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")]
+    print(len(ids), len(expected), len(expected2))
+    print(expected)
     assert ids == expected
 
 
