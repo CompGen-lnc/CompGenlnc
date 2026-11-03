@@ -106,17 +106,17 @@ def gen_role2vec_dict_from_fasta(
     kmer_dict = {
         record.id: get_kmer(record.seq, k)
         for record in load_fasta(fasta_file, mode=SEQ_MODE)
-        if record.id in keep
+        if keep is None or record.id in keep
     }
     ctd_dict = {
         record.id: get_ctd(record.seq)
         for record in load_fasta(fasta_file, mode=SEQ_MODE)
-        if record.id in keep
+        if keep is None or record.id in keep
     }
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=doc2vec_model)
         for record in load_fasta(fasta_file, mode=SEQ_MODE)
-        if record.id in keep
+        if keep is None or record.id in keep
     }
 
     gen_role2vec_dict(kmer_dict, ctd_dict, doc2vec_dict, dict_file)
