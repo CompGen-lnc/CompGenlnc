@@ -40,6 +40,8 @@ from compgenlnc.fileman.miranda_manager import (
 )
 from compgenlnc.typing.numpy_dtypes import Index
 
+type FeatDict5 = Annotated[tuple[tuple[dict, str]], 5]
+
 
 def load_feature_set(
     set_path: str | os.PathLike,
@@ -152,9 +154,6 @@ def get_ss_features(
     return features_dict
 
 
-type FeatDict5 = Annotated[tuple[tuple[dict, str]], 5]
-
-
 def get_feature_dictionaries() -> FeatDict5:
     lnc_dict = (
         get_seq_features("lnc", rna=LNCRNA)
@@ -187,7 +186,7 @@ def get_interactions_features() -> pd.DataFrame:
     def add_features(features, prefix):
         for key, value in features.items():
             key = f"{prefix} {key}".replace("_", " ")
-            features_dict[key] = value
+            features_dict[key] = list(value)
 
     for tup in get_feature_dictionaries():
         add_features(*tup)
