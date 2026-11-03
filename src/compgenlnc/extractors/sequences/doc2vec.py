@@ -22,7 +22,7 @@ from compgenlnc.typing.molecules import SeqLike
 
 def train_doc2vec_model(
     sequences: Iterable[SeqSSRecord],
-    model_file: str | os.PathLike = "",
+    model_file: str | os.PathLike | None = None,
 ) -> Doc2Vec:
     tokens = [
         TaggedDocument(
@@ -33,7 +33,7 @@ def train_doc2vec_model(
     model = Doc2Vec(vector_size=256, min_count=10, epochs=16, workers=12)
     model.build_vocab(tokens)
     model.train(tokens, total_examples=model.corpus_count, epochs=model.epochs)
-    if model_file:
+    if model_file is not None:
         model_file = Path(model_file).resolve()
         model_file.parent.mkdir(parents=True, exist_ok=True)
         model.save(str(model_file))
@@ -42,10 +42,9 @@ def train_doc2vec_model(
 
 def train_doc2vec_model_from_fasta(
     filename: str | os.PathLike,
-    model_file: str | os.PathLike = "",
+    model_file: str | os.PathLike | None = None,
 ) -> Doc2Vec:
     filename = Path(filename).resolve()
-    model_file = Path(model_file).resolve()
     return train_doc2vec_model(load_fasta(filename, mode=SEQ_MODE), model_file)
 
 
@@ -53,7 +52,7 @@ def get_doc2vec(
     seq: SeqLike,
     *,
     model: Doc2Vec | None = None,
-    model_file: str | os.PathLike = "",
+    model_file: str | os.PathLike | None = None,
 ) -> np.typing.NDArray[np.float32]:
     if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
@@ -77,7 +76,7 @@ def get_doc2vec_by_name(
     *,
     mature_only: bool = False,
     model: Doc2Vec | None = None,
-    model_file: str | os.PathLike = "",
+    model_file: str | os.PathLike | None = None,
 ) -> np.typing.NDArray[np.float32]:
     folder = Path(folder).resolve()
     seq = read_sequence(folder, id_, mature_only=mature_only)
@@ -90,22 +89,20 @@ def gen_doc2vec_dict(
     /,
     *,
     model: Doc2Vec | None = None,
-    model_file: str | os.PathLike = "",
-    mature_only: bool = False,
+    model_file: str | os.PathLike | None = None,
 ) -> None:
     send_msg("Generating Doc2Vec dictionary\n")
 
     if model is None:
-        model_file = Path(model_file).resolve()
-        if model_file.exists():
+        if model_file is not None and Path(model_file).resolve().exists():
             send_msg("  Loading trained model")
             model = Doc2Vec.load(str(model_file))
             complete_msg = "\r  Model loaded in memory\n"
         else:
             send_msg("  Training data model")
             record_list, record_copy = tee(record_list)
-            train_doc2vec_model(record_copy, model_file)
-            complete_msg = "\r  Data model trained\n"
+            model = train_doc2vec_model(record_copy, model_file)
+            complete_msg = "\r  Data model trained \n"
         send_msg(complete_msg)
 
     desc = "  Calculating Doc2Vec"
@@ -126,10 +123,9 @@ def gen_doc2vec_dict_from_fasta(
     /,
     *,
     model: Doc2Vec | None = None,
-    model_file: str | os.PathLike = "",
+    model_file: str | os.PathLike | None = None,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
-    mature_only: bool = False,
 ) -> None:
     record_list = load_fasta(
         filename, mode=SEQ_MODE, keep=keep, exclude=exclude
@@ -145,10 +141,9 @@ def gen_doc2vec_dict_from_folder(
     /,
     *,
     model: Doc2Vec | None = None,
-    model_file: str | os.PathLike = "",
+    model_file: str | os.PathLike | None = None,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
-    mature_only: bool = False,
 ) -> None:
     record_list = iter_seq_ss(folder, keep=keep, exclude=exclude)
     gen_doc2vec_dict(

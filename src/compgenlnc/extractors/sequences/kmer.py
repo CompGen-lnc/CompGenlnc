@@ -82,7 +82,7 @@ def gen_kmer_dict(
     dict_file: str | os.PathLike,
     k: int,
     /,
-    mature_only: bool = False,
+    overwrite: bool = False,
 ) -> None:
     """Get the k-mers of RNA sequences from 1 to k for the given molecule.
 
@@ -116,7 +116,7 @@ def gen_kmer_dict(
     record_list = track_progress(record_list, desc, total, "seq", initial)
 
     kmer_dict = {record.id: get_kmer(record.seq, k) for record in record_list}
-    save_dict(dict_file, kmer_dict)
+    save_dict(dict_file, kmer_dict, overwrite=overwrite)
 
     send_msg("  k-mer dictionary generated\n")
 
@@ -128,7 +128,7 @@ def gen_kmer_dict_from_fasta(
     /,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
-    mature_only: bool = False,
+    overwrite: bool = False,
 ) -> None:
     """Get the k-mers of RNA sequences from 1 to k from a FASTA file with RNA
     sequences.
@@ -143,9 +143,9 @@ def gen_kmer_dict_from_fasta(
             True.
     """
     record_list = load_fasta(
-        filename, mode=SEQ_MODE, keep=keep, exclude=exclude
+        filename, mode=SEQ_MODE, keep=keep, exclude=exclude,
     )
-    gen_kmer_dict(record_list, dict_file, k)
+    gen_kmer_dict(record_list, dict_file, k, overwrite=overwrite)
 
 
 def gen_kmer_dict_from_folder(
@@ -155,7 +155,7 @@ def gen_kmer_dict_from_folder(
     /,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
-    mature_only: bool = False,
+    overwrite: bool = False,
 ) -> None:
     """Get the k-mers of RNA sequences from 1 to k from the seq+ss
     files.
@@ -170,4 +170,4 @@ def gen_kmer_dict_from_folder(
             True.
     """
     record_list = iter_seq_ss(folder, keep=keep, exclude=exclude)
-    gen_kmer_dict(record_list, dict_file, k)
+    gen_kmer_dict(record_list, dict_file, k, overwrite=overwrite)
