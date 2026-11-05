@@ -18,6 +18,7 @@ from compgenlnc.consts.paths import (
     LNCRNA_SEQ_SS_FOLDER,
     MAT_MIRNA_FASTA,
     MIRNA_SEQ_SS_FOLDER,
+    PAIRS_FILE,
 )
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
@@ -29,9 +30,11 @@ from compgenlnc.typing.numpy_dtypes import (
 )
 
 _cgl_indexes = None
+_index_file = None
 _lnc_indexed_records = None
 _pre_mir_indexed_records = None
 _mat_mir_indexed_records = None
+_indexed_interactions = None
 
 
 def get_mature_index(
@@ -90,9 +93,14 @@ def gen_indexes_from_files(
 def load_indexes(
     *, index_file: str | os.PathLike = INDEX_NPY, rna: str | None = None
 ) -> np.typing.NDArray[Index]:
-    global _cgl_indexes
-    if _cgl_indexes is None:
+    global _cgl_indexes, _lnc_indexed_records, _pre_mir_indexed_records, _mat_mir_indexed_records, _indexed_interactions, _index_file
+    if _cgl_indexes is None or _index_file != index_file:
         _cgl_indexes = np.load(index_file, allow_pickle=True)
+        _lnc_indexed_records = None
+        _pre_mir_indexed_records = None
+        _mat_mir_indexed_records = None
+        _indexed_interactions = None
+        _index_file = index_file
 
     if rna == LNCRNA:
         return _cgl_indexes[LNCRNA_FIELD]
@@ -149,10 +157,16 @@ def index_mature_mirna(
     return _mat_mir_indexed_records
 
 
-def interactions_from_index() -> np.typing.NDArray[InteractionPair]:
-    indexes = load_indexes(rna=INTERACTION)
-    it = (tuple(interaction.split("_")) for interaction in indexes)
-    return np.fromiter(it, dtype=dtype_interaction_pair, count=len(indexes))
+def interactions_from_index(*, interactions_csv: str | os.PathLike = PAIRS_FILE, index_file: str | os.PathLike = INDEX_NPY) -> np.typing.NDArray[InteractionPair]:
+    global _indexed_interactions
+    if _indexed_interactions is None:
+        indexes = load_indexes(rna=INTERACTION)
+        interactions = load_interactions(interactions_csv)
+        it = (tuple(interaction.split("_")) for interaction in indexes)
+        tuples = np.fromiter(it, dtype=dtype_interaction_pair, count=len(indexes))
+        mask = np.isin(interactions[PAIR_FIELDS], tuples)
+        _indexed_interactions = interactions[mask]
+    return _indexed_interactions
 
 
 def dict_to_numpy(
