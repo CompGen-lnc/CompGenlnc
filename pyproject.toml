@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 # Build settings
 [project]
 name = "compgenlnc"
-version = "0.1.0"
+dynamic = ["version"]
 authors = []
 description = "A features extractor from lncRNA-miRNA interactions based on sequences and 2D structures"
 requires-python = ">= 3.12"
@@ -37,6 +37,9 @@ dependencies = [
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 readme = "README.md"
+
+[tool.setuptools_scm]
+write_to = "src/compgenlnc/_version.py"
 
 # Pytest settings
 [tool.pytest]
