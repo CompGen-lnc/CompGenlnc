@@ -21,7 +21,7 @@ def extract_interactions(
     new_csv: os.PathLike,
     pos_file: os.PathLike,
     neg_file: os.PathLike | None = None,
-    /,
+    *,
     separator: str | None = None,
     lnc_list: Sequence[str] | None = None,
     mir_list: Sequence[str] | None = None,
@@ -80,8 +80,8 @@ def extract_interactions(
 
 
 def filter_interactions(
-    new_csv: os.PathLike,
     interactions_file: os.PathLike,
+    new_csv: os.PathLike,
     /,
     lnc_filter: Sequence[str] | None = None,
     mir_filter: Sequence[str] | None = None,

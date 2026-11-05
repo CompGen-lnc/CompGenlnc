@@ -25,7 +25,7 @@ from compgenlnc.typing.numpy_dtypes import InteractionTuple
 
 
 def get_substructure_loops(
-    loop_counter: LoopCounter, binding_zone: BindingZone, molecule: str
+    loop_counter: LoopCounter, binding_zone: BindingZone, *, molecule: str = LNCRNA
 ) -> LoopCounter:
     if not binding_zone:
         return LoopCounter("", [], 0)
@@ -44,10 +44,11 @@ def get_substructure_loops(
 def get_substructure_loops_from_list(
     loops_it: Iterable[LoopCounter],
     binding_it: Iterable[BindingZone],
-    molecule: str,
+    *,
+    molecule: str = LNCRNA,
 ) -> Iterator[LoopCounter]:
     for loop_counter, binding_zone in zip(loops_it, binding_it):
-        yield get_substructure_loops(loop_counter, binding_zone, molecule)
+        yield get_substructure_loops(loop_counter, binding_zone, molecule=molecule)
 
 
 def gen_substructure_loops_dict(
@@ -55,7 +56,8 @@ def gen_substructure_loops_dict(
     interactions: Iterable[InteractionTuple],
     loops_it: Iterable[LoopCounter],
     binding_it: Iterable[BindingZone],
-    molecule: str,
+    *,
+    molecule: str = LNCRNA,
 ) -> None:
     send_msg("Generating loops dictionary\n")
     interactions = list(interactions)
@@ -85,7 +87,7 @@ def gen_substructure_loops_dict(
         send_msg("\r  Existing dictionary analyzed    \n")
 
     new_loops = get_substructure_loops_from_list(
-        loops_it, binding_it, molecule
+        loops_it, binding_it, molecule=molecule
     )
 
     initial = total - len(keys)
@@ -106,7 +108,8 @@ def gen_substructure_loops_dict_from_files(
     interactions_file: str | os.PathLike,
     loops_folder: str | os.PathLike,
     binding_folder: str | os.PathLike,
-    molecule: str,
+    *,
+    molecule: str = LNCRNA,
 ) -> None:
     loops_folder = Path(loops_folder).resolve()
     binding_folder = Path(binding_folder).resolve()
@@ -131,7 +134,7 @@ def gen_substructure_loops_dict_from_files(
                 yield [-1] * 3 + [0] * 4
             loop_counter = read_2d_structure_loops(loops_filename)
             yield get_substructure_loops(
-                loop_counter, binding_zone, molecule
+                loop_counter, binding_zone, molecule=molecule
             ).loops_vectorized
 
     save_dict(dict_file, keys=keys, values=iter_interactions_loops())

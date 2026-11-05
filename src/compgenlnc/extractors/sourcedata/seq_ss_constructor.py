@@ -13,7 +13,7 @@ from compgenlnc.fileman.fasta_manager import load_fasta
 
 
 def join_seq_ss(
-    seq: str, ss: str, id_: str, folder: str | os.PathLike
+    folder: str | os.PathLike, id_: str, seq: str, ss: str
 ) -> None:
     """Save the sequence and structure of a RNA molecule in the same
     file.
@@ -69,7 +69,7 @@ def fasta_to_seq_ss(
         try:
             seq = seq_dict[id_]
             ss = ss_dict[id_]
-            join_seq_ss(seq, ss, id_, folder)
+            join_seq_ss(folder, id_, seq, ss)
             total += 1
         except Exception:
             pass

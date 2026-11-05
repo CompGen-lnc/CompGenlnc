@@ -17,7 +17,7 @@ def test_gen_role2vec_dict(doc2vec_model_deterministic, tmp_path):
     }
 
     filename = tmp_path / "role2vec.dict"
-    cgl.gen_role2vec_dict(kmer_dict, ctd_dict, doc2vec_dict, filename)
+    cgl.gen_role2vec_dict(filename, kmer_dict, ctd_dict, doc2vec_dict)
     assert filename.exists()
 
     role2vec_dict = cgl.load_dict(filename)
@@ -35,13 +35,13 @@ def test_gen_role2vec_dict_from_files(doc2vec_model_deterministic, tmp_path):
     ctd_file = tmp_path / "ctd.dict"
     doc2vec_file = tmp_path / "doc2vec.dict"
 
-    cgl.gen_kmer_dict(sequences, kmer_file, 3)
-    cgl.gen_ctd_dict(sequences, ctd_file)
-    cgl.gen_doc2vec_dict(sequences, doc2vec_file, model=doc2vec_model)
+    cgl.gen_kmer_dict(kmer_file, sequences, 3)
+    cgl.gen_ctd_dict(ctd_file, sequences)
+    cgl.gen_doc2vec_dict(doc2vec_file, sequences, model=doc2vec_model)
 
     filename = tmp_path / "role2vec.dict"
     cgl.gen_role2vec_dict_from_files(
-        kmer_file, ctd_file, doc2vec_file, filename
+        filename, kmer_file, ctd_file, doc2vec_file
     )
     assert filename.exists()
 
@@ -55,7 +55,7 @@ def test_gen_role2vec_dict_from_files(doc2vec_model_deterministic, tmp_path):
 def test_gen_role2vec_dict_from_folder(tmp_path):
     filename = tmp_path / "role2vec.dict"
     cgl.gen_role2vec_dict_from_folder(
-        cgl.paths.MIRNA_SEQ_SS_FOLDER, filename, 3
+        filename, cgl.paths.MIRNA_SEQ_SS_FOLDER, 3
     )
     assert filename.exists()
 

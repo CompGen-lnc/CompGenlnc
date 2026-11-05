@@ -18,7 +18,7 @@ def test_join_seq_ss(tmp_path):
         id_ = record.id
         folder = tmp_path / "seq+ss_join"
         folder.mkdir(parents=True, exist_ok=True)
-        cgl.join_seq_ss(seq, ss, id_, folder)
+        cgl.join_seq_ss(folder, id_, seq, ss)
 
         path = folder / f"{cgl.paths.SEQ_SS_PREFIX}{id_}.dat"
         assert path.exists()

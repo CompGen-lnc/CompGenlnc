@@ -13,7 +13,7 @@ def test_predict_miranda(
         with subtests.test(i=(lnc, mir)):
             lnc_record = next(filter(lambda rec: rec.id == lnc, lnc_records))
             mir_record = next(filter(lambda rec: rec.id == mir, mir_records))
-            cgl.predict_miranda(lnc_record, mir_record, folder)
+            cgl.predict_miranda(folder, lnc_record, mir_record)
             filename = (
                 f"{cgl.paths.MIRANDA_PREFIX}"
                 f"{lnc_record.id}_{mir_record.id}.dat"
@@ -37,12 +37,12 @@ def test_predict_miranda_from_list(
         lambda mir: next(rec for rec in mir_records if rec.id == mir),
         interactions[cgl.MIRNA_FIELD],
     )
-    cgl.predict_miranda_from_list(lnc_list, mir_list, folder)
+    cgl.predict_miranda_from_list(folder, lnc_list, mir_list)
     expected_folder = tmp_path / "expected"
     for lnc, mir, _ in interactions:
         lnc_record = next(rec for rec in lnc_records if rec.id == lnc)
         mir_record = next(rec for rec in mir_records if rec.id == mir)
-        cgl.predict_miranda(lnc_record, mir_record, expected_folder)
+        cgl.predict_miranda(expected_folder, lnc_record, mir_record)
         filename = folder / (
             f"{cgl.paths.MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
         )
@@ -63,11 +63,11 @@ def test_predict_miranda_from_files(interaction_list, tmp_path):
 
     folder = tmp_path
     cgl.predict_miranda_from_files(
+        folder,
         cgl.paths.PAIRS_FILE,
         cgl.paths.LNCRNA_FASTA,
         cgl.paths.PRE_MIRNA_FASTA,
         cgl.paths.MAT_MIRNA_FASTA,
-        folder,
         keep=interactions,
     )
     for lnc, mir, _ in interactions:
@@ -81,7 +81,7 @@ def test_extract_binding_zone(interaction_list, tmp_path, subtests):
     folder = tmp_path
     for interaction in interaction_list:
         lnc, mir = interaction[cgl.PAIR_FIELDS]
-        cgl.extract_binding_zone(lnc, mir, miranda_folder, folder)
+        cgl.extract_binding_zone(miranda_folder, lnc, mir, folder)
         with subtests.test(i=(lnc, mir)):
             filename = folder / f"{cgl.paths.BINDING_PREFIX}{lnc}_{mir}.dat"
             assert filename.exists()
@@ -98,7 +98,7 @@ def test_extract_binding_zone_from_folder(
     expected_folder = cgl.paths.BINDING_FOLDER
     folder = tmp_path
     cgl.extract_binding_zone_from_folder(
-        miranda_folder, folder, lncrna_id_filter, mirna_id_filter
+        miranda_folder, folder, lnc_list=lncrna_id_filter, mir_list=mirna_id_filter
     )
     for interaction in interaction_list:
         lnc, mir = interaction[cgl.PAIR_FIELDS]

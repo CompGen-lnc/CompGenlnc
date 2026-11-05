@@ -53,8 +53,8 @@ def normalize_matrix_list(
 
 
 def gen_normalized_matrix_dict(
-    record_list: Iterable[SeqSSRecord],
     dict_file: str | os.PathLike,
+    record_list: Iterable[SeqSSRecord],
     normal_size: int | None = None,
     /,
 ) -> None:
@@ -76,22 +76,22 @@ def gen_normalized_matrix_dict(
 
 
 def gen_normalized_matrix_dict_from_fasta(
-    filename: str | os.PathLike,
     dict_file: str | os.PathLike,
+    fasta_file: str | os.PathLike,
     normal_size: int | None = None,
     /,
     keep: Iterable[str] | None = None,
 ) -> None:
-    record_it = load_fasta(filename, mode="ss", keep=keep)
-    gen_normalized_matrix_dict(record_it, dict_file, normal_size)
+    record_it = load_fasta(fasta_file, mode="ss", keep=keep)
+    gen_normalized_matrix_dict(dict_file, record_it, normal_size)
 
 
 def gen_normalized_matrix_dict_from_folder(
-    folder: str | os.PathLike,
     dict_file: str | os.PathLike,
+    seq_ss_folder: str | os.PathLike,
     normal_size: int | None = None,
     /,
     keep: Iterable[str] | None = None,
 ) -> None:
-    record_it = iter_seq_ss(folder, keep=keep)
-    gen_normalized_matrix_dict(record_it, dict_file, normal_size)
+    record_it = iter_seq_ss(seq_ss_folder, keep=keep)
+    gen_normalized_matrix_dict(dict_file, record_it, normal_size)

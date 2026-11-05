@@ -28,7 +28,7 @@ def gen_ss_features(
     dicts_folder.parent.mkdir(parents=True, exist_ok=True)
 
     loops_path = dicts_folder / LOOPS_DICT
-    gen_loops_dict(loops_path, record_list, loops_folder)
+    gen_loops_dict(loops_path, loops_folder, record_list)
 
     def path_to_npy(filename):
         return (DATASET_FOLDER / f"{rna}_{filename}").with_suffix(".npy")

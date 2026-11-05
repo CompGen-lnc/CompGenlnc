@@ -68,8 +68,8 @@ def test_extract_interactions_with_negavites(tmp_path):
 def test_filter_interactions(lncrna_id_filter, mirna_id_filter, tmp_path):
     filename = tmp_path / "interaction.csv"
     cgl.filter_interactions(
-        filename,
         cgl.paths.PAIRS_FILE,
+        filename,
         lnc_filter=lncrna_id_filter,
         mir_filter=mirna_id_filter,
     )

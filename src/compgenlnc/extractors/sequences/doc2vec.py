@@ -41,11 +41,11 @@ def train_doc2vec_model(
 
 
 def train_doc2vec_model_from_fasta(
-    filename: str | os.PathLike,
+    fasta_file: str | os.PathLike,
     model_file: str | os.PathLike | None = None,
 ) -> Doc2Vec:
-    filename = Path(filename).resolve()
-    return train_doc2vec_model(load_fasta(filename, mode=SEQ_MODE), model_file)
+    fasta_file = Path(fasta_file).resolve()
+    return train_doc2vec_model(load_fasta(fasta_file, mode=SEQ_MODE), model_file)
 
 
 def get_doc2vec(
@@ -70,9 +70,8 @@ def get_doc2vec(
 
 
 def get_doc2vec_by_name(
-    id_: str,
     folder: str | os.PathLike,
-    /,
+    id_: str,
     *,
     model: Doc2Vec | None = None,
     model_file: str | os.PathLike | None = None,
@@ -83,9 +82,8 @@ def get_doc2vec_by_name(
 
 
 def gen_doc2vec_dict(
-    record_list: Iterable[SeqSSRecord],
     dict_file: str | os.PathLike,
-    /,
+    record_list: Iterable[SeqSSRecord],
     *,
     model: Doc2Vec | None = None,
     model_file: str | os.PathLike | None = None,
@@ -117,8 +115,8 @@ def gen_doc2vec_dict(
 
 
 def gen_doc2vec_dict_from_fasta(
-    filename: str | os.PathLike,
     dict_file: str | os.PathLike,
+    fasta_file: str | os.PathLike,
     /,
     *,
     model: Doc2Vec | None = None,
@@ -127,16 +125,16 @@ def gen_doc2vec_dict_from_fasta(
     exclude: Iterable[str] | None = None,
 ) -> None:
     record_list = load_fasta(
-        filename, mode=SEQ_MODE, keep=keep, exclude=exclude
+        fasta_file, mode=SEQ_MODE, keep=keep, exclude=exclude
     )
     gen_doc2vec_dict(
-        record_list, dict_file, model=model, model_file=model_file
+        dict_file, record_list, model=model, model_file=model_file
     )
 
 
 def gen_doc2vec_dict_from_folder(
-    folder: str | os.PathLike,
     dict_file: str | os.PathLike,
+    seq_ss_folder: str | os.PathLike,
     /,
     *,
     model: Doc2Vec | None = None,
@@ -144,7 +142,7 @@ def gen_doc2vec_dict_from_folder(
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
 ) -> None:
-    record_list = iter_seq_ss(folder, keep=keep, exclude=exclude)
+    record_list = iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
     gen_doc2vec_dict(
-        record_list, dict_file, model=model, model_file=model_file
+        dict_file, record_list, model=model, model_file=model_file
     )

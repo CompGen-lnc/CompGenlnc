@@ -88,7 +88,6 @@ def filter_lncrna(filename: str | os.PathLike, filter: Iterable[str]) -> None:
 def gen_fasta_2d(
     seq_fasta: str | os.PathLike,
     ss_fasta: str | os.PathLike,
-    /,
     *,
     keep: Iterable[str] | None = None,
 ) -> None:
@@ -127,7 +126,6 @@ def seq_ss_to_fasta(
     folder: str | os.PathLike,
     new_seq_fasta: str | os.PathLike,
     new_ss_fasta: str | os.PathLike,
-    /,
     *,
     keep: Iterable[str] | None = None,
 ) -> None:

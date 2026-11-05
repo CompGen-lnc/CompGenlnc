@@ -74,7 +74,7 @@ def test_normalize_matrix_list(normal_size, ss_fasta_list):
 
 def test_gen_normalized_matrix_dict(seq_ss_list, tmp_path):
     dict_file = tmp_path / "kmer.dict"
-    cgl.gen_normalized_matrix_dict(seq_ss_list, dict_file)
+    cgl.gen_normalized_matrix_dict(dict_file, seq_ss_list)
     assert dict_file.exists()
 
     matrix_it = cgl.get_adjacency_matrix_list(seq_ss_list)
@@ -88,7 +88,7 @@ def test_gen_normalized_matrix_dict(seq_ss_list, tmp_path):
 def test_gen_normalized_matrix_dict_from_folder(example_id_filter, tmp_path):
     dict_file = tmp_path / "kmer.dict"
     cgl.gen_normalized_matrix_dict_from_folder(
-        cgl.paths.MIRNA_SEQ_SS_FOLDER, dict_file, keep=example_id_filter
+        dict_file, cgl.paths.MIRNA_SEQ_SS_FOLDER, keep=example_id_filter
     )
     assert dict_file.exists()
 

@@ -48,11 +48,11 @@ def gen_seq_features(
     r2v_path = dicts_folder / ROLE2VEC_DICT
     normal_path = dicts_folder / NORMAL_SEQ_DICT
 
-    gen_kmer_dict(record_list, kmer_path, k)
-    gen_ctd_dict(record_list, ctd_path)
-    gen_doc2vec_dict(record_list, d2v_path, model_file=dv2_model_file)
-    gen_role2vec_dict_from_files(kmer_path, ctd_path, d2v_path, r2v_path)
-    gen_normalized_sequence_dict(record_list, normal_path)
+    gen_kmer_dict(kmer_path, record_list, k)
+    gen_ctd_dict(ctd_path, record_list)
+    gen_doc2vec_dict(d2v_path, record_list, model_file=dv2_model_file)
+    gen_role2vec_dict_from_files(r2v_path, kmer_path, ctd_path, d2v_path)
+    gen_normalized_sequence_dict(normal_path, record_list)
 
     def path_to_npy(filename):
         return (DATASET_FOLDER / f"{rna}_{filename}").with_suffix(".npy")

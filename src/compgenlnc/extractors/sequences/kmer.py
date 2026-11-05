@@ -54,7 +54,7 @@ def get_kmer(seq: SeqLike, k: int) -> np.typing.NDArray[np.float32]:
 
 
 def get_kmer_by_name(
-    id_: str, folder: str | os.PathLike, k: int, /
+    folder: str | os.PathLike, id_: str, k: int
 ) -> np.typing.NDArray[np.float32]:
     """Get the k-mers of a RNA sequences from 1 to k from the seq+ss
     file of the given molecule.
@@ -78,10 +78,10 @@ def get_kmer_by_name(
 
 
 def gen_kmer_dict(
-    record_list: Iterable[SeqSSRecord],
     dict_file: str | os.PathLike,
+    record_list: Iterable[SeqSSRecord],
     k: int,
-    /,
+    *,
     overwrite: bool = False,
 ) -> None:
     """Get the k-mers of RNA sequences from 1 to k for the given molecule.
@@ -122,10 +122,10 @@ def gen_kmer_dict(
 
 
 def gen_kmer_dict_from_fasta(
-    filename: str | os.PathLike,
     dict_file: str | os.PathLike,
+    fasta_file: str | os.PathLike,
     k: int,
-    /,
+    *,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
     overwrite: bool = False,
@@ -143,16 +143,16 @@ def gen_kmer_dict_from_fasta(
             True.
     """
     record_list = load_fasta(
-        filename, mode=SEQ_MODE, keep=keep, exclude=exclude,
+        fasta_file, mode=SEQ_MODE, keep=keep, exclude=exclude,
     )
-    gen_kmer_dict(record_list, dict_file, k, overwrite=overwrite)
+    gen_kmer_dict(dict_file, record_list, k, overwrite=overwrite)
 
 
 def gen_kmer_dict_from_folder(
-    folder: str | os.PathLike,
     dict_file: str | os.PathLike,
+    seq_ss_folder: str | os.PathLike,
     k: int,
-    /,
+    *,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
     overwrite: bool = False,
@@ -169,5 +169,5 @@ def gen_kmer_dict_from_folder(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    record_list = iter_seq_ss(folder, keep=keep, exclude=exclude)
-    gen_kmer_dict(record_list, dict_file, k, overwrite=overwrite)
+    record_list = iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    gen_kmer_dict(dict_file, record_list, k, overwrite=overwrite)

@@ -83,7 +83,7 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
 
 
 def get_ctd_by_name(
-    id_: str, folder: str | os.PathLike, /
+    folder: str | os.PathLike, id_: str
 ) -> np.typing.NDArray[np.float32]:
     """Get the CTD of a RNA sequences from the seq+ss file of the given
     molecule.
@@ -104,9 +104,9 @@ def get_ctd_by_name(
 
 
 def gen_ctd_dict(
-    record_list: Iterable[SeqSSRecord],
     dict_file: str | os.PathLike,
-    /,
+    record_list: Iterable[SeqSSRecord],
+    *,
     overwrite: bool = False,
 ) -> None:
     """Get the CTD of a RNA sequences from the seq+ss file of the given
@@ -146,9 +146,9 @@ def gen_ctd_dict(
 
 
 def gen_ctd_dict_from_fasta(
-    filename: str | os.PathLike,
     dict_file: str | os.PathLike,
-    /,
+    fasta_file: str | os.PathLike,
+    *,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
     overwrite: bool = False,
@@ -166,15 +166,15 @@ def gen_ctd_dict_from_fasta(
             True.
     """
     record_list = load_fasta(
-        filename, mode=SEQ_MODE, keep=keep, exclude=exclude
+        fasta_file, mode=SEQ_MODE, keep=keep, exclude=exclude
     )
-    gen_ctd_dict(record_list, dict_file, overwrite=overwrite)
+    gen_ctd_dict(dict_file, record_list, overwrite=overwrite)
 
 
 def gen_ctd_dict_from_folder(
-    folder: str | os.PathLike,
     dict_file: str | os.PathLike,
-    /,
+    seq_ss_folder: str | os.PathLike,
+    *,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
     overwrite: bool = False,
@@ -188,5 +188,5 @@ def gen_ctd_dict_from_folder(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    record_list = iter_seq_ss(folder, keep=keep, exclude=exclude)
-    gen_ctd_dict(record_list, dict_file, overwrite=overwrite)
+    record_list = iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    gen_ctd_dict(dict_file, record_list, overwrite=overwrite)

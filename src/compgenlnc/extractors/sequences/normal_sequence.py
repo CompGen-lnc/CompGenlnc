@@ -61,8 +61,8 @@ def normalize_sequence_list(
 
 
 def gen_normalized_sequence_dict(
-    record_list: Iterable[SeqSSRecord],
     dict_file: str | os.PathLike,
+    record_list: Iterable[SeqSSRecord],
     normal_size: int | None = None,
     /,
 ) -> None:
@@ -85,22 +85,22 @@ def gen_normalized_sequence_dict(
 
 
 def gen_normalized_sequence_dict_from_fasta(
-    filename: str | os.PathLike,
     dict_file: str | os.PathLike,
+    fasta_file: str | os.PathLike,
     normal_size: int | None = None,
     /,
     keep: Iterable[str] | None = None,
 ) -> None:
-    record_list = load_fasta(filename, mode=SEQ_MODE, keep=keep)
-    gen_normalized_sequence_dict(record_list, dict_file, normal_size)
+    record_list = load_fasta(fasta_file, mode=SEQ_MODE, keep=keep)
+    gen_normalized_sequence_dict(dict_file, record_list, normal_size)
 
 
 def gen_normalized_sequence_dict_from_folder(
-    folder: str | os.PathLike,
     dict_file: str | os.PathLike,
+    seq_ss_folder: str | os.PathLike,
     normal_size: int | None = None,
     /,
     keep: Iterable[str] | None = None,
 ) -> None:
-    record_list = iter_seq_ss(folder, keep=keep)
-    gen_normalized_sequence_dict(record_list, dict_file, normal_size)
+    record_list = iter_seq_ss(seq_ss_folder, keep=keep)
+    gen_normalized_sequence_dict(dict_file, record_list, normal_size)

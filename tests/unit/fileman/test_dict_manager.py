@@ -39,7 +39,7 @@ import compgenlnc as cgl
 def test_load_dict(dict_gen, args, type_, expected_factory, tmp_path):
     expected = expected_factory()
     filename = tmp_path / "example.dict"
-    dict_gen(cgl.paths.MIRNA_SEQ_SS_FOLDER, filename, *args)
+    dict_gen(filename, cgl.paths.MIRNA_SEQ_SS_FOLDER, *args)
     assert filename.exists()
     dict_ = cgl.load_dict(filename, type_)
     assert set(dict_.keys()) == set(expected.keys())

@@ -40,7 +40,7 @@ def read_2d_structure_loops(
 
 def read_2d_structure_loops_from_folder(
     loops_folder: str | os.PathLike,
-    /,
+    *,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
 ) -> Iterator[LoopCounter]:

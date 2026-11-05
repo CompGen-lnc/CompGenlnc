@@ -24,7 +24,7 @@ from compgenlnc.typing.numpy_dtypes import (
 
 
 def predict_miranda(
-    lnc_record: SeqSSRecord, mir_record: SeqSSRecord, folder: os.PathLike
+    folder: os.PathLike, lnc_record: SeqSSRecord, mir_record: SeqSSRecord
 ) -> bool:
     folder = Path(folder).resolve()
     folder.mkdir(parents=True, exist_ok=True)
@@ -75,9 +75,9 @@ def _predict_miranda_with_args(args):
 
 
 def predict_miranda_from_list(
+    folder: os.PathLike,
     lnc_list: Iterable[SeqSSRecord],
     mir_list: Iterable[SeqSSRecord],
-    folder: os.PathLike,
     *,
     keep: Iterable[InteractionPair] | None = None,
     exclude: Iterable[InteractionPair] | None = None,
@@ -86,7 +86,7 @@ def predict_miranda_from_list(
     lnc_list = list(lnc_list)
     mir_list = list(mir_list)
     args_list = np.fromiter(
-        (args for args in zip(lnc_list, mir_list, repeat(folder))),
+        (args for args in zip(repeat(folder), lnc_list, mir_list)),
         dtype=object,
         count=min(len(lnc_list), len(mir_list)),
     )
@@ -96,7 +96,7 @@ def predict_miranda_from_list(
         count=len(args_list),
     )
     id_list = np.fromiter(
-        ((lnc.id, mir.id) for lnc, mir, _ in args_list),
+        ((lnc.id, mir.id) for _, lnc, mir in args_list),
         dtype=dtype_interaction_pair,
         count=len(args_list),
     )
@@ -129,11 +129,11 @@ def predict_miranda_from_list(
 
 
 def predict_miranda_from_files(
+    folder: str | os.PathLike,
     interaction_file: str | os.PathLike,
     lnc_fasta: str | os.PathLike,
     pre_mir_fasta: str | os.PathLike,
     mat_mir_fasta: str | os.PathLike,
-    folder: str | os.PathLike,
     *,
     keep: Iterable[InteractionPair] | None = None,
     exclude: Iterable[InteractionPair] | None = None,
@@ -157,14 +157,14 @@ def predict_miranda_from_files(
         None,
     )
     predict_miranda_from_list(
-        lnc_list, mir_list, folder, keep=keep, exclude=exclude
+        folder, lnc_list, mir_list, keep=keep, exclude=exclude
     )
 
 
 def extract_binding_zone(
+    miranda_folder: os.PathLike,
     lnc: str,
     mir: str,
-    miranda_folder: os.PathLike,
     binding_folder: os.PathLike,
 ) -> None:
     miranda_folder = Path(miranda_folder).resolve()
@@ -187,10 +187,9 @@ def extract_binding_zone(
 def extract_binding_zone_from_folder(
     miranda_folder: os.PathLike,
     binding_folder: os.PathLike,
-    /,
+    *,
     lnc_list: Iterable[str] | None = None,
     mir_list: Iterable[str] | None = None,
-    *,
     keep: Iterable[InteractionPair] | None = [],
     exclude: Iterable[InteractionPair] | None = [],
 ) -> None:
@@ -219,4 +218,4 @@ def extract_binding_zone_from_folder(
             and mir not in mir_list
         ):
             continue
-        extract_binding_zone(lnc, mir, miranda_folder, binding_folder)
+        extract_binding_zone(miranda_folder, lnc, mir, binding_folder)

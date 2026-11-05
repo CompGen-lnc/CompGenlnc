@@ -50,7 +50,7 @@ def test_normalize_sequence_list(normal_size, seq_fasta_list):
 
 def test_gen_normalized_sequence_dict(seq_ss_list, tmp_path):
     dict_file = tmp_path / "kmer.dict"
-    cgl.gen_normalized_sequence_dict(seq_ss_list, dict_file)
+    cgl.gen_normalized_sequence_dict(dict_file, seq_ss_list)
     assert dict_file.exists()
 
     recoded_list = list(cgl.recode_sequence_list(seq_ss_list))
@@ -64,7 +64,7 @@ def test_gen_normalized_sequence_dict(seq_ss_list, tmp_path):
 def test_gen_normalized_sequence_dict_from_folder(example_id_filter, tmp_path):
     dict_file = tmp_path / "kmer.dict"
     cgl.gen_normalized_sequence_dict_from_folder(
-        cgl.paths.MIRNA_SEQ_SS_FOLDER, dict_file, keep=example_id_filter
+        dict_file, cgl.paths.MIRNA_SEQ_SS_FOLDER, keep=example_id_filter
     )
     assert dict_file.exists()
 

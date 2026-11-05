@@ -17,7 +17,7 @@ from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
 
 def extract_2d_structure_loops(
-    record: SeqSSRecord, loops_folder: str | os.PathLike
+    loops_folder: str | os.PathLike, record: SeqSSRecord
 ) -> float:
     loops_folder = Path(loops_folder).resolve()
     if loops_folder.exists():
@@ -39,32 +39,32 @@ def extract_2d_structure_loops(
 
 
 def extract_2d_structure_loops_from_list(
-    record_list: Iterable[SeqSSRecord],
     loops_folder: str | os.PathLike,
+    record_list: Iterable[SeqSSRecord],
 ) -> np.typing.NDArray[np.float32]:
     energy_list = []
     for record in record_list:
-        energy_list.append(extract_2d_structure_loops(record, loops_folder))
+        energy_list.append(extract_2d_structure_loops(loops_folder, record))
 
     return np.array(energy_list, dtype=np.float32)
 
 
 def extract_2d_structure_loops_from_folder(
-    seq_ss_folder: str | os.PathLike,
     loops_folder: str | os.PathLike,
+    seq_ss_folder: str | os.PathLike,
     *,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
 ) -> np.typing.NDArray[np.float32]:
     return extract_2d_structure_loops_from_list(
-        iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude), loops_folder
+        loops_folder, iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
     )
 
 
 def gen_loops_dict(
     dict_file: str | os.PathLike,
-    record_list: Iterable[SeqSSRecord],
     loops_folder: str | os.PathLike,
+    record_list: Iterable[SeqSSRecord],
 ) -> None:
     send_msg("Generating loops dictionary\n")
     record_list = list(record_list)
@@ -85,7 +85,7 @@ def gen_loops_dict(
     desc = "  Calculating loops"
     record_it = track_progress(record_list, desc, total, "ss", initial)
 
-    extract_2d_structure_loops_from_list(record_it, loops_folder)
+    extract_2d_structure_loops_from_list(loops_folder, record_it)
     id_list = set(rec.id for rec in record_list)
     loops_list = list(
         read_2d_structure_loops_from_folder(loops_folder, keep=id_list)
