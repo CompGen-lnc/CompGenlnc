@@ -93,7 +93,12 @@ def gen_indexes_from_files(
 def load_indexes(
     *, index_file: str | os.PathLike = INDEX_NPY, rna: str | None = None
 ) -> np.typing.NDArray[Index]:
-    global _cgl_indexes, _lnc_indexed_records, _pre_mir_indexed_records, _mat_mir_indexed_records, _indexed_interactions, _index_file
+    global _cgl_indexes
+    global _lnc_indexed_records
+    global _pre_mir_indexed_records
+    global _mat_mir_indexed_records
+    global _indexed_interactions
+    global _index_file
     if _cgl_indexes is None or _index_file != index_file:
         _cgl_indexes = np.load(index_file, allow_pickle=True)
         _lnc_indexed_records = None
@@ -157,13 +162,19 @@ def index_mature_mirna(
     return _mat_mir_indexed_records
 
 
-def interactions_from_index(*, interactions_csv: str | os.PathLike = PAIRS_FILE, index_file: str | os.PathLike = INDEX_NPY) -> np.typing.NDArray[InteractionPair]:
+def interactions_from_index(
+    *,
+    interactions_csv: str | os.PathLike = PAIRS_FILE,
+    index_file: str | os.PathLike = INDEX_NPY,
+) -> np.typing.NDArray[InteractionPair]:
     global _indexed_interactions
     if _indexed_interactions is None:
         indexes = load_indexes(rna=INTERACTION)
         interactions = load_interactions(interactions_csv)
         it = (tuple(interaction.split("_")) for interaction in indexes)
-        tuples = np.fromiter(it, dtype=dtype_interaction_pair, count=len(indexes))
+        tuples = np.fromiter(
+            it, dtype=dtype_interaction_pair, count=len(indexes)
+        )
         mask = np.isin(interactions[PAIR_FIELDS], tuples)
         _indexed_interactions = interactions[mask]
     return _indexed_interactions

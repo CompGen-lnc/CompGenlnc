@@ -25,7 +25,10 @@ from compgenlnc.typing.numpy_dtypes import InteractionTuple
 
 
 def get_substructure_loops(
-    loop_counter: LoopCounter, binding_zone: BindingZone, *, molecule: str = LNCRNA
+    loop_counter: LoopCounter,
+    binding_zone: BindingZone,
+    *,
+    molecule: str = LNCRNA,
 ) -> LoopCounter:
     if not binding_zone:
         return LoopCounter("", [], 0)
@@ -48,7 +51,9 @@ def get_substructure_loops_from_list(
     molecule: str = LNCRNA,
 ) -> Iterator[LoopCounter]:
     for loop_counter, binding_zone in zip(loops_it, binding_it):
-        yield get_substructure_loops(loop_counter, binding_zone, molecule=molecule)
+        yield get_substructure_loops(
+            loop_counter, binding_zone, molecule=molecule
+        )
 
 
 def gen_substructure_loops_dict(

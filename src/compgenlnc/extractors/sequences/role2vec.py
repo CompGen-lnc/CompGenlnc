@@ -129,9 +129,7 @@ def gen_role2vec_dict_from_folder(
     *,
     keep: Iterable[str] | None = None,
 ) -> None:
-    doc2vec_model = train_doc2vec_model(
-        iter_seq_ss(seq_ss_folder, keep=keep)
-    )
+    doc2vec_model = train_doc2vec_model(iter_seq_ss(seq_ss_folder, keep=keep))
 
     kmer_dict = {
         record.id: get_kmer(record.seq, k)

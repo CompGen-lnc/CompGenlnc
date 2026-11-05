@@ -98,7 +98,10 @@ def test_extract_binding_zone_from_folder(
     expected_folder = cgl.paths.BINDING_FOLDER
     folder = tmp_path
     cgl.extract_binding_zone_from_folder(
-        miranda_folder, folder, lnc_list=lncrna_id_filter, mir_list=mirna_id_filter
+        miranda_folder,
+        folder,
+        lnc_list=lncrna_id_filter,
+        mir_list=mirna_id_filter,
     )
     for interaction in interaction_list:
         lnc, mir = interaction[cgl.PAIR_FIELDS]

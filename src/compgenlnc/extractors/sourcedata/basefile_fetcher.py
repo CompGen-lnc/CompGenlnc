@@ -22,7 +22,9 @@ from compgenlnc.fileman.log_manager import send_msg, track_progress
 _funits = ["B", "kiB", "MiB", "GiB"]
 
 
-def fetch_file(url: str, file: str | os.PathLike, *, file_desc: str = "") -> None:
+def fetch_file(
+    url: str, file: str | os.PathLike, *, file_desc: str = ""
+) -> None:
     send_msg(f"Fetching {file_desc}")
     req = requests.get(url, stream=True)
     if req.status_code != 200:
@@ -54,12 +56,22 @@ def fetch_mirna_files(
     pre_seq_fasta: str | os.PathLike = PRE_MIRNA_FASTA,
     precursor_file: str | os.PathLike = DATA_MIRNA,
 ) -> None:
-    fetch_file(GIT_DATA_MIRNA, precursor_file, file_desc="Precursor miRNA FASTA")
-    fetch_file(GIT_MAT_MIRNA_FASTA, mat_seq_fasta, file_desc="Mature miRNA FASTA")
-    fetch_file(GIT_PRE_MIRNA_FASTA, pre_seq_fasta, file_desc="Precursor association CSV")
+    fetch_file(
+        GIT_DATA_MIRNA, precursor_file, file_desc="Precursor miRNA FASTA"
+    )
+    fetch_file(
+        GIT_MAT_MIRNA_FASTA, mat_seq_fasta, file_desc="Mature miRNA FASTA"
+    )
+    fetch_file(
+        GIT_PRE_MIRNA_FASTA,
+        pre_seq_fasta,
+        file_desc="Precursor association CSV",
+    )
 
 
 def fetch_interaction_files(
     positive_file: str | os.PathLike = PAIRS_FILE_POSITIVE,
 ) -> None:
-    fetch_file(GIT_POSITIVE_PAIRS, positive_file, file_desc="Positive pairs CSV")
+    fetch_file(
+        GIT_POSITIVE_PAIRS, positive_file, file_desc="Positive pairs CSV"
+    )

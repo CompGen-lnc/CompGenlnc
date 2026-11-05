@@ -28,7 +28,10 @@ def test_filter_seq_fasta(filter, expected_factory, tmp_path):
     print(cgl.paths.PRE_MIRNA_FASTA)
 
     ids = [record.id for record in cgl.load_fasta(new_fasta, mode="seq")]
-    expected2 = [record.id for record in cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")]
+    expected2 = [
+        record.id
+        for record in cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")
+    ]
     print(len(ids), len(expected), len(expected2))
     print(expected)
     assert ids == expected

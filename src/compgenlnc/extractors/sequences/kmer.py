@@ -143,7 +143,10 @@ def gen_kmer_dict_from_fasta(
             True.
     """
     record_list = load_fasta(
-        fasta_file, mode=SEQ_MODE, keep=keep, exclude=exclude,
+        fasta_file,
+        mode=SEQ_MODE,
+        keep=keep,
+        exclude=exclude,
     )
     gen_kmer_dict(dict_file, record_list, k, overwrite=overwrite)
 

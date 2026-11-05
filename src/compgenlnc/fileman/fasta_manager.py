@@ -144,9 +144,7 @@ def read_sequence(folder: str | os.PathLike, id_: str) -> str:
     return seq.upper().replace("T", "U")
 
 
-def read_structure(
-    folder: str | os.PathLike, id_: str
-) -> str:
+def read_structure(folder: str | os.PathLike, id_: str) -> str:
     """Read the first line of a seq+ss file and normalize to ACGT
     alphabet.
 

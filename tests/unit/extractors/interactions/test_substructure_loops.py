@@ -81,7 +81,11 @@ def test_gen_substructure_loops_dict(
         binding_list.append(binding_zone)
 
     cgl.gen_substructure_loops_dict(
-        dict_path, interaction_list, loops_list, binding_list, molecule=cgl.MIRNA
+        dict_path,
+        interaction_list,
+        loops_list,
+        binding_list,
+        molecule=cgl.MIRNA,
     )
     loops_dict = cgl.load_dict(dict_path)
     for interaction, mir_loops, binding_zone in zip(

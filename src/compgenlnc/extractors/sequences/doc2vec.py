@@ -45,7 +45,9 @@ def train_doc2vec_model_from_fasta(
     model_file: str | os.PathLike | None = None,
 ) -> Doc2Vec:
     fasta_file = Path(fasta_file).resolve()
-    return train_doc2vec_model(load_fasta(fasta_file, mode=SEQ_MODE), model_file)
+    return train_doc2vec_model(
+        load_fasta(fasta_file, mode=SEQ_MODE), model_file
+    )
 
 
 def get_doc2vec(
