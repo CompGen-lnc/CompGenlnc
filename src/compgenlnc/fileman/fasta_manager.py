@@ -71,7 +71,6 @@ def load_fasta(
 def save_fasta(
     filename: str | os.PathLike,
     molecules: Iterable[SeqSSRecord],
-    /,
     *,
     mode: str,
     overwrite: bool = False,
@@ -128,9 +127,7 @@ def iter_seq_fasta(
         yield record
 
 
-def read_sequence(
-    folder: str | os.PathLike, id_: str, mature_only: bool = False
-) -> str:
+def read_sequence(folder: str | os.PathLike, id_: str) -> str:
     """Read the first line of a seq+ss file and normalize to ACGT
     alphabet.
 
@@ -144,13 +141,11 @@ def read_sequence(
 
     with open(filename) as f:
         seq = f.readlines()[0].strip()
-    if mature_only:
-        seq = "".join(c for c in seq if c.isupper())
     return seq.upper().replace("T", "U")
 
 
 def read_structure(
-    folder: str | os.PathLike, id_: str, mature_only: bool = False
+    folder: str | os.PathLike, id_: str
 ) -> str:
     """Read the first line of a seq+ss file and normalize to ACGT
     alphabet.
@@ -165,8 +160,6 @@ def read_structure(
 
     with open(filename) as f:
         ss = f.readlines()[1].strip()
-    if mature_only:
-        ss = "".join(c for c in ss if c.isupper())
     return ss
 
 
@@ -175,7 +168,6 @@ def iter_seq_ss(
     *,
     keep: Iterable[str] | None = None,
     exclude: Iterable[str] | None = None,
-    mature_only: bool = False,
 ) -> Iterator[SeqSSRecord]:
     """Iterate all the seq+ss files from the same folder that fit the
     filter.

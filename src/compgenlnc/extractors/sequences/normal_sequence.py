@@ -90,7 +90,6 @@ def gen_normalized_sequence_dict_from_fasta(
     normal_size: int | None = None,
     /,
     keep: Iterable[str] | None = None,
-    mature_only: bool = False,
 ) -> None:
     record_list = load_fasta(filename, mode=SEQ_MODE, keep=keep)
     gen_normalized_sequence_dict(record_list, dict_file, normal_size)
@@ -102,7 +101,6 @@ def gen_normalized_sequence_dict_from_folder(
     normal_size: int | None = None,
     /,
     keep: Iterable[str] | None = None,
-    mature_only: bool = False,
 ) -> None:
     record_list = iter_seq_ss(folder, keep=keep)
     gen_normalized_sequence_dict(record_list, dict_file, normal_size)

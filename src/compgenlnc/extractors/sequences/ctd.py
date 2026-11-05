@@ -83,7 +83,7 @@ def get_ctd(seq: SeqLike) -> np.typing.NDArray[np.float32]:
 
 
 def get_ctd_by_name(
-    id_: str, folder: str | os.PathLike, /, mature_only: bool = False
+    id_: str, folder: str | os.PathLike, /
 ) -> np.typing.NDArray[np.float32]:
     """Get the CTD of a RNA sequences from the seq+ss file of the given
     molecule.
@@ -99,7 +99,7 @@ def get_ctd_by_name(
             sequence.
     """
     folder = Path(folder).resolve()
-    seq = read_sequence(folder, id_, mature_only=mature_only)
+    seq = read_sequence(folder, id_)
     return get_ctd(seq)
 
 

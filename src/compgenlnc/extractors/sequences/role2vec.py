@@ -99,7 +99,6 @@ def gen_role2vec_dict_from_fasta(
     /,
     *,
     keep: Iterable[str] | None = None,
-    mature_only: bool = False,
 ) -> None:
     doc2vec_model = train_doc2vec_model_from_fasta(fasta_file)
 
@@ -129,23 +128,22 @@ def gen_role2vec_dict_from_folder(
     /,
     *,
     keep: Iterable[str] | None = None,
-    mature_only: bool = False,
 ) -> None:
     doc2vec_model = train_doc2vec_model(
-        iter_seq_ss(folder, keep=keep, mature_only=mature_only)
+        iter_seq_ss(folder, keep=keep)
     )
 
     kmer_dict = {
         record.id: get_kmer(record.seq, k)
-        for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
+        for record in iter_seq_ss(folder, keep=keep)
     }
     ctd_dict = {
         record.id: get_ctd(record.seq)
-        for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
+        for record in iter_seq_ss(folder, keep=keep)
     }
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=doc2vec_model)
-        for record in iter_seq_ss(folder, keep=keep, mature_only=mature_only)
+        for record in iter_seq_ss(folder, keep=keep)
     }
 
     gen_role2vec_dict(kmer_dict, ctd_dict, doc2vec_dict, dict_file)

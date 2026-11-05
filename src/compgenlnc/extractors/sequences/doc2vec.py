@@ -74,12 +74,11 @@ def get_doc2vec_by_name(
     folder: str | os.PathLike,
     /,
     *,
-    mature_only: bool = False,
     model: Doc2Vec | None = None,
     model_file: str | os.PathLike | None = None,
 ) -> np.typing.NDArray[np.float32]:
     folder = Path(folder).resolve()
-    seq = read_sequence(folder, id_, mature_only=mature_only)
+    seq = read_sequence(folder, id_)
     return get_doc2vec(seq, model=model, model_file=model_file)
 
 

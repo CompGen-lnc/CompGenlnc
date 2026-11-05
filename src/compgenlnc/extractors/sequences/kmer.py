@@ -54,7 +54,7 @@ def get_kmer(seq: SeqLike, k: int) -> np.typing.NDArray[np.float32]:
 
 
 def get_kmer_by_name(
-    id_: str, folder: str | os.PathLike, k: int, /, mature_only: bool = False
+    id_: str, folder: str | os.PathLike, k: int, /
 ) -> np.typing.NDArray[np.float32]:
     """Get the k-mers of a RNA sequences from 1 to k from the seq+ss
     file of the given molecule.
@@ -73,7 +73,7 @@ def get_kmer_by_name(
     """
     folder = Path(folder).resolve()
 
-    seq = read_sequence(folder, id_, mature_only=mature_only)
+    seq = read_sequence(folder, id_)
     return get_kmer(seq, k)
 
 
