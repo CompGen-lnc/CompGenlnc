@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 import os
-from collections.abc import Iterable
+from collections.abc import Collection, Iterable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import RNA
+from numpy.typing import NDArray
 
 from compgenlnc.consts.paths import LOOPS_PREFIX
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
@@ -15,9 +19,12 @@ from compgenlnc.fileman.loops_manager import (
 )
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def extract_2d_structure_loops(
-    loops_folder: str | os.PathLike, record: SeqSSRecord
+    loops_folder: StrPath, record: SeqSSRecord
 ) -> float:
     loops_folder = Path(loops_folder).resolve()
     if loops_folder.exists():
@@ -39,54 +46,54 @@ def extract_2d_structure_loops(
 
 
 def extract_2d_structure_loops_from_list(
-    loops_folder: str | os.PathLike,
-    record_list: Iterable[SeqSSRecord],
-) -> np.typing.NDArray[np.float32]:
+    loops_folder: StrPath,
+    records: Iterable[SeqSSRecord],
+) -> NDArray[np.float32]:
     energy_list = []
-    for record in record_list:
+    for record in records:
         energy_list.append(extract_2d_structure_loops(loops_folder, record))
 
     return np.array(energy_list, dtype=np.float32)
 
 
 def extract_2d_structure_loops_from_folder(
-    loops_folder: str | os.PathLike,
-    seq_ss_folder: str | os.PathLike,
+    loops_folder: StrPath,
+    seq_ss_folder: StrPath,
     *,
-    keep: Iterable[str] | None = None,
-    exclude: Iterable[str] | None = None,
-) -> np.typing.NDArray[np.float32]:
+    keep: Collection[str] | None = None,
+    exclude: Collection[str] | None = None,
+) -> NDArray[np.float32]:
     return extract_2d_structure_loops_from_list(
         loops_folder, iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
     )
 
 
 def gen_loops_dict(
-    dict_file: str | os.PathLike,
-    loops_folder: str | os.PathLike,
-    record_list: Iterable[SeqSSRecord],
+    dict_file: StrPath,
+    loops_folder: StrPath,
+    records: Collection[SeqSSRecord],
 ) -> None:
     send_msg("Generating loops dictionary\n")
-    record_list = list(record_list)
-    total = len(record_list)
+    records = list(records)
+    total = len(records)
 
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():
         send_msg("  Analyzing existing dictionary...")
 
         existing_dict = load_dict(dict_file)
-        record_list = [
-            record for record in record_list if record.id not in existing_dict
+        records = [
+            record for record in records if record.id not in existing_dict
         ]
 
         send_msg("\r  Existing dictionary analyzed    \n")
 
-    initial = total - len(record_list)
+    initial = total - len(records)
     desc = "  Calculating loops"
-    record_it = track_progress(record_list, desc, total, "ss", initial)
+    records = track_progress(records, desc, total, "ss", initial)
 
-    extract_2d_structure_loops_from_list(loops_folder, record_it)
-    id_list = set(rec.id for rec in record_list)
+    extract_2d_structure_loops_from_list(loops_folder, records)
+    id_list = set(rec.id for rec in records)
     loops_list = list(
         read_2d_structure_loops_from_folder(loops_folder, keep=id_list)
     )
@@ -98,11 +105,11 @@ def gen_loops_dict(
 
 
 def gen_loops_dict_from_folder(
-    dict_file: str | os.PathLike,
-    loops_folder: str | os.PathLike,
+    dict_file: StrPath,
+    loops_folder: StrPath,
     *,
-    keep: Iterable[str] | None = None,
-    exclude: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
+    exclude: Collection[str] | None = None,
 ) -> None:
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():

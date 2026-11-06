@@ -1,8 +1,11 @@
-import os
-from collections.abc import Iterable
+from __future__ import annotations
+
+from collections.abc import Collection, Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
+from numpy.typing import NDArray
 
 from compgenlnc.consts.fields import (
     INTERACTION_FIELD,
@@ -29,6 +32,9 @@ from compgenlnc.typing.numpy_dtypes import (
     dtype_interaction_pair,
 )
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 _cgl_indexes = None
 _index_file = None
 _lnc_indexed_records = None
@@ -49,15 +55,14 @@ def get_mature_index(
 
 
 def gen_indexes(
-    interactions_it: Iterable[InteractionPair],
+    interactions: Collection[InteractionPair],
     precursor_dict: dict[str, str],
     *,
-    index_file: str | os.PathLike = INDEX_NPY,
+    index_file: StrPath = INDEX_NPY,
 ) -> None:
-    interactions_it = list(interactions_it)
-    array = np.empty((len(interactions_it), 3), dtype=dtype_index)
+    array = np.empty((len(interactions), 3), dtype=dtype_index)
     fails = []
-    for i, interaction in enumerate(interactions_it):
+    for i, interaction in enumerate(interactions):
         mir = interaction[MIRNA_FIELD]
         if mir in precursor_dict:
             array[i] = get_mature_index(interaction, precursor_dict)
@@ -73,11 +78,11 @@ def gen_indexes(
 
 
 def gen_indexes_from_files(
-    interaction_csv: str | os.PathLike,
-    precursor_csv: str | os.PathLike,
+    interaction_csv: StrPath,
+    precursor_csv: StrPath,
     *,
-    lnc_list: Iterable[str] | None = None,
-    mir_list: Iterable[str] | None = None,
+    lnc_list: Sequence[str] | None = None,
+    mir_list: Sequence[str] | None = None,
 ) -> None:
     interactions = load_interactions(interaction_csv)
     mask = np.ones(len(interactions), dtype=np.bool)
@@ -91,8 +96,8 @@ def gen_indexes_from_files(
 
 
 def load_indexes(
-    *, index_file: str | os.PathLike = INDEX_NPY, rna: str | None = None
-) -> np.typing.NDArray[Index]:
+    *, index_file: StrPath = INDEX_NPY, rna: str | None = None
+) -> NDArray[Index]:
     global _cgl_indexes
     global _lnc_indexed_records
     global _pre_mir_indexed_records
@@ -118,9 +123,7 @@ def load_indexes(
     return _cgl_indexes
 
 
-def index_lncrna(
-    *, index_file: str | os.PathLike = INDEX_NPY
-) -> np.typing.NDArray[np.object_]:
+def index_lncrna(*, index_file: StrPath = INDEX_NPY) -> NDArray[np.object_]:
     global _lnc_indexed_records
     if _lnc_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=LNCRNA)
@@ -134,8 +137,8 @@ def index_lncrna(
 
 
 def index_precursor_mirna(
-    *, index_file: str | os.PathLike = INDEX_NPY
-) -> np.typing.NDArray[np.object_]:
+    *, index_file: StrPath = INDEX_NPY
+) -> NDArray[np.object_]:
     global _pre_mir_indexed_records
     if _pre_mir_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=PRECURSOR)
@@ -149,8 +152,8 @@ def index_precursor_mirna(
 
 
 def index_mature_mirna(
-    *, index_file: str | os.PathLike = INDEX_NPY
-) -> np.typing.NDArray[np.object_]:
+    *, index_file: StrPath = INDEX_NPY
+) -> NDArray[np.object_]:
     global _mat_mir_indexed_records
     if _mat_mir_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=MATURE)
@@ -164,9 +167,9 @@ def index_mature_mirna(
 
 def interactions_from_index(
     *,
-    interactions_csv: str | os.PathLike = PAIRS_FILE,
-    index_file: str | os.PathLike = INDEX_NPY,
-) -> np.typing.NDArray[InteractionPair]:
+    interactions_csv: StrPath = PAIRS_FILE,
+    index_file: StrPath = INDEX_NPY,
+) -> NDArray[InteractionPair]:
     global _indexed_interactions
     if _indexed_interactions is None:
         indexes = load_indexes(rna=INTERACTION)
@@ -181,10 +184,10 @@ def interactions_from_index(
 
 
 def dict_to_numpy(
-    np_file: str | os.PathLike,
-    feat_dict: dict[str, np.typing.NDArray],
+    np_file: StrPath,
+    feat_dict: dict[str, NDArray],
     *,
-    index_file: str | os.PathLike = INDEX_NPY,
+    index_file: StrPath = INDEX_NPY,
     rna: str = LNCRNA,
 ) -> None:
     indexes = load_indexes(index_file=index_file, rna=rna)

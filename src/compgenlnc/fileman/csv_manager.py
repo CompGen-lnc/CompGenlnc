@@ -1,8 +1,11 @@
-import os
+from __future__ import annotations
+
 from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from numpy.typing import NDArray
 
 from compgenlnc.consts.fields import (
     IS_POSITIVE_FIELD,
@@ -16,13 +19,16 @@ from compgenlnc.typing.numpy_dtypes import (
     dtype_interaction_tuple,
 )
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def save_interactions(
-    new_csv: str | os.PathLike,
-    interactions_list: np.typing.NDArray[InteractionTuple] | None = None,
+    new_csv: StrPath,
+    interactions_list: NDArray[InteractionTuple] | None = None,
     *,
-    pos_list: np.typing.NDArray[InteractionPair] | None = None,
-    neg_list: np.typing.NDArray[InteractionPair] | None = None,
+    pos_list: NDArray[InteractionPair] | None = None,
+    neg_list: NDArray[InteractionPair] | None = None,
 ) -> None:
     def parse_interactions(interactions, positive):
         arr = np.empty(interactions.shape, dtype=dtype_interaction_tuple)
@@ -43,11 +49,11 @@ def save_interactions(
 
 
 def load_interactions(
-    filename: str | os.PathLike,
+    filename: StrPath,
     *,
     lnc_keep: Sequence[str] | None = None,
     mir_keep: Sequence[str] | None = None,
-) -> np.typing.NDArray[InteractionTuple]:
+) -> NDArray[InteractionTuple]:
     df = pd.read_csv(filename)
     interactions = df.to_records(index=False)
     mask = np.ones(len(interactions), np.bool)
@@ -58,6 +64,6 @@ def load_interactions(
     return interactions[mask]
 
 
-def load_precursors(precursors_file: str | os.PathLike) -> dict[str, str]:
+def load_precursors(precursors_file: StrPath) -> dict[str, str]:
     df = pd.read_csv(precursors_file)
     return {mat: pre for mat, pre in df.itertuples(index=False)}

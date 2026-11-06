@@ -1,12 +1,13 @@
 from collections.abc import Iterable
 
 import numpy as np
+from numpy.typing import NDArray
 
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SSLike
 
 
-def recode_2d_structure(ss: SSLike) -> np.typing.NDArray[np.uint8]:
+def recode_2d_structure(ss: SSLike, /) -> NDArray[np.uint8]:
     if isinstance(ss, SeqSSRecord):
         ss = ss.ss
 
@@ -21,6 +22,6 @@ def recode_2d_structure(ss: SSLike) -> np.typing.NDArray[np.uint8]:
 
 
 def recode_2d_structure_list(
-    ss_list: Iterable[SSLike],
-) -> Iterable[np.typing.NDArray[np.uint8]]:
+    ss_list: Iterable[SSLike], /
+) -> Iterable[NDArray[np.uint8]]:
     return (recode_2d_structure(ss) for ss in ss_list)

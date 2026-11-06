@@ -68,9 +68,9 @@ def test_gen_normalized_sequence_dict_from_folder(example_id_filter, tmp_path):
     )
     assert dict_file.exists()
 
-    recoded_list = cgl.recode_sequence_list(
+    recoded_list = list(cgl.recode_sequence_list(
         cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER, keep=example_id_filter)
-    )
+    ))
     normal_matrix = cgl.normalize_sequence_list(recoded_list)
     normal_dict = cgl.load_dict(dict_file)
 

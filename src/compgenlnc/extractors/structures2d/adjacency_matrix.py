@@ -1,19 +1,25 @@
+from __future__ import annotations
+
 import math
-import os
-from collections.abc import Iterable, Iterator
+from collections.abc import Collection, Iterable, Iterator
 from itertools import tee
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
+from numpy.typing import NDArray
 
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SSLike
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
-def get_adjacency_matrix(ss: SSLike) -> np.typing.NDArray[np.bool]:
+
+def get_adjacency_matrix(ss: SSLike, /) -> NDArray[np.bool]:
     if isinstance(ss, SeqSSRecord):
         ss = ss.ss
 
@@ -30,16 +36,17 @@ def get_adjacency_matrix(ss: SSLike) -> np.typing.NDArray[np.bool]:
 
 
 def get_adjacency_matrix_list(
-    ss_list: Iterable[SSLike],
-) -> Iterator[np.typing.NDArray[np.bool]]:
+    ss_list: Iterable[SSLike], /
+) -> Iterator[NDArray[np.bool]]:
     for ss in ss_list:
         yield get_adjacency_matrix(ss)
 
 
 def normalize_matrix_list(
-    matrix_list: Iterable[np.typing.NDArray[np.bool]],
+    matrix_list: Iterable[NDArray[np.bool]],
+    /,
     normal_size: int | None = None,
-) -> Iterator[np.typing.NDArray[np.float32]]:
+) -> Iterator[NDArray[np.float32]]:
     if normal_size is None:
         matrix_list, matrix_copy = tee(matrix_list)
         normal_size = math.ceil(np.mean([len(mat) for mat in matrix_copy]))
@@ -53,10 +60,9 @@ def normalize_matrix_list(
 
 
 def gen_normalized_matrix_dict(
-    dict_file: str | os.PathLike,
-    record_list: Iterable[SeqSSRecord],
+    dict_file: StrPath,
+    records: Iterable[SeqSSRecord],
     normal_size: int | None = None,
-    /,
 ) -> None:
     dict_file = Path(dict_file).resolve()
     dict_file.parent.mkdir(parents=True, exist_ok=True)
@@ -64,7 +70,7 @@ def gen_normalized_matrix_dict(
     id_vector = []
     ss_vector = []
 
-    for record in record_list:
+    for record in records:
         id_vector.append(record.id)
         ss_vector.append(record.ss)
 
@@ -76,22 +82,22 @@ def gen_normalized_matrix_dict(
 
 
 def gen_normalized_matrix_dict_from_fasta(
-    dict_file: str | os.PathLike,
-    fasta_file: str | os.PathLike,
+    dict_file: StrPath,
+    fasta_file: StrPath,
     normal_size: int | None = None,
-    /,
-    keep: Iterable[str] | None = None,
+    *,
+    keep: Collection[str] | None = None,
 ) -> None:
-    record_it = load_fasta(fasta_file, mode="ss", keep=keep)
-    gen_normalized_matrix_dict(dict_file, record_it, normal_size)
+    records = load_fasta(fasta_file, mode="ss", keep=keep)
+    gen_normalized_matrix_dict(dict_file, records, normal_size)
 
 
 def gen_normalized_matrix_dict_from_folder(
-    dict_file: str | os.PathLike,
-    seq_ss_folder: str | os.PathLike,
+    dict_file: StrPath,
+    seq_ss_folder: StrPath,
     normal_size: int | None = None,
-    /,
-    keep: Iterable[str] | None = None,
+    *,
+    keep: Collection[str] | None = None,
 ) -> None:
-    record_it = iter_seq_ss(seq_ss_folder, keep=keep)
-    gen_normalized_matrix_dict(dict_file, record_it, normal_size)
+    records = iter_seq_ss(seq_ss_folder, keep=keep)
+    gen_normalized_matrix_dict(dict_file, records, normal_size)

@@ -1,6 +1,8 @@
-import os
+from __future__ import annotations
+
 from collections.abc import Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from compgenlnc.consts.params import LNCRNA, PRECURSOR
 from compgenlnc.consts.paths import (
@@ -16,11 +18,14 @@ from compgenlnc.extractors.structures2d.loops import gen_loops_dict
 from compgenlnc.fileman.dict_manager import load_dict
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def gen_ss_features(
-    record_list: Sequence[SeqSSRecord],
-    dicts_folder: str | os.PathLike,
-    loops_folder: str | os.PathLike,
+    records: Sequence[SeqSSRecord],
+    dicts_folder: StrPath,
+    loops_folder: StrPath,
     *,
     rna: str,
 ) -> None:
@@ -28,7 +33,7 @@ def gen_ss_features(
     dicts_folder.parent.mkdir(parents=True, exist_ok=True)
 
     loops_path = dicts_folder / LOOPS_DICT
-    gen_loops_dict(loops_path, loops_folder, record_list)
+    gen_loops_dict(loops_path, loops_folder, records)
 
     def path_to_npy(filename):
         return (DATASET_FOLDER / f"{rna}_{filename}").with_suffix(".npy")
@@ -37,18 +42,18 @@ def gen_ss_features(
     dict_to_numpy(loops_npy, load_dict(loops_path), rna=rna)
 
 
-def gen_lncrna_ss_features(record_list: Sequence[SeqSSRecord]) -> None:
+def gen_lncrna_ss_features(records: Sequence[SeqSSRecord]) -> None:
     gen_ss_features(
-        record_list,
+        records,
         LNCRNA_DICTS_FOLDER,
         LNCRNA_LOOPS_FOLDER,
         rna=LNCRNA,
     )
 
 
-def gen_mirna_ss_features(record_list: Sequence[SeqSSRecord]) -> None:
+def gen_mirna_ss_features(records: Sequence[SeqSSRecord]) -> None:
     gen_ss_features(
-        record_list,
+        records,
         PRE_MIRNA_DICTS_FOLDER,
         MIRNA_LOOPS_FOLDER,
         rna=PRECURSOR,

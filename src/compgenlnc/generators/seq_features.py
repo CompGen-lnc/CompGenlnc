@@ -1,6 +1,8 @@
-import os
+from __future__ import annotations
+
 from collections.abc import Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from compgenlnc.consts.params import LNCRNA, MATURE, PRECURSOR
 from compgenlnc.consts.paths import (
@@ -30,12 +32,15 @@ from compgenlnc.extractors.sequences.role2vec import (
 from compgenlnc.fileman.dict_manager import load_dict
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def gen_seq_features(
-    record_list: Sequence[SeqSSRecord],
-    dicts_folder: str | os.PathLike,
+    records: Sequence[SeqSSRecord],
+    dicts_folder: StrPath,
     k: int,
-    dv2_model_file: str | os.PathLike,
+    dv2_model_file: StrPath,
     *,
     rna: str,
 ) -> None:
@@ -48,11 +53,11 @@ def gen_seq_features(
     r2v_path = dicts_folder / ROLE2VEC_DICT
     normal_path = dicts_folder / NORMAL_SEQ_DICT
 
-    gen_kmer_dict(kmer_path, record_list, k)
-    gen_ctd_dict(ctd_path, record_list)
-    gen_doc2vec_dict(d2v_path, record_list, model_file=dv2_model_file)
+    gen_kmer_dict(kmer_path, records, k)
+    gen_ctd_dict(ctd_path, records)
+    gen_doc2vec_dict(d2v_path, records, model_file=dv2_model_file)
     gen_role2vec_dict_from_files(r2v_path, kmer_path, ctd_path, d2v_path)
-    gen_normalized_sequence_dict(normal_path, record_list)
+    gen_normalized_sequence_dict(normal_path, records)
 
     def path_to_npy(filename):
         return (DATASET_FOLDER / f"{rna}_{filename}").with_suffix(".npy")
@@ -69,9 +74,9 @@ def gen_seq_features(
     dict_to_numpy(normal_npy, load_dict(normal_path), rna=rna)
 
 
-def gen_lncrna_seq_features(record_list: Sequence[SeqSSRecord]) -> None:
+def gen_lncrna_seq_features(records: Sequence[SeqSSRecord]) -> None:
     gen_seq_features(
-        record_list,
+        records,
         LNCRNA_DICTS_FOLDER,
         k=4,
         dv2_model_file=LNCRNA_DOC2VEC_MODEL,
@@ -79,9 +84,9 @@ def gen_lncrna_seq_features(record_list: Sequence[SeqSSRecord]) -> None:
     )
 
 
-def gen_pre_mirna_seq_features(record_list: Sequence[SeqSSRecord]) -> None:
+def gen_pre_mirna_seq_features(records: Sequence[SeqSSRecord]) -> None:
     gen_seq_features(
-        record_list,
+        records,
         PRE_MIRNA_DICTS_FOLDER,
         k=3,
         dv2_model_file=PRE_MIRNA_DOC2VEC_MODEL,
@@ -89,9 +94,9 @@ def gen_pre_mirna_seq_features(record_list: Sequence[SeqSSRecord]) -> None:
     )
 
 
-def gen_mat_mirna_seq_features(record_list: Sequence[SeqSSRecord]) -> None:
+def gen_mat_mirna_seq_features(records: Sequence[SeqSSRecord]) -> None:
     gen_seq_features(
-        record_list,
+        records,
         MAT_MIRNA_DICTS_FOLDER,
         k=3,
         dv2_model_file=MAT_MIRNA_DOC2VEC_MODEL,

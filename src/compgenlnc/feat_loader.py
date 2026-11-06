@@ -1,9 +1,11 @@
-import os
+from __future__ import annotations
+
 from collections.abc import Collection
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 import numpy as np
 import pandas as pd
+from numpy.typing import NDArray
 
 from compgenlnc.consts.params import LNCRNA, MATURE, MIRNA, PRECURSOR
 from compgenlnc.consts.paths import (
@@ -40,15 +42,18 @@ from compgenlnc.fileman.miranda_manager import (
 )
 from compgenlnc.typing.numpy_dtypes import Index
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 type FeatDict5 = Annotated[tuple[tuple[dict, str]], 5]
 
 
 def load_feature_set(
-    set_path: str | os.PathLike,
+    set_path: StrPath,
     *,
     keep: Collection[Index] | None = None,
     exclude: Collection[Index] | None = None,
-) -> np.typing.NDArray[np.float32]:
+) -> NDArray[np.float32]:
     feature_set = np.load(set_path)
     mask = np.ones(len(feature_set), np.bool)
     indexes = load_indexes()
@@ -66,7 +71,7 @@ def get_seq_features(
     *,
     from_interactions: bool = False,
     rna: str = LNCRNA,
-) -> dict[str, np.typing.NDArray]:
+) -> dict[str, NDArray]:
     if not prefix.endswith("_"):
         prefix += "_"
 
@@ -115,7 +120,7 @@ def get_ss_features(
     calculate_matrix: bool = False,
     from_interactions: bool = False,
     rna: str = LNCRNA,
-) -> dict[str, np.typing.NDArray]:
+) -> dict[str, NDArray]:
     if not prefix.endswith("_"):
         prefix += "_"
 
@@ -194,7 +199,7 @@ def get_interactions_features() -> pd.DataFrame:
     return pd.DataFrame.from_dict(features_dict)
 
 
-def get_feature_vectors():
+def get_feature_vectors() -> NDArray[np.float32]:
     dicts, _ = zip(*get_feature_dictionaries())
     feat_names = [
         "size",

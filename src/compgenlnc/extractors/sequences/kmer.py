@@ -1,10 +1,13 @@
-import os
+from __future__ import annotations
+
 from collections import Counter
-from collections.abc import Iterable
+from collections.abc import Collection
 from itertools import product
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
+from numpy.typing import NDArray
 
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
@@ -18,8 +21,11 @@ from compgenlnc.structs.seq_record import SeqRecord
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SeqLike
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
-def get_kmer(seq: SeqLike, k: int) -> np.typing.NDArray[np.float32]:
+
+def get_kmer(seq: SeqLike, /, k: int) -> NDArray[np.float32]:
     """Get the k-mers of a RNA sequences from 1 to k from the given
     sequence.
 
@@ -40,7 +46,7 @@ def get_kmer(seq: SeqLike, k: int) -> np.typing.NDArray[np.float32]:
     seq = seq.upper().replace("T", "U")
 
     # Get the kmers of length n for the sequence
-    def get_nmer(seq: str, n: int) -> np.typing.NDArray[np.float32]:
+    def get_nmer(seq: str, n: int) -> NDArray[np.float32]:
         if not seq or len(seq) < n:
             return np.array([0] * 4**n, np.float32)
         kmers = Counter((seq[i : i + n] for i in range(len(seq) - n + 1)))
@@ -53,9 +59,7 @@ def get_kmer(seq: SeqLike, k: int) -> np.typing.NDArray[np.float32]:
     return np.concatenate([get_nmer(seq, n) for n in range(1, k + 1)])
 
 
-def get_kmer_by_name(
-    folder: str | os.PathLike, id_: str, k: int
-) -> np.typing.NDArray[np.float32]:
+def get_kmer_by_name(folder: StrPath, id_: str, k: int) -> NDArray[np.float32]:
     """Get the k-mers of a RNA sequences from 1 to k from the seq+ss
     file of the given molecule.
 
@@ -78,8 +82,8 @@ def get_kmer_by_name(
 
 
 def gen_kmer_dict(
-    dict_file: str | os.PathLike,
-    record_list: Iterable[SeqSSRecord],
+    dict_file: StrPath,
+    records: Collection[SeqSSRecord],
     k: int,
     *,
     overwrite: bool = False,
@@ -97,37 +101,37 @@ def gen_kmer_dict(
             True.
     """
     send_msg("Generating k-mer dictionary\n")
-    record_list = list(record_list)
-    total = len(record_list)
+    records = list(records)
+    total = len(records)
 
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():
         send_msg("  Analyzing existing dictionary...")
 
         existing_dict = load_dict(dict_file)
-        record_list = [
-            record for record in record_list if record.id not in existing_dict
+        records = [
+            record for record in records if record.id not in existing_dict
         ]
 
         send_msg("\r  Existing dictionary analyzed    \n")
 
-    initial = total - len(record_list)
+    initial = total - len(records)
     desc = "  Calculating k-mers"
-    record_list = track_progress(record_list, desc, total, "seq", initial)
+    records = track_progress(records, desc, total, "seq", initial)
 
-    kmer_dict = {record.id: get_kmer(record.seq, k) for record in record_list}
+    kmer_dict = {record.id: get_kmer(record.seq, k) for record in records}
     save_dict(dict_file, kmer_dict, overwrite=overwrite)
 
     send_msg("  k-mer dictionary generated\n")
 
 
 def gen_kmer_dict_from_fasta(
-    dict_file: str | os.PathLike,
-    fasta_file: str | os.PathLike,
+    dict_file: StrPath,
+    fasta_file: StrPath,
     k: int,
     *,
-    keep: Iterable[str] | None = None,
-    exclude: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
+    exclude: Collection[str] | None = None,
     overwrite: bool = False,
 ) -> None:
     """Get the k-mers of RNA sequences from 1 to k from a FASTA file with RNA
@@ -142,22 +146,22 @@ def gen_kmer_dict_from_fasta(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    record_list = load_fasta(
+    records = load_fasta(
         fasta_file,
         mode=SEQ_MODE,
         keep=keep,
         exclude=exclude,
     )
-    gen_kmer_dict(dict_file, record_list, k, overwrite=overwrite)
+    gen_kmer_dict(dict_file, records, k, overwrite=overwrite)
 
 
 def gen_kmer_dict_from_folder(
-    dict_file: str | os.PathLike,
-    seq_ss_folder: str | os.PathLike,
+    dict_file: StrPath,
+    seq_ss_folder: StrPath,
     k: int,
     *,
-    keep: Iterable[str] | None = None,
-    exclude: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
+    exclude: Collection[str] | None = None,
     overwrite: bool = False,
 ) -> None:
     """Get the k-mers of RNA sequences from 1 to k from the seq+ss
@@ -172,5 +176,5 @@ def gen_kmer_dict_from_folder(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    record_list = iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
-    gen_kmer_dict(dict_file, record_list, k, overwrite=overwrite)
+    records = iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    gen_kmer_dict(dict_file, records, k, overwrite=overwrite)

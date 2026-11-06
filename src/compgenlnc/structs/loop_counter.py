@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 
 import numpy as np
+from numpy.typing import NDArray
 
 from compgenlnc.consts.fields import ENERGY_FIELD, KIND_FIELD
 from compgenlnc.typing.numpy_dtypes import LoopTuple, dtype_loop_tuple
@@ -13,7 +14,7 @@ from compgenlnc.typing.numpy_dtypes import LoopTuple, dtype_loop_tuple
 class LoopCounter:
     _rna: str
     _energy: float
-    _loops: np.typing.NDArray[np.void]
+    _loops: NDArray[np.void]
     _hairpin_energy: float
     _stack_energy: float
     _multi_energy: float
@@ -21,7 +22,7 @@ class LoopCounter:
     def __init__(
         self,
         id_: str,
-        loops: Iterable[tuple[str, int, int, int]],
+        loops: Sequence[tuple[str, int, int, int]],
         energy: float | None = None,
     ) -> None:
         self._rna = id_
@@ -44,11 +45,11 @@ class LoopCounter:
         return self._energy
 
     @property
-    def loops(self) -> np.typing.NDArray[LoopTuple]:
+    def loops(self) -> NDArray[LoopTuple]:
         return self._loops
 
     @property
-    def hairpin_loops(self) -> np.typing.NDArray[LoopTuple]:
+    def hairpin_loops(self) -> NDArray[LoopTuple]:
         mask = self._loops[KIND_FIELD] == "Hairpin"
         return self._loops[mask]
 
@@ -57,7 +58,7 @@ class LoopCounter:
         return self._hairpin_energy
 
     @property
-    def stack_loops(self) -> np.typing.NDArray[LoopTuple]:
+    def stack_loops(self) -> NDArray[LoopTuple]:
         mask = self._loops[KIND_FIELD] == "Interior"
         return self._loops[mask]
 
@@ -66,7 +67,7 @@ class LoopCounter:
         return self._stack_energy
 
     @property
-    def multi_loops(self) -> np.typing.NDArray[LoopTuple]:
+    def multi_loops(self) -> NDArray[LoopTuple]:
         mask = self._loops[KIND_FIELD] == "Multi"
         return self._loops[mask]
 
@@ -75,7 +76,7 @@ class LoopCounter:
         return self._multi_energy
 
     @property
-    def loops_vectorized(self) -> np.typing.NDArray[np.float32]:
+    def loops_vectorized(self) -> NDArray[np.float32]:
         return np.array(
             [
                 len(self.hairpin_loops),

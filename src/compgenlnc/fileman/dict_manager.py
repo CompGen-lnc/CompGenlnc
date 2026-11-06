@@ -1,14 +1,20 @@
+from __future__ import annotations
+
 import csv
-import os
 from collections.abc import Iterable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
+from numpy.typing import NDArray
+
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
 
 def load_dict(
-    filename: str | os.PathLike, val_type: type = np.float32
-) -> dict[str, np.typing.NDArray]:
+    filename: StrPath, val_type: type = np.float32
+) -> dict[str, NDArray]:
     """Load a dicationary from a file with pairs of RNA names and feature
     vectors.
 
@@ -43,11 +49,11 @@ def load_dict(
 
 
 def save_dict(
-    filename: str | os.PathLike,
-    dict_: dict[str, np.typing.NDArray] | None = None,
+    filename: StrPath,
+    dict_: dict[str, NDArray] | None = None,
     *,
     keys: Iterable[str] | None = None,
-    values: Iterable[np.typing.NDArray] | None = None,
+    values: Iterable[NDArray] | None = None,
     overwrite: bool = False,
 ) -> None:
     """Save a dicationary pairs of RNA names and feature vectors into a file.

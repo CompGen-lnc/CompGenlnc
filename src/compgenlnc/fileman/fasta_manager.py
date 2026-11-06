@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import os
 import textwrap
-from collections.abc import Iterable, Iterator
+from collections.abc import Collection, Iterable, Iterator
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from compgenlnc.consts.params import SEQ_MODE, SS_MODE
 from compgenlnc.consts.paths import (
@@ -9,13 +12,16 @@ from compgenlnc.consts.paths import (
 )
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def load_fasta(
-    filename: str | os.PathLike,
+    filename: StrPath,
     *,
     mode: str = SEQ_MODE,
-    keep: Iterable[str] | None = None,
-    exclude: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
+    exclude: Collection[str] | None = None,
 ) -> Iterator[SeqSSRecord]:
     """Load a FASTA file and iterate the RNA molecules into them.
 
@@ -69,8 +75,8 @@ def load_fasta(
 
 
 def save_fasta(
-    filename: str | os.PathLike,
-    molecules: Iterable[SeqSSRecord],
+    filename: StrPath,
+    records: Iterable[SeqSSRecord],
     *,
     mode: str,
     overwrite: bool = False,
@@ -94,7 +100,7 @@ def save_fasta(
     filename.parent.mkdir(parents=True, exist_ok=True)
     open_mode = "w" if overwrite else "a"
     with open(filename, open_mode) as out_file:
-        for record in molecules:
+        for record in records:
             value = record.ss if mode == SS_MODE else record.seq
             out_file.write(f">{record.id}\n")
             if not value:
@@ -103,7 +109,7 @@ def save_fasta(
 
 
 def iter_seq_fasta(
-    filename: str | os.PathLike, filter: Iterable[str] | None = None
+    filename: StrPath, filter: Collection[str] | None = None
 ) -> Iterator[SeqSSRecord]:
     """Iterate all the RNA sequences from a FASTA file that fit the
     filter.
@@ -127,7 +133,7 @@ def iter_seq_fasta(
         yield record
 
 
-def read_sequence(folder: str | os.PathLike, id_: str) -> str:
+def read_sequence(folder: StrPath, id_: str) -> str:
     """Read the first line of a seq+ss file and normalize to ACGT
     alphabet.
 
@@ -144,7 +150,7 @@ def read_sequence(folder: str | os.PathLike, id_: str) -> str:
     return seq.upper().replace("T", "U")
 
 
-def read_structure(folder: str | os.PathLike, id_: str) -> str:
+def read_structure(folder: StrPath, id_: str) -> str:
     """Read the first line of a seq+ss file and normalize to ACGT
     alphabet.
 
@@ -162,10 +168,10 @@ def read_structure(folder: str | os.PathLike, id_: str) -> str:
 
 
 def iter_seq_ss(
-    folder: str | os.PathLike,
+    folder: StrPath,
     *,
-    keep: Iterable[str] | None = None,
-    exclude: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
+    exclude: Collection[str] | None = None,
 ) -> Iterator[SeqSSRecord]:
     """Iterate all the seq+ss files from the same folder that fit the
     filter.

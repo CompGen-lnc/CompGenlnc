@@ -1,7 +1,9 @@
-import os
+from __future__ import annotations
+
 import re
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from compgenlnc.consts.fields import PAIR_FIELDS
 from compgenlnc.consts.params import LNCRNA, MIRNA
@@ -11,9 +13,12 @@ from compgenlnc.structs.binding_zone import BindingZone
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.numpy_dtypes import InteractionPair
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def read_binding_zone(
-    binding_folder: str | os.PathLike, interaction: InteractionPair
+    binding_folder: StrPath, interaction: InteractionPair
 ) -> BindingZone:
     binding_folder = Path(binding_folder).resolve()
     lnc, mir = interaction[PAIR_FIELDS]
@@ -30,7 +35,7 @@ def read_binding_zone(
 
 
 def iter_binding_zones(
-    binding_folder: str | os.PathLike, interactions: Iterable[InteractionPair]
+    binding_folder: StrPath, interactions: Iterable[InteractionPair]
 ) -> Iterator[BindingZone]:
     return (
         read_binding_zone(binding_folder, interaction)
@@ -57,9 +62,9 @@ def get_subrecord(
 
 
 def get_subrecord_list(
-    records: Iterable[SeqSSRecord],
-    interactions: Iterable[InteractionPair],
-    binding_zones: Iterable[BindingZone],
+    records: Sequence[SeqSSRecord],
+    interactions: Sequence[InteractionPair],
+    binding_zones: Sequence[BindingZone],
     *,
     rna: str = LNCRNA,
 ) -> Iterator[SeqSSRecord]:
@@ -70,9 +75,9 @@ def get_subrecord_list(
 
 
 def get_subrecord_list_from_folder(
-    records: Iterable[SeqSSRecord],
-    interactions: Iterable[InteractionPair],
-    binding_folder: str | os.PathLike,
+    records: Sequence[SeqSSRecord],
+    interactions: Sequence[InteractionPair],
+    binding_folder: StrPath,
     *,
     rna: str = LNCRNA,
 ) -> Iterator[SeqSSRecord]:

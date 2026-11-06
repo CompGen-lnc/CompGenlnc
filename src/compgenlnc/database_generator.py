@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import math
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -59,19 +62,22 @@ from compgenlnc.generators.interaction_features import gen_interaction_database
 from compgenlnc.generators.seq_features import gen_seq_database
 from compgenlnc.generators.ss_features import gen_ss_database
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def load_source_data(
-    base_folder: str | os.PathLike | None = None,
+    base_folder: StrPath | None = None,
     *,
-    lnc_seq_fasta: str | os.PathLike | None = None,
-    lnc_ss_fasta: str | os.PathLike | None = None,
-    pre_mir_seq_fasta: str | os.PathLike | None = None,
-    mat_mir_seq_fasta: str | os.PathLike | None = None,
-    mir_ss_fasta: str | os.PathLike | None = None,
-    data_mirna_csv: str | os.PathLike | None = None,
-    interactions_csv: str | os.PathLike | None = None,
-    pos_interactions_csv: str | os.PathLike | None = None,
-    neg_interactions_csv: str | os.PathLike | None = None,
+    lnc_seq_fasta: StrPath | None = None,
+    lnc_ss_fasta: StrPath | None = None,
+    pre_mir_seq_fasta: StrPath | None = None,
+    mat_mir_seq_fasta: StrPath | None = None,
+    mir_ss_fasta: StrPath | None = None,
+    data_mirna_csv: StrPath | None = None,
+    interactions_csv: StrPath | None = None,
+    pos_interactions_csv: StrPath | None = None,
+    neg_interactions_csv: StrPath | None = None,
 ) -> None:
     if base_folder is not None:
         base_folder = Path(base_folder).resolve()
@@ -97,8 +103,7 @@ def load_source_data(
 
     def load_fasta_if_exists(old_fasta, new_fasta, mode):
         if old_fasta is not None and Path(old_fasta).resolve().exists():
-            record_it = load_fasta(old_fasta, mode=mode)
-            save_fasta(new_fasta, record_it, mode=mode, overwrite=True)
+            records = load_fasta(old_fasta, mode=mode)
 
     load_fasta_if_exists(lnc_seq_fasta, LNCRNA_FASTA, mode=SEQ_MODE)
     load_fasta_if_exists(lnc_ss_fasta, LNCRNA_SS_FASTA, mode=SS_MODE)
@@ -127,10 +132,10 @@ def gen_source_data(
         gen_precursors_csv_from_files(
             DATA_MIRNA, MAT_MIRNA_FASTA, PRE_MIRNA_FASTA
         )
-    lnc_list = list(
+    lnc_list = [
         rec.id for rec in load_fasta(LNCRNA_FASTA) if len(rec.seq) <= max_size
-    )
-    mir_list = list(rec.id for rec in load_fasta(MAT_MIRNA_FASTA))
+    ]
+    mir_list = [rec.id for rec in load_fasta(MAT_MIRNA_FASTA)]
     if not keep_data or not PAIRS_FILE.exists():
         extract_interactions(
             PAIRS_FILE,

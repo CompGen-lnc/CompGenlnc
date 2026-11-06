@@ -1,6 +1,8 @@
-import os
-from collections.abc import Iterable
+from __future__ import annotations
+
+from collections.abc import Collection
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from compgenlnc.consts.paths import (
     LNCRNA_FASTA,
@@ -11,10 +13,11 @@ from compgenlnc.consts.paths import (
 )
 from compgenlnc.fileman.fasta_manager import load_fasta
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
-def join_seq_ss(
-    folder: str | os.PathLike, id_: str, seq: str, ss: str
-) -> None:
+
+def join_seq_ss(folder: StrPath, id_: str, seq: str, ss: str) -> None:
     """Save the sequence and structure of a RNA molecule in the same
     file.
 
@@ -33,12 +36,11 @@ def join_seq_ss(
 
 
 def fasta_to_seq_ss(
-    seq_file: str | os.PathLike,
-    ss_file: str | os.PathLike,
-    folder: str | os.PathLike,
-    /,
+    seq_file: StrPath,
+    ss_file: StrPath,
+    folder: StrPath,
     *,
-    keep: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
 ) -> int:
     """Convert a FASTA file into seq+ss files for each molecule.
 

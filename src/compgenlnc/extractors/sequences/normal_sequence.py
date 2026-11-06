@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import math
-import os
-from collections.abc import Iterable, Iterator
-from itertools import tee
+from collections.abc import Collection, Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
+from numpy.typing import NDArray
 
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
@@ -12,8 +14,11 @@ from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SeqLike
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
-def recode_sequence(seq: SeqLike) -> np.typing.NDArray[np.uint8]:
+
+def recode_sequence(seq: SeqLike, /) -> NDArray[np.uint8]:
     if isinstance(seq, SeqSSRecord):
         seq = seq.seq
 
@@ -28,19 +33,19 @@ def recode_sequence(seq: SeqLike) -> np.typing.NDArray[np.uint8]:
 
 
 def recode_sequence_list(
-    seq_list: Iterable[SeqLike],
-) -> Iterator[np.typing.NDArray[np.uint8]]:
+    seq_list: Iterable[SeqLike], /
+) -> Iterator[NDArray[np.uint8]]:
     for seq in seq_list:
         yield recode_sequence(seq)
 
 
 def normalize_sequence_list(
-    seq_list: Iterable[np.typing.NDArray[np.uint8]],
+    seq_list: Sequence[NDArray[np.uint8]],
+    /,
     normal_size: int | None = None,
-) -> np.typing.NDArray[np.float32]:
+) -> NDArray[np.float32]:
     if normal_size is None:
-        seq_list, seq_copy = tee(seq_list)
-        normal_size = math.ceil(np.mean([len(seq) for seq in seq_copy]))
+        normal_size = math.ceil(np.mean([len(seq) for seq in seq_list]))
 
     matrix = np.array(
         [
@@ -61,18 +66,17 @@ def normalize_sequence_list(
 
 
 def gen_normalized_sequence_dict(
-    dict_file: str | os.PathLike,
-    record_list: Iterable[SeqSSRecord],
+    dict_file: StrPath,
+    records: Iterable[SeqSSRecord],
     normal_size: int | None = None,
-    /,
 ) -> None:
     send_msg("Generating normalized sequences dictionary\n")
     id_vector = []
     seq_vector = []
 
     desc = "  Recoding sequences"
-    record_list = track_progress(record_list, desc=desc)
-    for record in record_list:
+    records = track_progress(records, desc=desc)
+    for record in records:
         id_vector.append(record.id)
         seq_vector.append(recode_sequence(record.seq))
 
@@ -85,22 +89,22 @@ def gen_normalized_sequence_dict(
 
 
 def gen_normalized_sequence_dict_from_fasta(
-    dict_file: str | os.PathLike,
-    fasta_file: str | os.PathLike,
+    dict_file: StrPath,
+    fasta_file: StrPath,
     normal_size: int | None = None,
-    /,
-    keep: Iterable[str] | None = None,
+    *,
+    keep: Collection[str] | None = None,
 ) -> None:
-    record_list = load_fasta(fasta_file, mode=SEQ_MODE, keep=keep)
-    gen_normalized_sequence_dict(dict_file, record_list, normal_size)
+    records = load_fasta(fasta_file, mode=SEQ_MODE, keep=keep)
+    gen_normalized_sequence_dict(dict_file, records, normal_size)
 
 
 def gen_normalized_sequence_dict_from_folder(
-    dict_file: str | os.PathLike,
-    seq_ss_folder: str | os.PathLike,
+    dict_file: StrPath,
+    seq_ss_folder: StrPath,
     normal_size: int | None = None,
-    /,
-    keep: Iterable[str] | None = None,
+    *,
+    keep: Collection[str] | None = None,
 ) -> None:
-    record_list = iter_seq_ss(seq_ss_folder, keep=keep)
-    gen_normalized_sequence_dict(dict_file, record_list, normal_size)
+    records = iter_seq_ss(seq_ss_folder, keep=keep)
+    gen_normalized_sequence_dict(dict_file, records, normal_size)

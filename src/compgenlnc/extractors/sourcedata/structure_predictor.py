@@ -12,7 +12,7 @@ from compgenlnc.structs.structure_record import StructureRecord
 from compgenlnc.typing.molecules import SeqLike
 
 
-def extract_massive_2d_structure(seq: SeqLike) -> str:
+def extract_massive_2d_structure(seq: SeqLike, /) -> str:
     ss = io.StringIO("." * len(seq))
     sub_ss_list = []
     events = []
@@ -79,7 +79,7 @@ def extract_massive_2d_structure(seq: SeqLike) -> str:
     return ss.getvalue()
 
 
-def extract_2d_structure(seq: SeqLike) -> StructureRecord:
+def extract_2d_structure(seq: SeqLike, /) -> StructureRecord:
     if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
     elif isinstance(seq, SeqRecord):
@@ -97,10 +97,10 @@ def extract_2d_structure(seq: SeqLike) -> StructureRecord:
 
 
 def extract_2d_structure_list(
-    seq_list: Iterable[SeqLike],
+    seq_list: Iterable[SeqLike], /
 ) -> Iterator[StructureRecord]:
     return (extract_2d_structure(seq) for seq in seq_list)
 
 
-def extract_2d_structure_identified(seq: SeqSSRecord) -> SeqSSRecord:
+def extract_2d_structure_identified(seq: SeqSSRecord, /) -> SeqSSRecord:
     return SeqSSRecord(seq.id, seq.seq, extract_2d_structure(seq))

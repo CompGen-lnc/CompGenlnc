@@ -56,7 +56,7 @@ class BindingZone:
     def mir_end(self) -> int:
         return self._mir_range.stop
 
-    def adjust_mirna_range(self, start: int) -> BindingZone:
+    def adjust_mirna_range(self, start: int, /) -> BindingZone:
         new_range = range(
             self._mir_range.start + start, self._mir_range.stop + start
         )

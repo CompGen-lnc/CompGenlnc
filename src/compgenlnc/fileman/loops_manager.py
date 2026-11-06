@@ -1,15 +1,19 @@
+from __future__ import annotations
+
 import os
-from collections.abc import Iterable, Iterator
+from collections.abc import Collection, Iterator
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from compgenlnc.consts.paths import LOOPS_PREFIX
 from compgenlnc.consts.regex import EXTERNAL_LOOP_RE, LOOP_RE
 from compgenlnc.structs.loop_counter import LoopCounter
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
-def read_2d_structure_loops(
-    folder: str | os.PathLike, id_: str
-) -> LoopCounter:
+
+def read_2d_structure_loops(folder: StrPath, id_: str) -> LoopCounter:
     def match_loop(line: str) -> tuple[bool, tuple[str, int, int, int]]:
         m = LOOP_RE.match(line)
         if m:
@@ -39,10 +43,10 @@ def read_2d_structure_loops(
 
 
 def read_2d_structure_loops_from_folder(
-    loops_folder: str | os.PathLike,
+    loops_folder: StrPath,
     *,
-    keep: Iterable[str] | None = None,
-    exclude: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
+    exclude: Collection[str] | None = None,
 ) -> Iterator[LoopCounter]:
     for filename in sorted(os.listdir(loops_folder)):
         id_ = filename[len(LOOPS_PREFIX) : -4]

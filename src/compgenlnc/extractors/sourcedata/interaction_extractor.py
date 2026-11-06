@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from numpy.typing import NDArray
 
 from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD
 from compgenlnc.fileman.csv_manager import (
@@ -34,7 +35,7 @@ def extract_interactions(
 
     def read_interactions(
         file_inter: Path,
-    ) -> np.typing.NDArray[InteractionPair]:
+    ) -> NDArray[InteractionPair]:
         interactions_list = []
         if not file_inter:
             return interactions_list

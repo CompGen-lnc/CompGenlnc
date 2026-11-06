@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 import multiprocessing as mp
 import os
 import platform
 import re
 import subprocess
 import tempfile
-from collections.abc import Iterable
+from collections.abc import Collection, Sequence
 from itertools import repeat
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -21,6 +24,9 @@ from compgenlnc.typing.numpy_dtypes import (
     InteractionPair,
     dtype_interaction_pair,
 )
+
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
 
 def predict_miranda(
@@ -76,11 +82,11 @@ def _predict_miranda_with_args(args):
 
 def predict_miranda_from_list(
     folder: os.PathLike,
-    lnc_list: Iterable[SeqSSRecord],
-    mir_list: Iterable[SeqSSRecord],
+    lnc_list: Sequence[SeqSSRecord],
+    mir_list: Sequence[SeqSSRecord],
     *,
-    keep: Iterable[InteractionPair] | None = None,
-    exclude: Iterable[InteractionPair] | None = None,
+    keep: Collection[InteractionPair] | None = None,
+    exclude: Collection[InteractionPair] | None = None,
 ) -> None:
     send_msg("Calculating binding zone for interactions\n")
     lnc_list = list(lnc_list)
@@ -129,14 +135,14 @@ def predict_miranda_from_list(
 
 
 def predict_miranda_from_files(
-    folder: str | os.PathLike,
-    interaction_file: str | os.PathLike,
-    lnc_fasta: str | os.PathLike,
-    pre_mir_fasta: str | os.PathLike,
-    mat_mir_fasta: str | os.PathLike,
+    folder: StrPath,
+    interaction_file: StrPath,
+    lnc_fasta: StrPath,
+    pre_mir_fasta: StrPath,
+    mat_mir_fasta: StrPath,
     *,
-    keep: Iterable[InteractionPair] | None = None,
-    exclude: Iterable[InteractionPair] | None = None,
+    keep: Collection[InteractionPair] | None = None,
+    exclude: Collection[InteractionPair] | None = None,
 ) -> None:
     interactions = load_interactions(interaction_file)
 
@@ -188,10 +194,10 @@ def extract_binding_zone_from_folder(
     miranda_folder: os.PathLike,
     binding_folder: os.PathLike,
     *,
-    lnc_list: Iterable[str] | None = None,
-    mir_list: Iterable[str] | None = None,
-    keep: Iterable[InteractionPair] | None = [],
-    exclude: Iterable[InteractionPair] | None = [],
+    lnc_set: Collection[str] | None = None,
+    mir_set: Collection[str] | None = None,
+    keep: Collection[InteractionPair] | None = [],
+    exclude: Collection[InteractionPair] | None = [],
 ) -> None:
     miranda_files = os.listdir(miranda_folder)
     keep = ["_".join(pair[PAIR_FIELDS]) for pair in keep]
@@ -211,11 +217,6 @@ def extract_binding_zone_from_folder(
         ):
             continue
         [lnc, mir] = interaction.split("_")
-        if (
-            lnc_list
-            and lnc not in lnc_list
-            or mir_list
-            and mir not in mir_list
-        ):
+        if lnc_set and lnc not in lnc_set or mir_set and mir not in mir_set:
             continue
         extract_binding_zone(miranda_folder, lnc, mir, binding_folder)

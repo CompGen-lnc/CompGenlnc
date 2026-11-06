@@ -1,16 +1,21 @@
-import os
-from collections.abc import Iterable
+from __future__ import annotations
+
+from collections.abc import Collection, Sequence
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
 from compgenlnc.fileman import load_fasta
 from compgenlnc.structs import SeqSSRecord
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def extract_precursor(
-    mir: SeqSSRecord, precursor_list: Iterable[SeqSSRecord]
+    mature: SeqSSRecord, /, precursors: Collection[SeqSSRecord]
 ) -> str:
-    mat_id, mat_seq = mir.id, str(mir.seq)
+    mat_id, mat_seq = mature.id, str(mature.seq)
 
     if not mat_id.endswith("p"):
         return mat_id
@@ -20,20 +25,18 @@ def extract_precursor(
         id_, seq = record.id.lower(), record.seq
         return base_precursor in id_ and mat_seq in seq
 
-    match = next(filter(precursor_matched, precursor_list), None)
+    match = next(filter(precursor_matched, precursors), None)
     return match.id if match else match
 
 
 def gen_precursors_csv(
-    csv: str | os.PathLike,
-    mir_it: Iterable[SeqSSRecord],
-    precursor_it: Iterable[SeqSSRecord],
+    csv: StrPath,
+    matures: Sequence[SeqSSRecord],
+    precursors: Collection[SeqSSRecord],
 ) -> None:
-    mir_list = list(mir_it)
-    precursor_list = list(precursor_it)
-    precursors = [extract_precursor(mir, precursor_list) for mir in mir_list]
+    precursors = [extract_precursor(mir, precursors) for mir in matures]
     csv_dict = {
-        "Mature": [rec.id for rec in mir_list],
+        "Mature": [rec.id for rec in matures],
         "Precursor": precursors,
     }
     df = pd.DataFrame.from_dict(csv_dict)
@@ -41,10 +44,10 @@ def gen_precursors_csv(
 
 
 def gen_precursors_csv_from_files(
-    csv: str | os.PathLike,
-    mature_fasta: str | os.PathLike,
-    precursor_fasta: str | os.PathLike,
+    csv: StrPath,
+    mature_fasta: StrPath,
+    precursor_fasta: StrPath,
 ) -> None:
-    mature_list = load_fasta(mature_fasta)
-    precursor_list = load_fasta(precursor_fasta)
-    gen_precursors_csv(csv, mature_list, precursor_list)
+    matures = list(load_fasta(mature_fasta))
+    precursors = list(load_fasta(precursor_fasta))
+    gen_precursors_csv(csv, matures, precursors)

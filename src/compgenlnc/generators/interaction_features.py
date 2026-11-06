@@ -1,6 +1,8 @@
-import os
-from collections.abc import Iterable, Sequence
+from __future__ import annotations
+
+from collections.abc import Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -41,15 +43,18 @@ from compgenlnc.structs.loop_counter import LoopCounter
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.numpy_dtypes import InteractionPair
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def gen_interaction_features(
-    record_list: Sequence[SeqSSRecord],
-    interaction_list: Sequence[InteractionPair],
-    dicts_folder: str | os.PathLike,
-    loops_list: Iterable[LoopCounter],
-    binding_list: Iterable[BindingZone],
+    records: Sequence[SeqSSRecord],
+    interactions: Sequence[InteractionPair],
+    dicts_folder: StrPath,
+    loops_counters: Sequence[LoopCounter],
+    binding_zones: Sequence[BindingZone],
     k: int,
-    dv2_model_file: str | os.PathLike,
+    dv2_model_file: StrPath,
     *,
     rna: str,
 ) -> None:
@@ -63,13 +68,13 @@ def gen_interaction_features(
     normal_path = dicts_folder / f"{BINDING_PREFIX}{NORMAL_SEQ_DICT}"
     loops_path = dicts_folder / f"{BINDING_PREFIX}{LOOPS_DICT}"
 
-    gen_kmer_dict(kmer_path, record_list, k)
-    gen_ctd_dict(ctd_path, record_list)
-    gen_doc2vec_dict(d2v_path, record_list, model_file=dv2_model_file)
+    gen_kmer_dict(kmer_path, records, k)
+    gen_ctd_dict(ctd_path, records)
+    gen_doc2vec_dict(d2v_path, records, model_file=dv2_model_file)
     gen_role2vec_dict_from_files(r2v_path, kmer_path, ctd_path, d2v_path)
-    gen_normalized_sequence_dict(normal_path, record_list)
+    gen_normalized_sequence_dict(normal_path, records)
     gen_substructure_loops_dict(
-        loops_path, interaction_list, loops_list, binding_list, molecule=rna
+        loops_path, interactions, loops_counters, binding_zones, molecule=rna
     )
 
     def path_to_npy(filename):
@@ -91,17 +96,17 @@ def gen_interaction_features(
 
 
 def gen_lncrna_interaction_features(
-    record_list: Sequence[SeqSSRecord],
-    interaction_list: Sequence[InteractionPair],
-    loops_list: Iterable[LoopCounter],
-    binding_list: Iterable[BindingZone],
+    records: Sequence[SeqSSRecord],
+    interactions: Sequence[InteractionPair],
+    loops_counters: Sequence[LoopCounter],
+    binding_zones: Sequence[BindingZone],
 ) -> None:
     gen_interaction_features(
-        record_list,
-        interaction_list,
+        records,
+        interactions,
         LNCRNA_DICTS_FOLDER,
-        loops_list,
-        binding_list,
+        loops_counters,
+        binding_zones,
         4,
         LNCRNA_INTERACTION_DOV2VEC_MODEL,
         rna=LNCRNA,
@@ -109,15 +114,15 @@ def gen_lncrna_interaction_features(
 
 
 def gen_mirna_interaction_features(
-    record_list: Sequence[SeqSSRecord],
+    records: Sequence[SeqSSRecord],
     pre_mir_records: Sequence[SeqSSRecord],
-    interaction_list: Sequence[InteractionPair],
-    loops_list: Iterable[LoopCounter],
-    binding_list: Iterable[BindingZone],
+    interactions: Sequence[InteractionPair],
+    loops_counters: Sequence[LoopCounter],
+    binding_zones: Sequence[BindingZone],
 ) -> None:
     def adjust_binding_list():
         for record, precursor, binding_zone in zip(
-            record_list, pre_mir_records, binding_list
+            records, pre_mir_records, binding_zones
         ):
             # print(precursor.id, record.id)
             index = str(precursor.seq).index(str(record.seq))
@@ -127,12 +132,12 @@ def gen_mirna_interaction_features(
         pass
 
     gen_interaction_features(
-        record_list,
-        interaction_list,
+        records,
+        interactions,
         MIRNA_DICTS_FOLDER,
-        loops_list,
+        loops_counters,
         (binding for binding in adjust_binding_list()),
-        # binding_list,
+        # binding_zones,
         3,
         MIRNA_INTERACTION_DOV2VEC_MODEL,
         rna=MIRNA,
@@ -143,16 +148,14 @@ def gen_interaction_database(
     lnc_records: Sequence[SeqSSRecord],
     mir_records: Sequence[SeqSSRecord],
     pre_mir_records: Sequence[SeqSSRecord],
-    interaction_list: Sequence[InteractionPair],
+    interactions: Sequence[InteractionPair],
     precursor_map: dict[str, str],
-    binding_list: Sequence[BindingZone],
+    binding_zones: Sequence[BindingZone],
 ) -> None:
-    def subrecords(record_list, rna) -> Sequence[SeqSSRecord]:
-        count = len(record_list)
+    def subrecords(records, rna) -> Sequence[SeqSSRecord]:
+        count = len(records)
         subrecord_list = np.fromiter(
-            get_subrecord_list(
-                record_list, interaction_list, binding_list, rna=rna
-            ),
+            get_subrecord_list(records, interactions, binding_zones, rna=rna),
             dtype=object,
             count=count,
         )
@@ -160,20 +163,20 @@ def gen_interaction_database(
 
     gen_lncrna_interaction_features(
         subrecords(lnc_records, LNCRNA),
-        interaction_list,
+        interactions,
         (
             read_2d_structure_loops(LNCRNA_LOOPS_FOLDER, lnc)
-            for lnc in interaction_list[LNCRNA_FIELD]
+            for lnc in interactions[LNCRNA_FIELD]
         ),
-        binding_list,
+        binding_zones,
     )
     gen_mirna_interaction_features(
         subrecords(mir_records, MIRNA),
         pre_mir_records,
-        interaction_list,
+        interactions,
         (
             read_2d_structure_loops(MIRNA_LOOPS_FOLDER, precursor_map[mir])
-            for mir in interaction_list[MIRNA_FIELD]
+            for mir in interactions[MIRNA_FIELD]
         ),
-        binding_list,
+        binding_zones,
     )

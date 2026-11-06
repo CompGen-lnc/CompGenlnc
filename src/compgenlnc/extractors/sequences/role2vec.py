@@ -1,9 +1,12 @@
-import os
-from collections.abc import Iterable
+from __future__ import annotations
+
+from collections.abc import Collection
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import torch
+from numpy.typing import NDArray
 from torch_geometric.data import Data
 from torch_geometric.nn import Node2Vec, knn_graph
 
@@ -19,13 +22,15 @@ from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def gen_role2vec_dict(
-    dict_file: str | os.PathLike,
-    kmer_dict: dict[str, np.typing.NDArray],
-    ctd_dict: dict[str, np.typing.NDArray],
-    doc2vec_dict: dict[str, np.typing.NDArray],
-    /,
+    dict_file: StrPath,
+    kmer_dict: dict[str, NDArray],
+    ctd_dict: dict[str, NDArray],
+    doc2vec_dict: dict[str, NDArray],
 ) -> None:
     send_msg("Generating Role2Vec dictionary\n", flush=False)
     send_msg("  Extracting vector set")
@@ -74,11 +79,10 @@ def gen_role2vec_dict(
 
 
 def gen_role2vec_dict_from_files(
-    dict_file: str | os.PathLike,
-    kmer_file: str | os.PathLike,
-    ctd_file: str | os.PathLike,
-    doc2vec_file: str | os.PathLike,
-    /,
+    dict_file: StrPath,
+    kmer_file: StrPath,
+    ctd_file: StrPath,
+    doc2vec_file: StrPath,
 ) -> None:
     kmer_file = Path(kmer_file).resolve()
     ctd_file = Path(ctd_file).resolve()
@@ -93,12 +97,11 @@ def gen_role2vec_dict_from_files(
 
 
 def gen_role2vec_dict_from_fasta(
-    dict_file: str | os.PathLike,
-    fasta_file: str | os.PathLike,
+    dict_file: StrPath,
+    fasta_file: StrPath,
     k: int,
-    /,
     *,
-    keep: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
 ) -> None:
     doc2vec_model = train_doc2vec_model_from_fasta(fasta_file)
 
@@ -122,12 +125,11 @@ def gen_role2vec_dict_from_fasta(
 
 
 def gen_role2vec_dict_from_folder(
-    dict_file: str | os.PathLike,
-    seq_ss_folder: str | os.PathLike,
+    dict_file: StrPath,
+    seq_ss_folder: StrPath,
     k: int,
-    /,
     *,
-    keep: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
 ) -> None:
     doc2vec_model = train_doc2vec_model(iter_seq_ss(seq_ss_folder, keep=keep))
 

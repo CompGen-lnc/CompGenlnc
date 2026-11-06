@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import multiprocessing as mp
-import os
-from collections.abc import Iterable
+from collections.abc import Collection
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from compgenlnc.consts.params import SS_MODE
 from compgenlnc.consts.paths import (
@@ -20,11 +22,14 @@ from compgenlnc.fileman.fasta_manager import (
 )
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 def filter_fasta(
-    filename: str | os.PathLike,
-    new_fasta: str | os.PathLike,
-    filter: Iterable[str],
+    filename: StrPath,
+    new_fasta: StrPath,
+    filter: Collection[str],
 ) -> None:
     """Filter the RNA sequences from a FASTA file by the name.
 
@@ -44,9 +49,7 @@ def filter_fasta(
     save_fasta(new_fasta, fasta, mode="seq")
 
 
-def filter_pre_mirna(
-    filename: str | os.PathLike, filter: Iterable[str]
-) -> None:
+def filter_pre_mirna(filename: StrPath, filter: Collection[str]) -> None:
     """Filter the precursor miRNA sequences from a FASTA file by the
     name.
 
@@ -59,9 +62,7 @@ def filter_pre_mirna(
     filter_fasta(filename, filter, new_fasta=PRE_MIRNA_FASTA)
 
 
-def filter_mat_mirna(
-    filename: str | os.PathLike, filter: Iterable[str]
-) -> None:
+def filter_mat_mirna(filename: StrPath, filter: Collection[str]) -> None:
     """Filter the mature miRNA sequences from a FASTA file by the name.
 
     Args:
@@ -73,7 +74,7 @@ def filter_mat_mirna(
     filter_fasta(filename, filter, new_fasta=MAT_MIRNA_FASTA)
 
 
-def filter_lncrna(filename: str | os.PathLike, filter: Iterable[str]) -> None:
+def filter_lncrna(filename: StrPath, filter: Collection[str]) -> None:
     """Filter the lncRNA sequences from a FASTA file by the name.
 
     Args:
@@ -86,10 +87,10 @@ def filter_lncrna(filename: str | os.PathLike, filter: Iterable[str]) -> None:
 
 
 def gen_fasta_2d(
-    seq_fasta: str | os.PathLike,
-    ss_fasta: str | os.PathLike,
+    seq_fasta: StrPath,
+    ss_fasta: StrPath,
     *,
-    keep: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
 ) -> None:
     send_msg("Generating 2D structures for sequences\n")
 
@@ -123,11 +124,11 @@ def gen_fasta_2d(
 
 
 def seq_ss_to_fasta(
-    folder: str | os.PathLike,
-    new_seq_fasta: str | os.PathLike,
-    new_ss_fasta: str | os.PathLike,
+    folder: StrPath,
+    new_seq_fasta: StrPath,
+    new_ss_fasta: StrPath,
     *,
-    keep: Iterable[str] | None = None,
+    keep: Collection[str] | None = None,
 ) -> None:
     """Join all the seq+ss files from the same folder into a FASTA file.
 

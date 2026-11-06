@@ -1,6 +1,8 @@
-import os
-from collections.abc import Iterable, Iterator
+from __future__ import annotations
+
+from collections.abc import Iterator, Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -22,6 +24,9 @@ from compgenlnc.fileman.miranda_manager import read_binding_zone
 from compgenlnc.structs.binding_zone import BindingZone
 from compgenlnc.structs.loop_counter import LoopCounter
 from compgenlnc.typing.numpy_dtypes import InteractionTuple
+
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
 
 def get_substructure_loops(
@@ -45,22 +50,22 @@ def get_substructure_loops(
 
 
 def get_substructure_loops_from_list(
-    loops_it: Iterable[LoopCounter],
-    binding_it: Iterable[BindingZone],
+    loops_counters: Sequence[LoopCounter],
+    binding_zones: Sequence[BindingZone],
     *,
     molecule: str = LNCRNA,
 ) -> Iterator[LoopCounter]:
-    for loop_counter, binding_zone in zip(loops_it, binding_it):
+    for loop_counter, binding_zone in zip(loops_counters, binding_zones):
         yield get_substructure_loops(
             loop_counter, binding_zone, molecule=molecule
         )
 
 
 def gen_substructure_loops_dict(
-    dict_file: str | os.PathLike,
-    interactions: Iterable[InteractionTuple],
-    loops_it: Iterable[LoopCounter],
-    binding_it: Iterable[BindingZone],
+    dict_file: StrPath,
+    interactions: Sequence[InteractionTuple],
+    loops_counters: Sequence[LoopCounter],
+    binding_zones: Sequence[BindingZone],
     *,
     molecule: str = LNCRNA,
 ) -> None:
@@ -80,19 +85,21 @@ def gen_substructure_loops_dict(
         existing_dict = load_dict(dict_file)
         mask = [key in existing_dict for key in keys]
         keys = [key for key, existing in zip(keys, mask) if not existing]
-        loops_it = (
-            loops for loops, existing in zip(loops_it, mask) if not existing
+        loops_counters = (
+            loops
+            for loops, existing in zip(loops_counters, mask)
+            if not existing
         )
-        binding_it = (
+        binding_zones = (
             binding
-            for binding, existing in zip(binding_it, mask)
+            for binding, existing in zip(binding_zones, mask)
             if not existing
         )
 
         send_msg("\r  Existing dictionary analyzed    \n")
 
     new_loops = get_substructure_loops_from_list(
-        loops_it, binding_it, molecule=molecule
+        loops_counters, binding_zones, molecule=molecule
     )
 
     initial = total - len(keys)
@@ -109,10 +116,10 @@ def gen_substructure_loops_dict(
 
 # Fix when precursors are mapped to mature miRNAs
 def gen_substructure_loops_dict_from_files(
-    dict_file: str | os.PathLike,
-    interactions_file: str | os.PathLike,
-    loops_folder: str | os.PathLike,
-    binding_folder: str | os.PathLike,
+    dict_file: StrPath,
+    interactions_file: StrPath,
+    loops_folder: StrPath,
+    binding_folder: StrPath,
     *,
     molecule: str = LNCRNA,
 ) -> None:
