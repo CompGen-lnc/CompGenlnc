@@ -55,7 +55,7 @@ def test_load_dict(dict_gen, args, type_, expected_factory, tmp_path):
             np.float32,
             {
                 record.id: cgl.get_ctd(record.seq)
-                for record in cgl.load_fasta(
+                for record in cgl.iter_fasta(
                     cgl.paths.PRE_MIRNA_FASTA, mode="seq"
                 )
             },
@@ -64,7 +64,7 @@ def test_load_dict(dict_gen, args, type_, expected_factory, tmp_path):
             np.float32,
             {
                 record.id: cgl.get_kmer(record.seq, 3)
-                for record in cgl.load_fasta(
+                for record in cgl.iter_fasta(
                     cgl.paths.PRE_MIRNA_FASTA, mode="seq"
                 )
             },
@@ -73,7 +73,7 @@ def test_load_dict(dict_gen, args, type_, expected_factory, tmp_path):
             np.float32,
             {
                 record.id: cgl.get_kmer(record.seq, 4)
-                for record in cgl.load_fasta(
+                for record in cgl.iter_fasta(
                     cgl.paths.PRE_MIRNA_FASTA, mode="seq"
                 )
             },

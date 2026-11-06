@@ -12,7 +12,7 @@ from numpy.typing import NDArray
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import (
-    iter_seq_ss,
+    load_seq_ss,
     load_fasta,
     read_sequence,
 )
@@ -195,5 +195,5 @@ def gen_ctd_dict_from_folder(
         mature_only: Only saves the mature section of the sequence if
             True.
     """
-    records = iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    records = load_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
     gen_ctd_dict(dict_file, records, overwrite=overwrite)

@@ -11,7 +11,7 @@ from compgenlnc.consts.paths import (
     PRE_MIRNA_FASTA,
     SEQ_SS_PREFIX,
 )
-from compgenlnc.fileman.fasta_manager import load_fasta
+from compgenlnc.fileman.fasta_manager import iter_fasta
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
@@ -55,11 +55,11 @@ def fasta_to_seq_ss(
 
     seq_dict = {
         record.id: str(record.seq).upper().replace("U", "T")
-        for record in load_fasta(seq_file, mode="seq")
+        for record in iter_fasta(seq_file, mode="seq")
     }
     ss_dict = {
         record.id: str(record.seq)
-        for record in load_fasta(ss_file, mode="seq")
+        for record in iter_fasta(ss_file, mode="seq")
     }
     id_list = seq_dict.keys() & ss_dict.keys()
     if keep is not None:

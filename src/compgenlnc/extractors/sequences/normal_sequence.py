@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
-from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
+from compgenlnc.fileman.fasta_manager import load_seq_ss, iter_fasta
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SeqLike
@@ -95,7 +95,7 @@ def gen_normalized_sequence_dict_from_fasta(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
-    records = load_fasta(fasta_file, mode=SEQ_MODE, keep=keep)
+    records = iter_fasta(fasta_file, mode=SEQ_MODE, keep=keep)
     gen_normalized_sequence_dict(dict_file, records, normal_size)
 
 
@@ -106,5 +106,5 @@ def gen_normalized_sequence_dict_from_folder(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
-    records = iter_seq_ss(seq_ss_folder, keep=keep)
+    records = load_seq_ss(seq_ss_folder, keep=keep)
     gen_normalized_sequence_dict(dict_file, records, normal_size)

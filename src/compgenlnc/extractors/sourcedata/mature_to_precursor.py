@@ -48,6 +48,6 @@ def gen_precursors_csv_from_files(
     mature_fasta: StrPath,
     precursor_fasta: StrPath,
 ) -> None:
-    matures = list(load_fasta(mature_fasta))
-    precursors = list(load_fasta(precursor_fasta))
+    matures = load_fasta(mature_fasta)
+    precursors = load_fasta(precursor_fasta)
     gen_precursors_csv(csv, matures, precursors)

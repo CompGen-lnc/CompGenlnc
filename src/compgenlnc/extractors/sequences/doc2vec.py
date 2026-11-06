@@ -12,7 +12,8 @@ from compgenlnc.config import DOC2VEC_MODEL_SEED
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (
-    iter_seq_ss,
+    iter_fasta,
+    load_seq_ss,
     load_fasta,
     read_sequence,
 )
@@ -53,7 +54,7 @@ def train_doc2vec_model_from_fasta(
 ) -> Doc2Vec:
     fasta_file = Path(fasta_file).resolve()
     return train_doc2vec_model(
-        load_fasta(fasta_file, mode=SEQ_MODE), model_file
+        iter_fasta(fasta_file, mode=SEQ_MODE), model_file
     )
 
 
@@ -145,5 +146,5 @@ def gen_doc2vec_dict_from_folder(
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> None:
-    records = iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    records = load_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
     gen_doc2vec_dict(dict_file, records, model=model, model_file=model_file)

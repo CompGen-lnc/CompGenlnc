@@ -146,10 +146,8 @@ def predict_miranda_from_files(
 ) -> None:
     interactions = load_interactions(interaction_file)
 
-    lnc_records = list(load_fasta(lnc_fasta))
-    mir_records = list(load_fasta(pre_mir_fasta)) + list(
-        load_fasta(mat_mir_fasta)
-    )
+    lnc_records = load_fasta(lnc_fasta)
+    mir_records = load_fasta(pre_mir_fasta) + load_fasta(mat_mir_fasta)
     lnc_map = {rec.id: rec for rec in lnc_records}
     mir_map = {rec.id: rec for rec in mir_records}
     lnc_list = np.select(

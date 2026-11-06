@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from _typeshed import StrPath
 
 
-def load_fasta(
+def iter_fasta(
     filename: StrPath,
     *,
     mode: str = SEQ_MODE,
@@ -72,6 +72,11 @@ def load_fasta(
             if len(keep) and line not in keep or line in exclude:
                 continue
             id_ = line
+
+
+def load_fasta(filename: StrPath, **kwargs) -> list[SeqSSRecord]:
+    records = list(iter_fasta(filename, **kwargs))
+    return records
 
 
 def save_fasta(
@@ -198,3 +203,8 @@ def iter_seq_ss(
             seq = file.readline().upper().replace("T", "U")
             ss = file.readline()
         yield SeqSSRecord(id_, seq, ss)
+
+
+def load_seq_ss(folder: StrPath, **kwargs) -> list[SeqSSRecord]:
+    records = list(iter_seq_ss(folder, **kwargs))
+    return records

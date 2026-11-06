@@ -16,8 +16,8 @@ from compgenlnc.extractors.sourcedata.structure_predictor import (
 )
 from compgenlnc.fileman.fasta_manager import (
     iter_seq_fasta,
-    iter_seq_ss,
-    load_fasta,
+    load_seq_ss,
+    iter_fasta,
     save_fasta,
 )
 from compgenlnc.fileman.log_manager import send_msg, track_progress
@@ -95,7 +95,7 @@ def gen_fasta_2d(
     send_msg("Generating 2D structures for sequences\n")
 
     if keep is None or not len(keep):
-        total = sum(1 for _ in load_fasta(seq_fasta, mode="seq"))
+        total = sum(1 for _ in iter_fasta(seq_fasta, mode="seq"))
     else:
         total = len(keep)
     ss_fasta = Path(ss_fasta).resolve()
@@ -103,7 +103,7 @@ def gen_fasta_2d(
 
     if ss_fasta.exists():
         send_msg("  Analyzing existing FASTA...")
-        exclude = [rec.id for rec in load_fasta(ss_fasta, mode=SS_MODE)]
+        exclude = [rec.id for rec in iter_fasta(ss_fasta, mode=SS_MODE)]
         send_msg("\r  Existing FASTA analyzed    \n")
     else:
         ss_fasta.parent.mkdir(parents=True, exist_ok=True)
@@ -112,7 +112,7 @@ def gen_fasta_2d(
     with mp.Pool(processes=num_processes) as pool:
         ss_list = pool.imap_unordered(
             extract_2d_structure_identified,
-            load_fasta(seq_fasta, mode="seq", keep=keep, exclude=exclude),
+            iter_fasta(seq_fasta, mode="seq", keep=keep, exclude=exclude),
             chunksize=30,
         )
         initial = len(exclude)
@@ -142,5 +142,6 @@ def seq_ss_to_fasta(
 
     new_seq_fasta.parent.mkdir(parents=True, exist_ok=True)
     new_ss_fasta.parent.mkdir(parents=True, exist_ok=True)
-    save_fasta(new_seq_fasta, iter_seq_ss(folder, keep=keep), mode="seq")
-    save_fasta(new_ss_fasta, iter_seq_ss(folder, keep=keep), mode="ss")
+    records = load_seq_ss(folder, keep=keep)
+    save_fasta(new_seq_fasta, records, mode="seq")
+    save_fasta(new_ss_fasta, records, mode="ss")

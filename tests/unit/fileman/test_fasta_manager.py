@@ -4,12 +4,12 @@ import compgenlnc as cgl
 
 
 def test_load_fasta():
-    records = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode=cgl.SEQ_MODE)
+    records = cgl.iter_fasta(cgl.paths.PRE_MIRNA_FASTA, mode=cgl.SEQ_MODE)
     for record in records:
         assert isinstance(record, cgl.structs.SeqSSRecord)
         assert len(record.seq) > len(record.ss) or len(record.seq) == 0
 
-    records = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode=cgl.SS_MODE)
+    records = cgl.iter_fasta(cgl.paths.PRE_MIRNA_FASTA, mode=cgl.SS_MODE)
     for record in records:
         assert isinstance(record, cgl.structs.SeqSSRecord)
         assert len(record.ss) > len(record.seq) or len(record.ss) == 0
@@ -17,12 +17,12 @@ def test_load_fasta():
 
 def test_save_fasta(tmp_path):
     new_fasta = tmp_path / "fasta.fa"
-    molecules = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")
+    molecules = cgl.iter_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")
     cgl.save_fasta(new_fasta, molecules, mode="seq")
     assert new_fasta.exists()
 
-    it = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")
-    new_it = cgl.load_fasta(new_fasta, mode="seq")
+    it = cgl.iter_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")
+    new_it = cgl.iter_fasta(new_fasta, mode="seq")
     assert all(a == b for a, b in zip(it, new_it))
 
 
@@ -67,11 +67,8 @@ def test_iter_seq_ss():
     ],
 )
 def test_iter_seq_ss_filtered(keep, expected):
-    records_list = [
-        record
-        for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER, keep=keep)
-    ]
-    assert len(records_list) == expected
+    records = cgl.load_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER, keep=keep)
+    assert len(records) == expected
 
 
 def test_read_sequence():

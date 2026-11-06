@@ -19,7 +19,7 @@ from compgenlnc.extractors.sequences.doc2vec import (
 )
 from compgenlnc.extractors.sequences.kmer import get_kmer
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
-from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
+from compgenlnc.fileman.fasta_manager import load_seq_ss, load_fasta
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 
 if TYPE_CHECKING:
@@ -104,20 +104,21 @@ def gen_role2vec_dict_from_fasta(
     keep: Collection[str] | None = None,
 ) -> None:
     doc2vec_model = train_doc2vec_model_from_fasta(fasta_file)
+    records = load_fasta(fasta_file, mode=SEQ_MODE)
 
     kmer_dict = {
         record.id: get_kmer(record.seq, k)
-        for record in load_fasta(fasta_file, mode=SEQ_MODE)
+        for record in records
         if keep is None or record.id in keep
     }
     ctd_dict = {
         record.id: get_ctd(record.seq)
-        for record in load_fasta(fasta_file, mode=SEQ_MODE)
+        for record in records
         if keep is None or record.id in keep
     }
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=doc2vec_model)
-        for record in load_fasta(fasta_file, mode=SEQ_MODE)
+        for record in records
         if keep is None or record.id in keep
     }
 
@@ -131,19 +132,20 @@ def gen_role2vec_dict_from_folder(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
-    doc2vec_model = train_doc2vec_model(iter_seq_ss(seq_ss_folder, keep=keep))
+    records = load_seq_ss(seq_ss_folder, keep=keep)
+    doc2vec_model = train_doc2vec_model(records)
 
     kmer_dict = {
         record.id: get_kmer(record.seq, k)
-        for record in iter_seq_ss(seq_ss_folder, keep=keep)
+        for record in records
     }
     ctd_dict = {
         record.id: get_ctd(record.seq)
-        for record in iter_seq_ss(seq_ss_folder, keep=keep)
+        for record in records
     }
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=doc2vec_model)
-        for record in iter_seq_ss(seq_ss_folder, keep=keep)
+        for record in records
     }
 
     gen_role2vec_dict(dict_file, kmer_dict, ctd_dict, doc2vec_dict)

@@ -4,7 +4,7 @@ import compgenlnc as cgl
 
 
 def test_gen_role2vec_dict(doc2vec_model_deterministic, tmp_path):
-    sequences = tuple(cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq"))
+    sequences = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")
     doc2vec_model = doc2vec_model_deterministic
 
     kmer_dict = {
@@ -28,7 +28,7 @@ def test_gen_role2vec_dict(doc2vec_model_deterministic, tmp_path):
 
 
 def test_gen_role2vec_dict_from_files(doc2vec_model_deterministic, tmp_path):
-    sequences = tuple(cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq"))
+    sequences = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA, mode="seq")
     doc2vec_model = doc2vec_model_deterministic
 
     kmer_file = tmp_path / "kmer.dict"

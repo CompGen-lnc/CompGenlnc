@@ -53,8 +53,10 @@ from compgenlnc.extractors.sourcedata.mature_to_precursor import (
 from compgenlnc.extractors.sourcedata.seq_ss_constructor import fasta_to_seq_ss
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
 from compgenlnc.fileman.fasta_manager import (
+    iter_fasta,
     iter_seq_ss,
     load_fasta,
+    load_seq_ss,
     save_fasta,
 )
 from compgenlnc.fileman.miranda_manager import read_binding_zone
@@ -103,7 +105,8 @@ def load_source_data(
 
     def load_fasta_if_exists(old_fasta, new_fasta, mode):
         if old_fasta is not None and Path(old_fasta).resolve().exists():
-            records = load_fasta(old_fasta, mode=mode)
+            records = iter_fasta(old_fasta, mode=mode)
+            save_fasta(new_fasta, records, mode=mode, overwrite=True)
 
     load_fasta_if_exists(lnc_seq_fasta, LNCRNA_FASTA, mode=SEQ_MODE)
     load_fasta_if_exists(lnc_ss_fasta, LNCRNA_SS_FASTA, mode=SS_MODE)
@@ -133,9 +136,9 @@ def gen_source_data(
             DATA_MIRNA, MAT_MIRNA_FASTA, PRE_MIRNA_FASTA
         )
     lnc_list = [
-        rec.id for rec in load_fasta(LNCRNA_FASTA) if len(rec.seq) <= max_size
+        rec.id for rec in iter_fasta(LNCRNA_FASTA) if len(rec.seq) <= max_size
     ]
-    mir_list = [rec.id for rec in load_fasta(MAT_MIRNA_FASTA)]
+    mir_list = [rec.id for rec in iter_fasta(MAT_MIRNA_FASTA)]
     if not keep_data or not PAIRS_FILE.exists():
         extract_interactions(
             PAIRS_FILE,
@@ -199,9 +202,9 @@ def gen_source_data(
 
 
 def gen_database():
-    lnc_records = list(iter_seq_ss(LNCRNA_SEQ_SS_FOLDER))
-    pre_mir_records = list(iter_seq_ss(MIRNA_SEQ_SS_FOLDER))
-    mat_mir_records = list(load_fasta(MAT_MIRNA_FASTA))
+    lnc_records = load_seq_ss(LNCRNA_SEQ_SS_FOLDER)
+    pre_mir_records = load_seq_ss(MIRNA_SEQ_SS_FOLDER)
+    mat_mir_records = load_fasta(MAT_MIRNA_FASTA)
     gen_seq_database(lnc_records, pre_mir_records, mat_mir_records)
     gen_ss_database(lnc_records, pre_mir_records)
 
@@ -209,10 +212,10 @@ def gen_database():
     pre_mir_records = index_precursor_mirna()
     mat_mir_records = index_mature_mirna()
 
-    lnc_set = list(rec.id for rec in iter_seq_ss(LNCRNA_SEQ_SS_FOLDER))
-    mat_mir_set = list(rec.id for rec in load_fasta(MAT_MIRNA_FASTA))
+    lnc_list = [rec.id for rec in iter_seq_ss(LNCRNA_SEQ_SS_FOLDER)]
+    mat_mir_list = [rec.id for rec in iter_fasta(MAT_MIRNA_FASTA)]
     interactions = load_interactions(
-        PAIRS_FILE, lnc_keep=lnc_set, mir_keep=mat_mir_set
+        PAIRS_FILE, lnc_keep=lnc_list, mir_keep=mat_mir_list
     )
 
     binding_list = [

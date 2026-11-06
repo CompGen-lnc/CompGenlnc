@@ -24,7 +24,7 @@ from compgenlnc.consts.paths import (
     PAIRS_FILE,
 )
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
-from compgenlnc.fileman.fasta_manager import iter_seq_ss, load_fasta
+from compgenlnc.fileman.fasta_manager import iter_seq_ss, iter_fasta
 from compgenlnc.typing.numpy_dtypes import (
     Index,
     InteractionPair,
@@ -158,7 +158,7 @@ def index_mature_mirna(
     if _mat_mir_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=MATURE)
         records = {
-            rec.id: rec for rec in load_fasta(MAT_MIRNA_FASTA, keep=indexes)
+            rec.id: rec for rec in iter_fasta(MAT_MIRNA_FASTA, keep=indexes)
         }
         map_index = np.frompyfunc(records.__getitem__, 1, 1)
         _mat_mir_indexed_records = map_index(indexes)

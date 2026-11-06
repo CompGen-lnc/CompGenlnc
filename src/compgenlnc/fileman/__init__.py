@@ -4,9 +4,11 @@ from .dict_manager import (
     save_dict,
 )
 from .fasta_manager import (
+    iter_fasta,
     iter_seq_fasta,
     iter_seq_ss,
     load_fasta,
+    load_seq_ss,
     read_sequence,
     read_structure,
     save_fasta,
@@ -18,12 +20,14 @@ from .loops_manager import (
 from .miranda_manager import read_binding_zone
 
 __all__ = [
+    "iter_fasta",
     "iter_seq_fasta",
     "iter_seq_ss",
     "load_dict",
     "load_fasta",
     "load_interactions",
     "load_precursors",
+    "load_seq_ss",
     "read_2d_structure_loops",
     "read_2d_structure_loops_from_folder",
     "read_binding_zone",

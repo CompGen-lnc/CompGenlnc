@@ -5,7 +5,7 @@ import compgenlnc as cgl
 
 @pytest.fixture(scope="module")
 def example_id_list():
-    records = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA)
+    records = cgl.iter_fasta(cgl.paths.PRE_MIRNA_FASTA)
     return [rec.id for rec in records]
 
 
@@ -17,7 +17,7 @@ def example_id_filter(request, example_id_list):
 
 @pytest.fixture(scope="module")
 def lncrna_id_list():
-    records = cgl.load_fasta(cgl.paths.LNCRNA_FASTA)
+    records = cgl.iter_fasta(cgl.paths.LNCRNA_FASTA)
     return [rec.id for rec in records]
 
 
@@ -29,7 +29,7 @@ def lncrna_id_filter(request, lncrna_id_list):
 
 @pytest.fixture(scope="module")
 def pre_mirna_id_list():
-    records = cgl.load_fasta(cgl.paths.PRE_MIRNA_FASTA)
+    records = cgl.iter_fasta(cgl.paths.PRE_MIRNA_FASTA)
     return [rec.id for rec in records]
 
 
@@ -41,7 +41,7 @@ def pre_mirna_id_filter(request, pre_mirna_id_list):
 
 @pytest.fixture(scope="module")
 def mat_mirna_id_list():
-    records = cgl.load_fasta(cgl.paths.MAT_MIRNA_FASTA)
+    records = cgl.iter_fasta(cgl.paths.MAT_MIRNA_FASTA)
     return [rec.id for rec in records]
 
 
