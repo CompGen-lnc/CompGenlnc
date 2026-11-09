@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
-from compgenlnc.fileman.fasta_manager import load_seq_ss, iter_fasta
+from compgenlnc.fileman.fasta_manager import iter_fasta, load_seq_ss
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SeqLike

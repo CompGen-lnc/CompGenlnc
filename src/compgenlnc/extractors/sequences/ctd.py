@@ -12,8 +12,8 @@ from numpy.typing import NDArray
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import (
-    load_seq_ss,
     load_fasta,
+    load_seq_ss,
     read_sequence,
 )
 from compgenlnc.fileman.log_manager import send_msg, track_progress
@@ -26,15 +26,17 @@ if TYPE_CHECKING:
 
 
 def get_ctd(seq: SeqLike, /) -> NDArray[np.float32]:
-    """Get the CTD of a RNA sequences from the given sequence.
+    """Get the CTD of a RNA sequence.
 
-        seq: The RNA sequence string on ATCG alphabet.
+    Parameters
+    ----------
+    seq : SeqLike
+        The RNA sequence string on ATCG alphabet.
 
-    Returns:
     Returns
     -------
-    NDArray
-        A concatenated numpy array with the CTD of the sequence.
+    ndarray of float32
+        A 1D array with the CTD of the sequence.
     """
     if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
@@ -89,26 +91,23 @@ def get_ctd(seq: SeqLike, /) -> NDArray[np.float32]:
     return np.concatenate((nums_array, trans_array, dist_array))
 
 
-def get_ctd_by_name(folder: StrPath, id_: str) -> NDArray[np.float32]:
-    """Get the CTD of a RNA sequences from the seq+ss file of the given
-    molecule.
+def get_ctd_by_name(dir: StrPath, id_: str) -> NDArray[np.float32]:
+    """Get the CTD of a RNA sequence from the seq+ss file.
 
-    Args:
-        id_: Name of the RNA sequence.
-        folder: Path of the folder where the seq+ss file is.
-        mature_only: Only saves the mature section of the sequence if
     Parameters
     ----------
-    folder :
-        Path of the folder where the seq+ss file is.
-    id_: Name of the RNA sequence.
+    dir : str or os.PathLike
+        Path of the directory where the seq+ss file is.
+    id_ : str
+        ID of the RNA sequence to read.
 
-    Returns:
-        NDArray: A concatenated numpy array with the CTD of the
-            sequence.
+    Returns
+    -------
+    ndarray of float32
+        A 1D array with the CTD of the sequence.
     """
-    folder = Path(folder).resolve()
-    seq = read_sequence(folder, id_)
+    dir = Path(dir).resolve()
+    seq = read_sequence(dir, id_)
     return get_ctd(seq)
 
 
@@ -118,16 +117,19 @@ def gen_ctd_dict(
     *,
     overwrite: bool = False,
 ) -> None:
-    """Get the CTD of a RNA sequences from the seq+ss file of the given
-    molecule.
+    """Generate a dictionary of CTD from a set of RNA sequences.
 
-    Args:
-        record_list: Iterable that contains all the sequence records to
-            save into the dictionary.
-        dict_file: Path of the file where the dictionary will be saved.
-        keep: List of the RNA names to save. Save all if None.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    records : collection of SeqSSRecord
+        Set that contains all the sequence records to save into the
+        dictionary. 
+    overwrite : bool, optional
+        Append the items to the existing dictionary if `True`, ignoring
+        those that have already been processed. Otherwise, replace the
+        existing dictionary. Default: `False`.
     """
     send_msg("Generating CTD dictionary\n")
     records = list(records)
@@ -162,38 +164,55 @@ def gen_ctd_dict_from_fasta(
     exclude: Collection[str] | None = None,
     overwrite: bool = False,
 ) -> None:
-    """Get the ctd of a RNA sequences from 1 to k from a FASTA file with RNA
-    sequences.
+    """Generate a dictionary of CTD from a FASTA file.
 
-    Args:
-        filename: Path of the FASTA file.
-        dict_file: Path of the file where the dictionary will be saved.
-        k: Maximum length for k-mers. It calculates k-mers with length
-            from 1 to k, included.
-        keep: List of the RNA names to save. Save all if None.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    fasta_file : str or os.PathLike
+        Path of the FASTA file with the sequences.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
+    overwrite : bool, optional
+        Append the items to the existing dictionary if `True`, ignoring
+        those that have already been processed. Otherwise, replace the
+        existing dictionary. Default: `False`.
     """
     records = load_fasta(fasta_file, mode=SEQ_MODE, keep=keep, exclude=exclude)
     gen_ctd_dict(dict_file, records, overwrite=overwrite)
 
 
-def gen_ctd_dict_from_folder(
+def gen_ctd_dict_from_dir(
     dict_file: StrPath,
-    seq_ss_folder: StrPath,
+    seq_ss_dir: StrPath,
     *,
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
     overwrite: bool = False,
 ) -> None:
-    """Get the CTD of a RNA sequences from the seq+ss files.
+    """Generate a dictionary of CTD from seq+ss files.
 
-    Args:
-        folder: Path of the folder where the seq+ss file is.
-        dict_file: Path of the file where the dictionary will be saved.
-        keep: List of the RNA names to save. Save all if None.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    seq_ss_dir : str or os.PathLike
+        Path of the directory where the seq+ss files are.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
+    overwrite : bool, optional
+        Append the items to the existing dictionary if `True`, ignoring
+        those that have already been processed. Otherwise, replace the
+        existing dictionary. Default: `False`.
     """
-    records = load_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    records = load_seq_ss(seq_ss_dir, keep=keep, exclude=exclude)
     gen_ctd_dict(dict_file, records, overwrite=overwrite)

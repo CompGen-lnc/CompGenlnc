@@ -5,10 +5,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from compgenlnc.consts.paths import (
-    LNCRNA_FASTA,
-    LNCRNA_SEQ_SS_FOLDER,
-    MIRNA_SEQ_SS_FOLDER,
-    PRE_MIRNA_FASTA,
     SEQ_SS_PREFIX,
 )
 from compgenlnc.fileman.fasta_manager import iter_fasta
@@ -17,77 +13,73 @@ if TYPE_CHECKING:
     from _typeshed import StrPath
 
 
-def join_seq_ss(folder: StrPath, id_: str, seq: str, ss: str) -> None:
-    """Save the sequence and structure of a RNA molecule in the same
-    file.
+def join_seq_ss(dir: StrPath, id_: str, seq: str, ss: str) -> None:
+    """Save the sequence and 2D structure in the same file.
 
-    Args:
-        seq: The RNA sequence on ACGT alphabet.
-        ss: The RNA 2d structure on dot-bracket notation.
-        id_: Name of the RNA molecule.
-        folder: Path for the seq+ss file of the RNA molecule.
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory where the seq+ss file will be stored.
+    id_ : str
+        ID of the RNA.
+    seq : str
+        The RNA sequence on ACGT alphabet.
+    ss : str
+        The RNA 2d structure on dot-bracket notation.
     """
-    folder = Path(folder).resolve()
+    dir = Path(dir).resolve()
 
-    path = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
+    path = dir / f"{SEQ_SS_PREFIX}{id_}.dat"
     with open(path, "w") as out_file:
         out_file.write(seq + "\n")
         out_file.write(ss)
 
 
 def fasta_to_seq_ss(
-    seq_file: StrPath,
-    ss_file: StrPath,
-    folder: StrPath,
+    src_seq: StrPath,
+    src_ss: StrPath,
+    dst_dir: StrPath,
     *,
     keep: Collection[str] | None = None,
 ) -> int:
-    """Convert a FASTA file into seq+ss files for each molecule.
+    """Convert a FASTA file into seq+ss files for each RNA.
 
-    Args:
-        seq_file: Path of the file containing all the RNA sequences.
-        ss_file: Path of the file containing all the RNA structures.
-        folder: Path for the seq+ss files.
+    Parameters
+    ----------
+    src_seq : str or os.PathLike
+        Path of the FASTA file that contains the RNA sequences.
+    src_ss : str or os.PathLike
+        Path of the FASTA file that contains the RNA structures.
+    dst_dir : str or os.PathLike
+        Path of the directory where the seq+ss files will be saved.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
     """
-    seq_file = Path(seq_file).resolve()
-    ss_file = Path(ss_file).resolve()
-    folder = Path(folder).resolve()
+    src_seq = Path(src_seq).resolve()
+    src_ss = Path(src_ss).resolve()
+    dst_dir = Path(dst_dir).resolve()
 
     seq_dict = {
         record.id: str(record.seq).upper().replace("U", "T")
-        for record in iter_fasta(seq_file, mode="seq")
+        for record in iter_fasta(src_seq, mode="seq")
     }
     ss_dict = {
-        record.id: str(record.seq)
-        for record in iter_fasta(ss_file, mode="seq")
+        record.id: str(record.seq) for record in iter_fasta(src_ss, mode="seq")
     }
     id_list = seq_dict.keys() & ss_dict.keys()
     if keep is not None:
         id_list &= set(keep)
-    folder.mkdir(parents=True, exist_ok=True)
+    dst_dir.mkdir(parents=True, exist_ok=True)
     total = 0
 
     for id_ in id_list:
         try:
             seq = seq_dict[id_]
             ss = ss_dict[id_]
-            join_seq_ss(folder, id_, seq, ss)
+            join_seq_ss(dst_dir, id_, seq, ss)
             total += 1
         except Exception:
             pass
 
     return total
-
-
-def mirna_to_seq_ss() -> int:
-    """Convert the pre-miRNA FASTA file into seq+ss files for each
-    molecule.
-    """
-    return fasta_to_seq_ss(PRE_MIRNA_FASTA, MIRNA_SEQ_SS_FOLDER)
-
-
-def lncrna_to_seq_ss() -> int:
-    """Convert the lncRNA FASTA file into seq+ss files for each
-    molecule.
-    """
-    return fasta_to_seq_ss(LNCRNA_FASTA, LNCRNA_SEQ_SS_FOLDER)

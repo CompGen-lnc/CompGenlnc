@@ -13,8 +13,8 @@ from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (
     iter_fasta,
-    load_seq_ss,
     load_fasta,
+    load_seq_ss,
     read_sequence,
 )
 from compgenlnc.fileman.log_manager import send_msg, track_progress

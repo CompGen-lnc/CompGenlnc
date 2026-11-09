@@ -6,18 +6,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from compgenlnc.consts.params import SS_MODE
-from compgenlnc.consts.paths import (
-    LNCRNA_FASTA,
-    MAT_MIRNA_FASTA,
-    PRE_MIRNA_FASTA,
-)
 from compgenlnc.extractors.sourcedata.structure_predictor import (
     extract_2d_structure_identified,
 )
 from compgenlnc.fileman.fasta_manager import (
+    iter_fasta,
     iter_seq_fasta,
     load_seq_ss,
-    iter_fasta,
     save_fasta,
 )
 from compgenlnc.fileman.log_manager import send_msg, track_progress
@@ -27,121 +22,112 @@ if TYPE_CHECKING:
 
 
 def filter_fasta(
-    filename: StrPath,
-    new_fasta: StrPath,
+    src: StrPath,
+    dst: StrPath,
+    /,
     filter: Collection[str],
 ) -> None:
-    """Filter the RNA sequences from a FASTA file by the name.
+    """Filter the RNA sequences from a FASTA file by the ID.
 
-    Args:
-        filename: Path of the FASTA file.
-        filter: A list with all substrings contained in the name of the
-            desired sequences.
-        new_fasta: Path of the filtered FASTA file.
+    Parameters
+    ----------
+    src : str or os.PathLike
+        Path of the FASTA file.
+    dst : str or os.PathLike
+        Path of the filtered FASTA file.
+    filter : collection of str
+        A set with all substrings contained in the IDs of the desired
+        sequences. The matched IDs must contain at least one substring
+        from `filter`.
     """
-    filename = Path(filename).resolve()
-    new_fasta = Path(new_fasta).resolve()
+    src = Path(src).resolve()
+    dst = Path(dst).resolve()
 
-    fasta = [record for record in iter_seq_fasta(filename, filter)]
+    fasta = [record for record in iter_seq_fasta(src, filter)]
     fasta.sort(key=lambda record: record.id)
 
-    new_fasta.parent.mkdir(parents=True, exist_ok=True)
-    save_fasta(new_fasta, fasta, mode="seq")
-
-
-def filter_pre_mirna(filename: StrPath, filter: Collection[str]) -> None:
-    """Filter the precursor miRNA sequences from a FASTA file by the
-    name.
-
-    Args:
-        filename: Path of the FASTA file.
-        filter: A list with all substrings contained in the name of the
-            desired sequences.
-    """
-    filename = Path(filename).resolve()
-    filter_fasta(filename, filter, new_fasta=PRE_MIRNA_FASTA)
-
-
-def filter_mat_mirna(filename: StrPath, filter: Collection[str]) -> None:
-    """Filter the mature miRNA sequences from a FASTA file by the name.
-
-    Args:
-        filename: Path of the FASTA file.
-        filter: A list with all substrings contained in the name of the
-            desired sequences.
-    """
-    filename = Path(filename).resolve()
-    filter_fasta(filename, filter, new_fasta=MAT_MIRNA_FASTA)
-
-
-def filter_lncrna(filename: StrPath, filter: Collection[str]) -> None:
-    """Filter the lncRNA sequences from a FASTA file by the name.
-
-    Args:
-        filename: Path of the FASTA file.
-        filter: A list with all substrings contained in the name of the
-            desired sequences.
-    """
-    filename = Path(filename).resolve()
-    filter_fasta(filename, filter, new_fasta=LNCRNA_FASTA)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    save_fasta(dst, fasta, mode="seq")
 
 
 def gen_fasta_2d(
-    seq_fasta: StrPath,
-    ss_fasta: StrPath,
+    src: StrPath,
+    dst: StrPath,
+    /,
     *,
     keep: Collection[str] | None = None,
 ) -> None:
+    """Generate a FASTA file that contains the 2D structures calculated.
+
+    Parameters
+    ----------
+    src : str or os.PathLike
+        Path of the FASTA file with the RNA sequences which 2D structure
+        will be calculated.
+    dst : str or os.PathLike
+        Path of the FASTA file where the 2D structures will be stored.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    """
     send_msg("Generating 2D structures for sequences\n")
 
     if keep is None or not len(keep):
-        total = sum(1 for _ in iter_fasta(seq_fasta, mode="seq"))
+        total = sum(1 for _ in iter_fasta(src, mode="seq"))
     else:
         total = len(keep)
-    ss_fasta = Path(ss_fasta).resolve()
+    dst = Path(dst).resolve()
     exclude = []
 
-    if ss_fasta.exists():
+    if dst.exists():
         send_msg("  Analyzing existing FASTA...")
-        exclude = [rec.id for rec in iter_fasta(ss_fasta, mode=SS_MODE)]
+        exclude = [rec.id for rec in iter_fasta(dst, mode=SS_MODE)]
         send_msg("\r  Existing FASTA analyzed    \n")
     else:
-        ss_fasta.parent.mkdir(parents=True, exist_ok=True)
+        dst.parent.mkdir(parents=True, exist_ok=True)
 
     num_processes = max(1, mp.cpu_count() - 2)
     with mp.Pool(processes=num_processes) as pool:
         ss_list = pool.imap_unordered(
             extract_2d_structure_identified,
-            iter_fasta(seq_fasta, mode="seq", keep=keep, exclude=exclude),
+            iter_fasta(src, mode="seq", keep=keep, exclude=exclude),
             chunksize=30,
         )
         initial = len(exclude)
         desc = "  Calculating 2D structures"
         ss_list = track_progress(ss_list, desc, total, "seq", initial)
-        save_fasta(ss_fasta, ss_list, mode="ss")
+        save_fasta(dst, ss_list, mode="ss")
 
     send_msg("  2D structure FASTA generated\n")
 
 
 def seq_ss_to_fasta(
-    folder: StrPath,
-    new_seq_fasta: StrPath,
-    new_ss_fasta: StrPath,
+    src_dir: StrPath,
+    dst_seq: StrPath,
+    dst_ss: StrPath,
     *,
     keep: Collection[str] | None = None,
 ) -> None:
-    """Join all the seq+ss files from the same folder into a FASTA file.
+    """Separate the sequence and 2D structure from seq+ss files.
 
-    Args:
-        new_seq_fasta: Path for the new FASTA file with the sequences.
-        folder: Path of the folder containing all the seq+ss files.
+    Parameters
+    ----------
+    src_dir : str or os.PathLike
+        Path of the directory that contains the seq+ss files.
+    dst_seq : str or os.PathLike
+        Path of the FASTA file where the sequences will be stored.
+    dst_ss : str or os.PathLike
+        Path of the FASTA file where the 2D structures will be stored.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
     """
-    folder = Path(folder).resolve()
-    new_seq_fasta = Path(new_seq_fasta).resolve()
-    new_ss_fasta = Path(new_ss_fasta).resolve()
+    src_dir = Path(src_dir).resolve()
+    dst_seq = Path(dst_seq).resolve()
+    dst_ss = Path(dst_ss).resolve()
 
-    new_seq_fasta.parent.mkdir(parents=True, exist_ok=True)
-    new_ss_fasta.parent.mkdir(parents=True, exist_ok=True)
-    records = load_seq_ss(folder, keep=keep)
-    save_fasta(new_seq_fasta, records, mode="seq")
-    save_fasta(new_ss_fasta, records, mode="ss")
+    dst_seq.parent.mkdir(parents=True, exist_ok=True)
+    dst_ss.parent.mkdir(parents=True, exist_ok=True)
+    records = load_seq_ss(src_dir, keep=keep)
+    save_fasta(dst_seq, records, mode="seq")
+    save_fasta(dst_ss, records, mode="ss")

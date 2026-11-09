@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import csv
-from collections.abc import Iterable
+from collections.abc import Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -13,21 +13,26 @@ if TYPE_CHECKING:
 
 
 def load_dict(
-    filename: StrPath, val_type: type = np.float32
+    dict_file: StrPath, val_type: type = np.float32
 ) -> dict[str, NDArray]:
-    """Load a dicationary from a file with pairs of RNA names and feature
-    vectors.
+    """Load a dicationary from a file with pairs of RNA IDs and vectors.
 
-    Args:
-        filename: Path of the dictionary file.
-        val_type: Type of the feature vector.
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file that contains the dictionary.
+    val_type : type, optional
+        Type of the feature vectors contained in the dictionary.
+        Default: `float32`.
 
-    Returns:
-        dict
+    Returns
+    -------
+    dict
+        Dictionary that contains all vectors associated to their RNA ID.
     """
-    filename = Path(filename).resolve()
+    dict_file = Path(dict_file).resolve()
 
-    lines = open(filename, "r").readlines()
+    lines = open(dict_file, "r").readlines()
     res_dict = {}
     actual_id, actual_value = "", []
 
@@ -49,21 +54,38 @@ def load_dict(
 
 
 def save_dict(
-    filename: StrPath,
+    dict_file: StrPath,
     dict_: dict[str, NDArray] | None = None,
     *,
-    keys: Iterable[str] | None = None,
-    values: Iterable[NDArray] | None = None,
+    keys: Sequence[str] | None = None,
+    values: Sequence[NDArray] | None = None,
     overwrite: bool = False,
 ) -> None:
-    """Save a dicationary pairs of RNA names and feature vectors into a file.
+    """Save a dicationary pairs of RNA names and feature vectors into a
+    file.
 
-    Args:
-        filename: Path of the dictionary file.
-        dict_: Dictionary with the RNA names and feature vectors.
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the dictionary file.
+    dict_ : dict, optional
+        Dictionary with the feature vectors associated to their RNA ID.
+        Should not be `None` if `keys` or `values` are `None`, if it is,
+        then `save_dict` will do nothing. Default: `None`.
+    keys : sequence of str, optional
+        Sequence with the RNA IDs to store. Does not have effect if
+        `dict_` is provided. Default: `None`.
+    values : sequence of ndarray, optional
+        Sequence with the feature vectors to store. Must have the same
+        length than `keys`. Does not have effect if `dict_` is provided.
+        Default: `None`.
+    overwrite : bool, optional
+        Append the items to the existing dictionary if `True`, ignoring
+        those that have already been processed. Otherwise, replace the
+        existing dictionary. Default: `False`.
     """
-    filename = Path(filename).resolve()
-    filename.parent.mkdir(parents=True, exist_ok=True)
+    dict_file = Path(dict_file).resolve()
+    dict_file.parent.mkdir(parents=True, exist_ok=True)
 
     if dict_ is not None:
         items = dict_.items()
@@ -73,7 +95,7 @@ def save_dict(
         return
 
     open_mode = "w" if overwrite else "a"
-    with open(filename, open_mode) as out_file:
+    with open(dict_file, open_mode) as out_file:
         wrapper = csv.writer(out_file)
         for key, value in items:
             if value.ndim == 1:

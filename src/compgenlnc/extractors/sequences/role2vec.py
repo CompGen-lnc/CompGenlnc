@@ -19,7 +19,7 @@ from compgenlnc.extractors.sequences.doc2vec import (
 )
 from compgenlnc.extractors.sequences.kmer import get_kmer
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
-from compgenlnc.fileman.fasta_manager import load_seq_ss, load_fasta
+from compgenlnc.fileman.fasta_manager import load_fasta, load_seq_ss
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 
 if TYPE_CHECKING:
@@ -135,14 +135,8 @@ def gen_role2vec_dict_from_folder(
     records = load_seq_ss(seq_ss_folder, keep=keep)
     doc2vec_model = train_doc2vec_model(records)
 
-    kmer_dict = {
-        record.id: get_kmer(record.seq, k)
-        for record in records
-    }
-    ctd_dict = {
-        record.id: get_ctd(record.seq)
-        for record in records
-    }
+    kmer_dict = {record.id: get_kmer(record.seq, k) for record in records}
+    ctd_dict = {record.id: get_ctd(record.seq) for record in records}
     doc2vec_dict = {
         record.id: get_doc2vec(record.seq, model=doc2vec_model)
         for record in records

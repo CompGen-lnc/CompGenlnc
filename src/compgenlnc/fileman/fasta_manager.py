@@ -25,17 +25,30 @@ def iter_fasta(
 ) -> Iterator[SeqSSRecord]:
     """Load a FASTA file and iterate the RNA molecules into them.
 
-    Args:
-        filename: Path of the FASTA file.
-        mode: Type of the data saved in the file. If 'seq', it will treat the
-            data as sequences. If 'ss', it will treat the data as 2D
-            structures.
+    Parameters
+    ----------
+    filename : str or os.PathLike
+        Path of the FASTA file.
+    mode : str
+        Type of the data saved in the file. If `'seq'`, it will treat
+        the data as sequences. If `'ss'`, it will treat the data as 2D
+        structures.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
 
-    Yields:
-        SeqSSRecord: A record with the sequence or structure and its name.
+    Yields
+    ------
+    SeqSSRecord
+        A record with the sequence or 2D structure with its ID.
 
-    Raises:
-        ValueError: If mode is any other than 'seq' or 'ss'.
+    Raises
+    ------
+    ValueError
+        If `mode` is any other than `'seq'` or `'ss'`.
     """
     if mode not in [SEQ_MODE, SS_MODE]:
         raise ValueError(f"Value {mode} for mode is not allowed")
@@ -75,6 +88,34 @@ def iter_fasta(
 
 
 def load_fasta(filename: StrPath, **kwargs) -> list[SeqSSRecord]:
+    """Load a FASTA file and list the RNA molecules into them.
+
+    Parameters
+    ----------
+    filename : str or os.PathLike
+        Path of the FASTA file.
+    mode : str
+        Type of the data saved in the file. If `'seq'`, it will treat
+        the data as sequences. If `'ss'`, it will treat the data as 2D
+        structures.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
+
+    Returns
+    -------
+    list of SeqSSRecord
+        A list of records with the sequence or 2D structure with their
+        ID.
+
+    Raises
+    ------
+    ValueError
+        If `mode` is any other than `'seq'` or `'ss'`.
+    """
     records = list(iter_fasta(filename, **kwargs))
     return records
 
@@ -86,17 +127,26 @@ def save_fasta(
     mode: str,
     overwrite: bool = False,
 ) -> None:
-    """Save sequences or 2D structures from a group of RNA molecules into a
-    FATSA file.
+    """Save sequences or 2D structures from a set of RNA molecules.
 
-    Args:
-        filename: Path of the FASTA file.
-        molecules: Group of RNA molecules to
-        mode: Type of the data saved in the file. If 'seq', it will save the
-            sequences. If 'ss', it will save the 2Dstructures.
+    Parameters
+    ----------
+    filename : str or os.PathLike
+        Path of the FASTA file.
+    records : iterable object of SeqSSRecord
+        Group of RNA molecules to save.
+    mode : str
+        Type of the data saved in the file. If `'seq'`, it will save the
+        sequences. If `'ss'`, it will save the 2Dstructures.
+    overwrite : bool, optional
+        Append the items to the existing dictionary if `True`, ignoring
+        those that have already been processed. Otherwise, replace the
+        existing dictionary. Default: `False`.
 
-    Raises:
-        ValueError: If mode is any other than 'seq' or 'ss'.
+    Raises
+    ------
+    ValueError
+        If `mode` is any other than `'seq'` or `'ss'`.
     """
     if mode not in [SEQ_MODE, SS_MODE]:
         raise ValueError(f"Value {mode} for mode is not allowed")
@@ -116,56 +166,72 @@ def save_fasta(
 def iter_seq_fasta(
     filename: StrPath, filter: Collection[str] | None = None
 ) -> Iterator[SeqSSRecord]:
-    """Iterate all the RNA sequences from a FASTA file that fit the
-    filter.
+    """Iterate all the RNA sequences from a FASTA file.
 
-    Args:
-        filename: Path of the FASTA file.
-        filter: A list with all substrings contained in the name of the
-            desired sequences. If None, it is the same as using `load_fasta`
-            with mode as 'seq'.
+    Parameters
+    ----------
+    filename : str or os.PathLike
+        Path of the FASTA file.
+    filter : collection of str
+        A set with all substrings contained in the ID of the desired
+        sequences. If None, it is the same as using `load_fasta` with
+        mode as `'seq'`.
 
-    Yields:
-        SeqSSRecord: A record with the sequence and its name.
+    Yields
+    ------
+    SeqSSRecord
+        A record with the sequence with its ID.
     """
     filename = Path(filename).resolve()
     if filter is None:
         filter = []
 
-    for record in load_fasta(filename, mode="seq"):
+    for record in load_fasta(filename, mode='seq'):
         if len(filter) and not any(prefix in record.id for prefix in filter):
             continue
         yield record
 
 
-def read_sequence(folder: StrPath, id_: str) -> str:
-    """Read the first line of a seq+ss file and normalize to ACGT
-    alphabet.
+def read_sequence(dir: StrPath, id_: str) -> str:
+    """Read the first line of a seq+ss file.
 
-    Args:
-        filename: Path of the seq+ss file.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory that contains the seq+ss file.
+    id_ : str
+        ID of the RNA to read the sequence
+
+    Returns
+    -------
+    str
+        Sequence of the RNA searched.
     """
-    folder = Path(folder).resolve()
-    filename = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
+    dir = Path(dir).resolve()
+    filename = dir / f"{SEQ_SS_PREFIX}{id_}.dat"
 
     with open(filename) as f:
         seq = f.readlines()[0].strip()
     return seq.upper().replace("T", "U")
 
 
-def read_structure(folder: StrPath, id_: str) -> str:
-    """Read the first line of a seq+ss file and normalize to ACGT
-    alphabet.
+def read_structure(dir: StrPath, id_: str) -> str:
+    """Read the second line of a seq+ss file.
 
-    Args:
-        filename: Path of the seq+ss file.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory that contains the seq+ss file.
+    id_ : str
+        ID of the RNA to read the 2D structure
+
+    Returns
+    -------
+    str
+        2D structure of the RNA searched.
     """
-    folder = Path(folder).resolve()
-    filename = folder / f"{SEQ_SS_PREFIX}{id_}.dat"
+    dir = Path(dir).resolve()
+    filename = dir / f"{SEQ_SS_PREFIX}{id_}.dat"
 
     with open(filename) as f:
         ss = f.readlines()[1].strip()
@@ -173,38 +239,65 @@ def read_structure(folder: StrPath, id_: str) -> str:
 
 
 def iter_seq_ss(
-    folder: StrPath,
+    dir: StrPath,
     *,
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> Iterator[SeqSSRecord]:
-    """Iterate all the seq+ss files from the same folder that fit the
-    filter.
+    """Iterate all the seq+ss files from the same directory.
 
-    Args:
-        folder: Path of the folder containing seq+ss files.
-        keep: List of the RNA names to iterate. Iterate all if None.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory that contains the seq+ss file.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
+
+    Yields
+    ------
+    SeqSSRecord
+        A record with the sequence and 2D structure with its ID.
     """
-    folder = Path(folder).resolve()
+    dir = Path(dir).resolve()
     if keep is None:
         keep = []
     if exclude is None:
         exclude = []
 
-    for filename in sorted(os.listdir(folder)):
+    for filename in sorted(os.listdir(dir)):
         if not filename.startswith(SEQ_SS_PREFIX):
             continue
         id_ = os.path.splitext(filename[len(SEQ_SS_PREFIX) :])[0]
         if len(keep) and id_ not in keep or id_ in exclude:
             continue
-        with open(folder / filename) as file:
+        with open(dir / filename) as file:
             seq = file.readline().upper().replace("T", "U")
             ss = file.readline()
         yield SeqSSRecord(id_, seq, ss)
 
 
-def load_seq_ss(folder: StrPath, **kwargs) -> list[SeqSSRecord]:
-    records = list(iter_seq_ss(folder, **kwargs))
+def load_seq_ss(dir: StrPath, **kwargs) -> list[SeqSSRecord]:
+    """List all the seq+ss files from the same directory.
+
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory that contains the seq+ss file.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
+
+    Returns
+    -------
+    list of SeqSSRecord
+        A list of records with the sequence and 2D structure with their ID.
+    """
+    records = list(iter_seq_ss(dir, **kwargs))
     return records

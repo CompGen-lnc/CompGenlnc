@@ -24,7 +24,7 @@ from compgenlnc.consts.paths import (
     PAIRS_FILE,
 )
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
-from compgenlnc.fileman.fasta_manager import iter_seq_ss, iter_fasta
+from compgenlnc.fileman.fasta_manager import iter_fasta, iter_seq_ss
 from compgenlnc.typing.numpy_dtypes import (
     Index,
     InteractionPair,

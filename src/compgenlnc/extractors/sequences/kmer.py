@@ -12,8 +12,8 @@ from numpy.typing import NDArray
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import load_dict, save_dict
 from compgenlnc.fileman.fasta_manager import (
-    load_seq_ss,
     load_fasta,
+    load_seq_ss,
     read_sequence,
 )
 from compgenlnc.fileman.log_manager import send_msg, track_progress
@@ -26,17 +26,20 @@ if TYPE_CHECKING:
 
 
 def get_kmer(seq: SeqLike, /, k: int) -> NDArray[np.float32]:
-    """Get the k-mers of a RNA sequences from 1 to k from the given
-    sequence.
+    """Get the k-mers of a RNA sequence.
 
-    Args:
-        seq: The RNA sequence string on ATCG alphabet.
-        k: Maximum length for k-mers. It calculates k-mers with length
-            from 1 to k, included.
+    Parameters
+    ----------
+    seq : SeqLike
+        The RNA sequence string on ATCG alphabet.
+    k : int
+        Maximum length for k-mers. It calculates k-mers with length from
+        1 to `k`, included.
 
-    Returns:
-        NDArray: A concatenated numpy array with the k-mers of the
-            sequence.
+    Returns
+    -------
+    ndarray of float32
+        A 1D array with the k-mers of the sequence.
     """
     if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
@@ -59,25 +62,27 @@ def get_kmer(seq: SeqLike, /, k: int) -> NDArray[np.float32]:
     return np.concatenate([get_nmer(seq, n) for n in range(1, k + 1)])
 
 
-def get_kmer_by_name(folder: StrPath, id_: str, k: int) -> NDArray[np.float32]:
-    """Get the k-mers of a RNA sequences from 1 to k from the seq+ss
-    file of the given molecule.
+def get_kmer_by_name(dir: StrPath, id_: str, k: int) -> NDArray[np.float32]:
+    """Get the k-mers of a RNA sequence from the seq+ss file.
 
-    Args:
-        id_: Name of the RNA sequence.
-        folder: Path of the folder where the seq+ss file is.
-        k: Maximum length for k-mers. It calculates k-mers with length
-            from 1 to k, included.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory where the seq+ss file is.
+    id_ : str
+        ID of the RNA sequence.
+    k : int
+        Maximum length for k-mers. It calculates k-mers with length from
+        1 to `k`, included.
 
-    Returns:
-        NDArray: A concatenated numpy array with the k-mers of the
-            sequence.
+    Returns
+    -------
+    ndarray of float32
+        A 1D array with the k-mers of the sequence.
     """
-    folder = Path(folder).resolve()
+    dir = Path(dir).resolve()
 
-    seq = read_sequence(folder, id_)
+    seq = read_sequence(dir, id_)
     return get_kmer(seq, k)
 
 
@@ -88,17 +93,22 @@ def gen_kmer_dict(
     *,
     overwrite: bool = False,
 ) -> None:
-    """Get the k-mers of RNA sequences from 1 to k for the given molecule.
+    """Generate a dictionary of k-mers from a set of RNA sequences.
 
-    Args:
-        record_list: Iterable that contains all the sequence records to
-            save into the dictionary.
-        dict_file: Path of the file where the dictionary will be saved.
-        k: Maximum length for k-mers. It calculates k-mers with length
-            from 1 to k, included.
-        keep: List of the RNA names to save. Save all if None.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    records : collection of SeqSSRecord
+        Set that contains all the sequence records to save into the
+        dictionary.
+    k : int
+        Maximum length for k-mers. It calculates k-mers with length from
+        1 to `k`, included.
+    overwrite : bool, optional
+        Append the items to the existing dictionary if `True`, ignoring
+        those that have already been processed. Otherwise, replace the
+        existing dictionary. Default: `False`.
     """
     send_msg("Generating k-mer dictionary\n")
     records = list(records)
@@ -134,17 +144,27 @@ def gen_kmer_dict_from_fasta(
     exclude: Collection[str] | None = None,
     overwrite: bool = False,
 ) -> None:
-    """Get the k-mers of RNA sequences from 1 to k from a FASTA file with RNA
-    sequences.
+    """Generate a dictionary of k-mers from a FASTA file.
 
-    Args:
-        filename: Path of the FASTA file.
-        dict_file: Path of the file where the dictionary will be saved.
-        k: Maximum length for k-mers. It calculates k-mers with length
-            from 1 to k, included.
-        keep: List of the RNA names to save. Save all if None.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    fasta_file : str or os.PathLike
+        Path of the FASTA file with the sequences.
+    k : int
+        Maximum length for k-mers. It calculates k-mers with length from
+        1 to `k`, included.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
+    overwrite : bool, optional
+        Append the items to the existing dictionary if `True`, ignoring
+        those that have already been processed. Otherwise, replace the
+        existing dictionary. Default: `False`.
     """
     records = load_fasta(
         fasta_file,
@@ -155,26 +175,36 @@ def gen_kmer_dict_from_fasta(
     gen_kmer_dict(dict_file, records, k, overwrite=overwrite)
 
 
-def gen_kmer_dict_from_folder(
+def gen_kmer_dict_from_dir(
     dict_file: StrPath,
-    seq_ss_folder: StrPath,
+    seq_ss_dir: StrPath,
     k: int,
     *,
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
     overwrite: bool = False,
 ) -> None:
-    """Get the k-mers of RNA sequences from 1 to k from the seq+ss
-    files.
+    """Generate a dictionary of k-mers from seq+ss files.
 
-    Args:
-        folder: Path of the folder where the seq+ss file is.
-        dict_file: Path of the file where the dictionary will be saved.
-        k: Maximum length for k-mers. It calculates k-mers with length
-            from 1 to k, included.
-        keep: List of the RNA names to save. Save all if None.
-        mature_only: Only saves the mature section of the sequence if
-            True.
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    seq_ss_dir : str or os.PathLike
+        Path of the directory where the seq+ss files are.
+    k : int
+        Maximum length for k-mers. It calculates k-mers with length from
+        1 to `k`, included.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
+    overwrite : bool, optional
+        Append the items to the existing dictionary if `True`, ignoring
+        those that have already been processed. Otherwise, replace the
+        existing dictionary. Default: `False`.
     """
-    records = load_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    records = load_seq_ss(seq_ss_dir, keep=keep, exclude=exclude)
     gen_kmer_dict(dict_file, records, k, overwrite=overwrite)

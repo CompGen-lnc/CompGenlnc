@@ -11,7 +11,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from compgenlnc.fileman.dict_manager import save_dict
-from compgenlnc.fileman.fasta_manager import iter_seq_ss, iter_fasta
+from compgenlnc.fileman.fasta_manager import iter_fasta, iter_seq_ss
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.molecules import SSLike
 
