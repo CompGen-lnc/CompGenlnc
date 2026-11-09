@@ -92,12 +92,12 @@ def gen_normalized_matrix_dict_from_fasta(
     gen_normalized_matrix_dict(dict_file, records, normal_size)
 
 
-def gen_normalized_matrix_dict_from_folder(
+def gen_normalized_matrix_dict_from_dir(
     dict_file: StrPath,
-    seq_ss_folder: StrPath,
+    seq_ss_dir: StrPath,
     normal_size: int | None = None,
     *,
     keep: Collection[str] | None = None,
 ) -> None:
-    records = iter_seq_ss(seq_ss_folder, keep=keep)
+    records = iter_seq_ss(seq_ss_dir, keep=keep)
     gen_normalized_matrix_dict(dict_file, records, normal_size)

@@ -59,7 +59,7 @@ def test_seq_ss_to_fasta(tmp_path):
     new_seq_fasta_file = tmp_path / "new_seq_fasta.fa"
     new_ss_fasta_file = tmp_path / "new_ss_fasta.fa"
     cgl.seq_ss_to_fasta(
-        cgl.paths.MIRNA_SEQ_SS_FOLDER, new_seq_fasta_file, new_ss_fasta_file
+        cgl.paths.MIRNA_SEQ_SS_DIR, new_seq_fasta_file, new_ss_fasta_file
     )
     assert new_seq_fasta_file.exists()
 

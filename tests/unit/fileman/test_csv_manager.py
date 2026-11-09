@@ -28,7 +28,7 @@ def test_load_interactions(interaction_set, tmp_path):
 
 
 def test_load_precursors():
-    path = cgl.paths.MIRNA_FOLDER / "data_miRNA.csv"
+    path = cgl.paths.MIRNA_DIR / "data_miRNA.csv"
     precursor_dict = cgl.load_precursors(path)
     lines = path.read_text().split("\n")
     headers = lines.pop(0)

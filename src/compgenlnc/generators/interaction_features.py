@@ -11,16 +11,16 @@ from compgenlnc.consts.params import INTERACTION, LNCRNA, MIRNA
 from compgenlnc.consts.paths import (
     BINDING_PREFIX,
     CTD_DICT,
-    DATASET_FOLDER,
+    DATASET_DIR,
     DOC2VEC_DICT,
     KMER_DICT,
-    LNCRNA_DICTS_FOLDER,
+    LNCRNA_DICTS_DIR,
     LNCRNA_INTERACTION_DOV2VEC_MODEL,
-    LNCRNA_LOOPS_FOLDER,
+    LNCRNA_LOOPS_DIR,
     LOOPS_DICT,
-    MIRNA_DICTS_FOLDER,
+    MIRNA_DICTS_DIR,
     MIRNA_INTERACTION_DOV2VEC_MODEL,
-    MIRNA_LOOPS_FOLDER,
+    MIRNA_LOOPS_DIR,
     NORMAL_SEQ_DICT,
     ROLE2VEC_DICT,
 )
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
 def gen_interaction_features(
     records: Sequence[SeqSSRecord],
     interactions: Sequence[InteractionPair],
-    dicts_folder: StrPath,
+    dicts_dir: StrPath,
     loops_counters: Sequence[LoopCounter],
     binding_zones: Sequence[BindingZone],
     k: int,
@@ -58,15 +58,15 @@ def gen_interaction_features(
     *,
     rna: str,
 ) -> None:
-    dicts_folder = Path(dicts_folder).resolve()
-    dicts_folder.parent.mkdir(parents=True, exist_ok=True)
+    dicts_dir = Path(dicts_dir).resolve()
+    dicts_dir.parent.mkdir(parents=True, exist_ok=True)
 
-    kmer_path = dicts_folder / f"{BINDING_PREFIX}{KMER_DICT}"
-    ctd_path = dicts_folder / f"{BINDING_PREFIX}{CTD_DICT}"
-    d2v_path = dicts_folder / f"{BINDING_PREFIX}{DOC2VEC_DICT}"
-    r2v_path = dicts_folder / f"{BINDING_PREFIX}{ROLE2VEC_DICT}"
-    normal_path = dicts_folder / f"{BINDING_PREFIX}{NORMAL_SEQ_DICT}"
-    loops_path = dicts_folder / f"{BINDING_PREFIX}{LOOPS_DICT}"
+    kmer_path = dicts_dir / f"{BINDING_PREFIX}{KMER_DICT}"
+    ctd_path = dicts_dir / f"{BINDING_PREFIX}{CTD_DICT}"
+    d2v_path = dicts_dir / f"{BINDING_PREFIX}{DOC2VEC_DICT}"
+    r2v_path = dicts_dir / f"{BINDING_PREFIX}{ROLE2VEC_DICT}"
+    normal_path = dicts_dir / f"{BINDING_PREFIX}{NORMAL_SEQ_DICT}"
+    loops_path = dicts_dir / f"{BINDING_PREFIX}{LOOPS_DICT}"
 
     gen_kmer_dict(kmer_path, records, k)
     gen_ctd_dict(ctd_path, records)
@@ -78,7 +78,7 @@ def gen_interaction_features(
     )
 
     def path_to_npy(filename):
-        path = DATASET_FOLDER / f"binding_{rna}_{filename}"
+        path = DATASET_DIR / f"binding_{rna}_{filename}"
         return path.with_suffix(".npy")
 
     kmer_npy = path_to_npy(KMER_DICT)
@@ -104,7 +104,7 @@ def gen_lncrna_interaction_features(
     gen_interaction_features(
         records,
         interactions,
-        LNCRNA_DICTS_FOLDER,
+        LNCRNA_DICTS_DIR,
         loops_counters,
         binding_zones,
         4,
@@ -134,7 +134,7 @@ def gen_mirna_interaction_features(
     gen_interaction_features(
         records,
         interactions,
-        MIRNA_DICTS_FOLDER,
+        MIRNA_DICTS_DIR,
         loops_counters,
         (binding for binding in adjust_binding_list()),
         # binding_zones,
@@ -165,7 +165,7 @@ def gen_interaction_database(
         subrecords(lnc_records, LNCRNA),
         interactions,
         (
-            read_2d_structure_loops(LNCRNA_LOOPS_FOLDER, lnc)
+            read_2d_structure_loops(LNCRNA_LOOPS_DIR, lnc)
             for lnc in interactions[LNCRNA_FIELD]
         ),
         binding_zones,
@@ -175,7 +175,7 @@ def gen_interaction_database(
         pre_mir_records,
         interactions,
         (
-            read_2d_structure_loops(MIRNA_LOOPS_FOLDER, precursor_map[mir])
+            read_2d_structure_loops(MIRNA_LOOPS_DIR, precursor_map[mir])
             for mir in interactions[MIRNA_FIELD]
         ),
         binding_zones,

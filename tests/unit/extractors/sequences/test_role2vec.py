@@ -52,11 +52,9 @@ def test_gen_role2vec_dict_from_files(doc2vec_model_deterministic, tmp_path):
     )
 
 
-def test_gen_role2vec_dict_from_folder(tmp_path):
+def test_gen_role2vec_dict_from_dir(tmp_path):
     filename = tmp_path / "role2vec.dict"
-    cgl.gen_role2vec_dict_from_folder(
-        filename, cgl.paths.MIRNA_SEQ_SS_FOLDER, 3
-    )
+    cgl.gen_role2vec_dict_from_dir(filename, cgl.paths.MIRNA_SEQ_SS_DIR, 3)
     assert filename.exists()
 
     role2vec_dict = cgl.load_dict(filename)

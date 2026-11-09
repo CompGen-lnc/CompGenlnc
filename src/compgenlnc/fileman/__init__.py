@@ -15,7 +15,7 @@ from .fasta_manager import (
 )
 from .loops_manager import (
     read_2d_structure_loops,
-    read_2d_structure_loops_from_folder,
+    read_2d_structure_loops_from_dir,
 )
 from .miranda_manager import read_binding_zone
 
@@ -29,7 +29,7 @@ __all__ = [
     "load_precursors",
     "load_seq_ss",
     "read_2d_structure_loops",
-    "read_2d_structure_loops_from_folder",
+    "read_2d_structure_loops_from_dir",
     "read_binding_zone",
     "read_sequence",
     "read_structure",

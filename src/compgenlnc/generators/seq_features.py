@@ -7,15 +7,15 @@ from typing import TYPE_CHECKING
 from compgenlnc.consts.params import LNCRNA, MATURE, PRECURSOR
 from compgenlnc.consts.paths import (
     CTD_DICT,
-    DATASET_FOLDER,
+    DATASET_DIR,
     DOC2VEC_DICT,
     KMER_DICT,
-    LNCRNA_DICTS_FOLDER,
+    LNCRNA_DICTS_DIR,
     LNCRNA_DOC2VEC_MODEL,
-    MAT_MIRNA_DICTS_FOLDER,
+    MAT_MIRNA_DICTS_DIR,
     MAT_MIRNA_DOC2VEC_MODEL,
     NORMAL_SEQ_DICT,
-    PRE_MIRNA_DICTS_FOLDER,
+    PRE_MIRNA_DICTS_DIR,
     PRE_MIRNA_DOC2VEC_MODEL,
     ROLE2VEC_DICT,
 )
@@ -38,20 +38,20 @@ if TYPE_CHECKING:
 
 def gen_seq_features(
     records: Sequence[SeqSSRecord],
-    dicts_folder: StrPath,
+    dicts_dir: StrPath,
     k: int,
     dv2_model_file: StrPath,
     *,
     rna: str,
 ) -> None:
-    dicts_folder = Path(dicts_folder).resolve()
-    dicts_folder.parent.mkdir(parents=True, exist_ok=True)
+    dicts_dir = Path(dicts_dir).resolve()
+    dicts_dir.parent.mkdir(parents=True, exist_ok=True)
 
-    kmer_path = dicts_folder / KMER_DICT
-    ctd_path = dicts_folder / CTD_DICT
-    d2v_path = dicts_folder / DOC2VEC_DICT
-    r2v_path = dicts_folder / ROLE2VEC_DICT
-    normal_path = dicts_folder / NORMAL_SEQ_DICT
+    kmer_path = dicts_dir / KMER_DICT
+    ctd_path = dicts_dir / CTD_DICT
+    d2v_path = dicts_dir / DOC2VEC_DICT
+    r2v_path = dicts_dir / ROLE2VEC_DICT
+    normal_path = dicts_dir / NORMAL_SEQ_DICT
 
     gen_kmer_dict(kmer_path, records, k)
     gen_ctd_dict(ctd_path, records)
@@ -60,7 +60,7 @@ def gen_seq_features(
     gen_normalized_sequence_dict(normal_path, records)
 
     def path_to_npy(filename):
-        return (DATASET_FOLDER / f"{rna}_{filename}").with_suffix(".npy")
+        return (DATASET_DIR / f"{rna}_{filename}").with_suffix(".npy")
 
     kmer_npy = path_to_npy(KMER_DICT)
     ctd_npy = path_to_npy(CTD_DICT)
@@ -77,7 +77,7 @@ def gen_seq_features(
 def gen_lncrna_seq_features(records: Sequence[SeqSSRecord]) -> None:
     gen_seq_features(
         records,
-        LNCRNA_DICTS_FOLDER,
+        LNCRNA_DICTS_DIR,
         k=4,
         dv2_model_file=LNCRNA_DOC2VEC_MODEL,
         rna=LNCRNA,
@@ -87,7 +87,7 @@ def gen_lncrna_seq_features(records: Sequence[SeqSSRecord]) -> None:
 def gen_pre_mirna_seq_features(records: Sequence[SeqSSRecord]) -> None:
     gen_seq_features(
         records,
-        PRE_MIRNA_DICTS_FOLDER,
+        PRE_MIRNA_DICTS_DIR,
         k=3,
         dv2_model_file=PRE_MIRNA_DOC2VEC_MODEL,
         rna=PRECURSOR,
@@ -97,7 +97,7 @@ def gen_pre_mirna_seq_features(records: Sequence[SeqSSRecord]) -> None:
 def gen_mat_mirna_seq_features(records: Sequence[SeqSSRecord]) -> None:
     gen_seq_features(
         records,
-        MAT_MIRNA_DICTS_FOLDER,
+        MAT_MIRNA_DICTS_DIR,
         k=3,
         dv2_model_file=MAT_MIRNA_DOC2VEC_MODEL,
         rna=MATURE,

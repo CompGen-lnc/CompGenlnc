@@ -125,7 +125,7 @@ def gen_ctd_dict(
         Path of the file where the dictionary will be saved.
     records : collection of SeqSSRecord
         Set that contains all the sequence records to save into the
-        dictionary. 
+        dictionary.
     overwrite : bool, optional
         Append the items to the existing dictionary if `True`, ignoring
         those that have already been processed. Otherwise, replace the

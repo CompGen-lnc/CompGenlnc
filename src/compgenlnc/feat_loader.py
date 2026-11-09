@@ -9,9 +9,9 @@ from numpy.typing import NDArray
 
 from compgenlnc.consts.params import LNCRNA, MATURE, MIRNA, PRECURSOR
 from compgenlnc.consts.paths import (
-    BINDING_FOLDER,
+    BINDING_DIR,
     CTD_DICT,
-    DATASET_FOLDER,
+    DATASET_DIR,
     DOC2VEC_DICT,
     KMER_DICT,
     LOOPS_DICT,
@@ -37,7 +37,7 @@ from compgenlnc.extractors.structures2d.recoded_structure import (
 )
 from compgenlnc.fileman.miranda_manager import (
     get_subrecord_list,
-    get_subrecord_list_from_folder,
+    get_subrecord_list_from_dir,
     iter_binding_zones,
 )
 from compgenlnc.typing.numpy_dtypes import Index
@@ -83,14 +83,14 @@ def get_seq_features(
         records = index_mature_mirna()
     if from_interactions:
         interactions = interactions_from_index()
-        bindings = list(iter_binding_zones(BINDING_FOLDER, interactions))
+        bindings = list(iter_binding_zones(BINDING_DIR, interactions))
         records = get_subrecord_list(records, interactions, bindings, rna=rna)
 
     features_dict = {}
     sequences = [rec.seq for rec in records]
 
     def get_npy_path(dict_name: str):
-        return DATASET_FOLDER / f"{prefix}{dict_name}".replace(".dict", ".npy")
+        return DATASET_DIR / f"{prefix}{dict_name}".replace(".dict", ".npy")
 
     def map_sequences(func, dtype):
         it = (func(seq) for seq in sequences)
@@ -130,15 +130,15 @@ def get_ss_features(
         records = index_precursor_mirna()
     if from_interactions:
         interactions = interactions_from_index()
-        records = get_subrecord_list_from_folder(
-            records, interactions, BINDING_FOLDER, rna=rna
+        records = get_subrecord_list_from_dir(
+            records, interactions, BINDING_DIR, rna=rna
         )
 
     features_dict = {}
     structures = [rec.ss for rec in records]
 
     def get_npy_path(dict_name: str):
-        return DATASET_FOLDER / f"{prefix}{dict_name}".replace(".dict", ".npy")
+        return DATASET_DIR / f"{prefix}{dict_name}".replace(".dict", ".npy")
 
     def map_structures(func, dtype):
         it = (func(seq) for seq in structures)

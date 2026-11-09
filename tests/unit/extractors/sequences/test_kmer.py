@@ -57,8 +57,8 @@ def test_get_kmer(seq, k, expected):
 
 def test_get_kmer_by_name(example_id_list):
     for id_ in example_id_list:
-        kmers = cgl.get_kmer_by_name(cgl.paths.MIRNA_SEQ_SS_FOLDER, id_, 3)
-        seq = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_FOLDER, id_)
+        kmers = cgl.get_kmer_by_name(cgl.paths.MIRNA_SEQ_SS_DIR, id_, 3)
+        seq = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_DIR, id_)
         expected = cgl.get_kmer(seq, 3)
         assert np.array_equal(kmers, expected)
 
@@ -77,10 +77,10 @@ def test_gen_kmer_dict(seq_ss_list, tmp_path):
     )
 
 
-def test_gen_kmer_dict_from_folder(example_id_filter, tmp_path):
+def test_gen_kmer_dict_from_dir(example_id_filter, tmp_path):
     dict_file = tmp_path / "kmer.dict"
-    cgl.gen_kmer_dict_from_folder(
-        dict_file, cgl.paths.MIRNA_SEQ_SS_FOLDER, 3, keep=example_id_filter
+    cgl.gen_kmer_dict_from_dir(
+        dict_file, cgl.paths.MIRNA_SEQ_SS_DIR, 3, keep=example_id_filter
     )
     assert dict_file.exists()
 
@@ -89,7 +89,7 @@ def test_gen_kmer_dict_from_folder(example_id_filter, tmp_path):
         [
             np.array_equal(
                 kmer_dict[id_],
-                cgl.get_kmer_by_name(cgl.paths.MIRNA_SEQ_SS_FOLDER, id_, 3),
+                cgl.get_kmer_by_name(cgl.paths.MIRNA_SEQ_SS_DIR, id_, 3),
             )
             for id_ in example_id_filter
         ]

@@ -18,9 +18,9 @@ from compgenlnc.consts.fields import (
 from compgenlnc.consts.params import INTERACTION, LNCRNA, MATURE, PRECURSOR
 from compgenlnc.consts.paths import (
     INDEX_NPY,
-    LNCRNA_SEQ_SS_FOLDER,
+    LNCRNA_SEQ_SS_DIR,
     MAT_MIRNA_FASTA,
-    MIRNA_SEQ_SS_FOLDER,
+    MIRNA_SEQ_SS_DIR,
     PAIRS_FILE,
 )
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
@@ -128,8 +128,7 @@ def index_lncrna(*, index_file: StrPath = INDEX_NPY) -> NDArray[np.object_]:
     if _lnc_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=LNCRNA)
         records = {
-            rec.id: rec
-            for rec in iter_seq_ss(LNCRNA_SEQ_SS_FOLDER, keep=indexes)
+            rec.id: rec for rec in iter_seq_ss(LNCRNA_SEQ_SS_DIR, keep=indexes)
         }
         map_index = np.frompyfunc(records.__getitem__, 1, 1)
         _lnc_indexed_records = map_index(indexes)
@@ -143,8 +142,7 @@ def index_precursor_mirna(
     if _pre_mir_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=PRECURSOR)
         records = {
-            rec.id: rec
-            for rec in iter_seq_ss(MIRNA_SEQ_SS_FOLDER, keep=indexes)
+            rec.id: rec for rec in iter_seq_ss(MIRNA_SEQ_SS_DIR, keep=indexes)
         }
         map_index = np.frompyfunc(records.__getitem__, 1, 1)
         _pre_mir_indexed_records = map_index(indexes)

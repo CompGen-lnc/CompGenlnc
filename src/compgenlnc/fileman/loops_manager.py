@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from _typeshed import StrPath
 
 
-def read_2d_structure_loops(folder: StrPath, id_: str) -> LoopCounter:
+def read_2d_structure_loops(dir: StrPath, id_: str) -> LoopCounter:
     def match_loop(line: str) -> tuple[bool, tuple[str, int, int, int]]:
         m = LOOP_RE.match(line)
         if m:
@@ -26,7 +26,7 @@ def read_2d_structure_loops(folder: StrPath, id_: str) -> LoopCounter:
             return True, (m.group(1).split()[0], 0, 0, int(m.group(2)))
         return False, ()
 
-    loops_file = Path(folder).resolve() / f"{LOOPS_PREFIX}{id_}.dat"
+    loops_file = Path(dir).resolve() / f"{LOOPS_PREFIX}{id_}.dat"
     energy = 0
     loops = []
     with open(loops_file) as file:
@@ -42,15 +42,15 @@ def read_2d_structure_loops(folder: StrPath, id_: str) -> LoopCounter:
     return LoopCounter(id_, loops, energy)
 
 
-def read_2d_structure_loops_from_folder(
-    loops_folder: StrPath,
+def read_2d_structure_loops_from_dir(
+    loops_dir: StrPath,
     *,
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> Iterator[LoopCounter]:
-    for filename in sorted(os.listdir(loops_folder)):
+    for filename in sorted(os.listdir(loops_dir)):
         id_ = filename[len(LOOPS_PREFIX) : -4]
         filtered = keep and id_ not in keep or exclude and id_ in exclude
         if filtered:
             continue
-        yield read_2d_structure_loops(loops_folder, id_)
+        yield read_2d_structure_loops(loops_dir, id_)

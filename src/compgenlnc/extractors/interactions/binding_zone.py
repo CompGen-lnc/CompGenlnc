@@ -30,12 +30,12 @@ if TYPE_CHECKING:
 
 
 def predict_miranda(
-    folder: os.PathLike, lnc_record: SeqSSRecord, mir_record: SeqSSRecord
+    dir: os.PathLike, lnc_record: SeqSSRecord, mir_record: SeqSSRecord
 ) -> bool:
-    folder = Path(folder).resolve()
-    folder.mkdir(parents=True, exist_ok=True)
+    dir = Path(dir).resolve()
+    dir.mkdir(parents=True, exist_ok=True)
 
-    filename = folder / f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
+    filename = dir / f"{MIRANDA_PREFIX}{lnc_record.id}_{mir_record.id}.dat"
 
     def to_wsl(path):
         disk, sub_path = str(path).split(":")
@@ -81,7 +81,7 @@ def _predict_miranda_with_args(args):
 
 
 def predict_miranda_from_list(
-    folder: os.PathLike,
+    dir: os.PathLike,
     lnc_list: Sequence[SeqSSRecord],
     mir_list: Sequence[SeqSSRecord],
     *,
@@ -92,7 +92,7 @@ def predict_miranda_from_list(
     lnc_list = list(lnc_list)
     mir_list = list(mir_list)
     args_list = np.fromiter(
-        (args for args in zip(repeat(folder), lnc_list, mir_list)),
+        (args for args in zip(repeat(dir), lnc_list, mir_list)),
         dtype=object,
         count=min(len(lnc_list), len(mir_list)),
     )
@@ -135,7 +135,7 @@ def predict_miranda_from_list(
 
 
 def predict_miranda_from_files(
-    folder: StrPath,
+    dir: StrPath,
     interaction_file: StrPath,
     lnc_fasta: StrPath,
     pre_mir_fasta: StrPath,
@@ -161,43 +161,43 @@ def predict_miranda_from_files(
         None,
     )
     predict_miranda_from_list(
-        folder, lnc_list, mir_list, keep=keep, exclude=exclude
+        dir, lnc_list, mir_list, keep=keep, exclude=exclude
     )
 
 
 def extract_binding_zone(
-    miranda_folder: os.PathLike,
+    miranda_dir: os.PathLike,
     lnc: str,
     mir: str,
-    binding_folder: os.PathLike,
+    binding_dir: os.PathLike,
 ) -> None:
-    miranda_folder = Path(miranda_folder).resolve()
-    binding_folder = Path(binding_folder).resolve()
+    miranda_dir = Path(miranda_dir).resolve()
+    binding_dir = Path(binding_dir).resolve()
 
-    binding_folder.mkdir(parents=True, exist_ok=True)
+    binding_dir.mkdir(parents=True, exist_ok=True)
 
-    miranda_file = miranda_folder / f"{MIRANDA_PREFIX}{lnc}_{mir}.dat"
+    miranda_file = miranda_dir / f"{MIRANDA_PREFIX}{lnc}_{mir}.dat"
     text = miranda_file.read_text()
     hits = list(re.finditer(MIRANDA_INFO, text))
     if hits:
         min_energy_hit = min(hits, key=lambda hit: hit["energy"])[0]
     else:
         min_energy_hit = "No Hits Found above Threshold"
-    filename = binding_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
+    filename = binding_dir / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
     with open(filename, "w") as out_file:
         out_file.write(min_energy_hit)
 
 
-def extract_binding_zone_from_folder(
-    miranda_folder: os.PathLike,
-    binding_folder: os.PathLike,
+def extract_binding_zone_from_dir(
+    miranda_dir: os.PathLike,
+    binding_dir: os.PathLike,
     *,
     lnc_set: Collection[str] | None = None,
     mir_set: Collection[str] | None = None,
     keep: Collection[InteractionPair] | None = [],
     exclude: Collection[InteractionPair] | None = [],
 ) -> None:
-    miranda_files = os.listdir(miranda_folder)
+    miranda_files = os.listdir(miranda_dir)
     keep = ["_".join(pair[PAIR_FIELDS]) for pair in keep]
     exclude = ["_".join(pair[PAIR_FIELDS]) for pair in exclude]
     for file in miranda_files:
@@ -217,4 +217,4 @@ def extract_binding_zone_from_folder(
         [lnc, mir] = interaction.split("_")
         if lnc_set and lnc not in lnc_set or mir_set and mir not in mir_set:
             continue
-        extract_binding_zone(miranda_folder, lnc, mir, binding_folder)
+        extract_binding_zone(miranda_dir, lnc, mir, binding_dir)

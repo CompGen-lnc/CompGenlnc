@@ -18,11 +18,11 @@ if TYPE_CHECKING:
 
 
 def read_binding_zone(
-    binding_folder: StrPath, interaction: InteractionPair
+    binding_dir: StrPath, interaction: InteractionPair
 ) -> BindingZone:
-    binding_folder = Path(binding_folder).resolve()
+    binding_dir = Path(binding_dir).resolve()
     lnc, mir = interaction[PAIR_FIELDS]
-    filename = binding_folder / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
+    filename = binding_dir / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
     text = filename.read_text()
     m = re.match(MIRANDA_INFO, text)
     if not m:
@@ -35,10 +35,10 @@ def read_binding_zone(
 
 
 def iter_binding_zones(
-    binding_folder: StrPath, interactions: Iterable[InteractionPair]
+    binding_dir: StrPath, interactions: Iterable[InteractionPair]
 ) -> Iterator[BindingZone]:
     return (
-        read_binding_zone(binding_folder, interaction)
+        read_binding_zone(binding_dir, interaction)
         for interaction in interactions
     )
 
@@ -74,12 +74,12 @@ def get_subrecord_list(
     )
 
 
-def get_subrecord_list_from_folder(
+def get_subrecord_list_from_dir(
     records: Sequence[SeqSSRecord],
     interactions: Sequence[InteractionPair],
-    binding_folder: StrPath,
+    binding_dir: StrPath,
     *,
     rna: str = LNCRNA,
 ) -> Iterator[SeqSSRecord]:
-    binding_zones = iter_binding_zones(binding_folder, interactions)
+    binding_zones = iter_binding_zones(binding_dir, interactions)
     return get_subrecord_list(records, interactions, binding_zones, rna=rna)

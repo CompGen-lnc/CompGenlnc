@@ -125,14 +125,14 @@ def gen_role2vec_dict_from_fasta(
     gen_role2vec_dict(dict_file, kmer_dict, ctd_dict, doc2vec_dict)
 
 
-def gen_role2vec_dict_from_folder(
+def gen_role2vec_dict_from_dir(
     dict_file: StrPath,
-    seq_ss_folder: StrPath,
+    seq_ss_dir: StrPath,
     k: int,
     *,
     keep: Collection[str] | None = None,
 ) -> None:
-    records = load_seq_ss(seq_ss_folder, keep=keep)
+    records = load_seq_ss(seq_ss_dir, keep=keep)
     doc2vec_model = train_doc2vec_model(records)
 
     kmer_dict = {record.id: get_kmer(record.seq, k) for record in records}

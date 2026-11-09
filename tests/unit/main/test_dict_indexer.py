@@ -34,7 +34,7 @@ def test_gen_indexes(interaction_set, precursors_consverter, tmp_path):
 
 
 def test_load_indexes():
-    path = cgl.paths.EMBEDDING_FOLDER / "index.npy"
+    path = cgl.paths.EMBEDDING_DIR / "index.npy"
     indexes = cgl.load_indexes(index_file=path)
     array = np.load(path, allow_pickle=True)
     expected = np.array(array, dtype=cgl.dtype_index)
@@ -42,11 +42,11 @@ def test_load_indexes():
 
 
 def test_dict_to_numpy(index_list, tmp_path, subtests):
-    folder = cgl.paths.MAT_MIRNA_DICTS_FOLDER
-    index_path = cgl.paths.EMBEDDING_FOLDER / "index.npy"
-    dicts = os.listdir(folder)
+    dir = cgl.paths.MAT_MIRNA_DICTS_DIR
+    index_path = cgl.paths.EMBEDDING_DIR / "index.npy"
+    dicts = os.listdir(dir)
     for filename in dicts:
-        dict_path = folder / filename
+        dict_path = dir / filename
         npy_path = tmp_path / filename.replace(".dict", ".npy")
         with subtests.test(i=(filename)):
             dict_ = cgl.load_dict(dict_path)

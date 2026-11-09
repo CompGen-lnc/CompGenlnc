@@ -28,10 +28,10 @@ def test_get_doc2vec(seq, segments, doc2vec_model_deterministic):
 def test_get_doc2vec_by_name(example_id_list, doc2vec_model_deterministic):
     model = doc2vec_model_deterministic
     for id_ in example_id_list:
-        seq = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_FOLDER, id_)
+        seq = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_DIR, id_)
         segments = [seq[i : i + 3] for i in range(len(seq) - 2)]
         vector = cgl.get_doc2vec_by_name(
-            cgl.paths.MIRNA_SEQ_SS_FOLDER, id_, model=model
+            cgl.paths.MIRNA_SEQ_SS_DIR, id_, model=model
         )
         expected = model.infer_vector(segments) if segments else [0.0] * 256
         assert np.array_equal(vector, expected)
@@ -54,14 +54,14 @@ def test_gen_doc2vec_dict(seq_ss_list, doc2vec_model_deterministic, tmp_path):
     )
 
 
-def test_gen_doc2vec_dict_from_folder(
+def test_gen_doc2vec_dict_from_dir(
     example_id_filter, doc2vec_model_deterministic, tmp_path
 ):
     model = doc2vec_model_deterministic
     dict_file = tmp_path / "doc2vec.dict"
-    cgl.gen_doc2vec_dict_from_folder(
+    cgl.gen_doc2vec_dict_from_dir(
         dict_file,
-        cgl.paths.MIRNA_SEQ_SS_FOLDER,
+        cgl.paths.MIRNA_SEQ_SS_DIR,
         model=model,
         keep=example_id_filter,
     )
@@ -73,7 +73,7 @@ def test_gen_doc2vec_dict_from_folder(
             np.array_equal(
                 doc2vec_dict[id_],
                 cgl.get_doc2vec_by_name(
-                    cgl.paths.MIRNA_SEQ_SS_FOLDER, id_, model=model
+                    cgl.paths.MIRNA_SEQ_SS_DIR, id_, model=model
                 ),
             )
             for id_ in example_id_filter

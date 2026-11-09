@@ -51,7 +51,7 @@ def test_iter_seq_fasta_filtered(filter, expected):
 
 
 def test_iter_seq_ss():
-    records = cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
+    records = cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_DIR)
     for record in records:
         assert isinstance(record, cgl.structs.SeqSSRecord)
         assert len(record.seq) == len(record.ss)
@@ -67,19 +67,19 @@ def test_iter_seq_ss():
     ],
 )
 def test_iter_seq_ss_filtered(keep, expected):
-    records = cgl.load_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER, keep=keep)
+    records = cgl.load_seq_ss(cgl.paths.MIRNA_SEQ_SS_DIR, keep=keep)
     assert len(records) == expected
 
 
 def test_read_sequence():
-    records = cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
+    records = cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_DIR)
     for record in records:
-        seq = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_FOLDER, record.id)
+        seq = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_DIR, record.id)
         assert str(record.seq) == seq
 
 
 def test_read_structure():
-    records = cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
+    records = cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_DIR)
     for record in records:
-        ss = cgl.read_structure(cgl.paths.MIRNA_SEQ_SS_FOLDER, record.id)
+        ss = cgl.read_structure(cgl.paths.MIRNA_SEQ_SS_DIR, record.id)
         assert str(record.ss) == ss

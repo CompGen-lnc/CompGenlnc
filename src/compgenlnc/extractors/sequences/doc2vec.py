@@ -81,7 +81,7 @@ def get_doc2vec(
 
 
 def get_doc2vec_by_name(
-    folder: StrPath,
+    dir: StrPath,
     id_: str,
     *,
     model: Doc2Vec | None = None,
@@ -89,6 +89,8 @@ def get_doc2vec_by_name(
 ) -> NDArray[np.float32]:
     folder = Path(folder).resolve()
     seq = read_sequence(folder, id_)
+    dir = Path(dir).resolve()
+    seq = read_sequence(dir, id_)
     return get_doc2vec(seq, model=model, model_file=model_file)
 
 
@@ -137,7 +139,7 @@ def gen_doc2vec_dict_from_fasta(
     gen_doc2vec_dict(dict_file, records, model=model, model_file=model_file)
 
 
-def gen_doc2vec_dict_from_folder(
+def gen_doc2vec_dict_from_dir(
     dict_file: StrPath,
     seq_ss_folder: StrPath,
     *,
@@ -147,4 +149,14 @@ def gen_doc2vec_dict_from_folder(
     exclude: Collection[str] | None = None,
 ) -> None:
     records = load_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    model_file : str or os.PathLike, optional
+        Path of the file where the model is stored.
+    keep : collection of str, optional
+        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
+        Default: `None`.
+    """
+    records = load_seq_ss(seq_ss_dir, keep=keep, exclude=exclude)
     gen_doc2vec_dict(dict_file, records, model=model, model_file=model_file)

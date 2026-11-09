@@ -6,12 +6,12 @@ from typing import TYPE_CHECKING
 
 from compgenlnc.consts.params import LNCRNA, PRECURSOR
 from compgenlnc.consts.paths import (
-    DATASET_FOLDER,
-    LNCRNA_DICTS_FOLDER,
-    LNCRNA_LOOPS_FOLDER,
+    DATASET_DIR,
+    LNCRNA_DICTS_DIR,
+    LNCRNA_LOOPS_DIR,
     LOOPS_DICT,
-    MIRNA_LOOPS_FOLDER,
-    PRE_MIRNA_DICTS_FOLDER,
+    MIRNA_LOOPS_DIR,
+    PRE_MIRNA_DICTS_DIR,
 )
 from compgenlnc.dict_indexer import dict_to_numpy
 from compgenlnc.extractors.structures2d.loops import gen_loops_dict
@@ -24,19 +24,19 @@ if TYPE_CHECKING:
 
 def gen_ss_features(
     records: Sequence[SeqSSRecord],
-    dicts_folder: StrPath,
-    loops_folder: StrPath,
+    dicts_dir: StrPath,
+    loops_dir: StrPath,
     *,
     rna: str,
 ) -> None:
-    dicts_folder = Path(dicts_folder).resolve()
-    dicts_folder.parent.mkdir(parents=True, exist_ok=True)
+    dicts_dir = Path(dicts_dir).resolve()
+    dicts_dir.parent.mkdir(parents=True, exist_ok=True)
 
-    loops_path = dicts_folder / LOOPS_DICT
-    gen_loops_dict(loops_path, loops_folder, records)
+    loops_path = dicts_dir / LOOPS_DICT
+    gen_loops_dict(loops_path, loops_dir, records)
 
     def path_to_npy(filename):
-        return (DATASET_FOLDER / f"{rna}_{filename}").with_suffix(".npy")
+        return (DATASET_DIR / f"{rna}_{filename}").with_suffix(".npy")
 
     loops_npy = path_to_npy(LOOPS_DICT)
     dict_to_numpy(loops_npy, load_dict(loops_path), rna=rna)
@@ -45,8 +45,8 @@ def gen_ss_features(
 def gen_lncrna_ss_features(records: Sequence[SeqSSRecord]) -> None:
     gen_ss_features(
         records,
-        LNCRNA_DICTS_FOLDER,
-        LNCRNA_LOOPS_FOLDER,
+        LNCRNA_DICTS_DIR,
+        LNCRNA_LOOPS_DIR,
         rna=LNCRNA,
     )
 
@@ -54,8 +54,8 @@ def gen_lncrna_ss_features(records: Sequence[SeqSSRecord]) -> None:
 def gen_mirna_ss_features(records: Sequence[SeqSSRecord]) -> None:
     gen_ss_features(
         records,
-        PRE_MIRNA_DICTS_FOLDER,
-        MIRNA_LOOPS_FOLDER,
+        PRE_MIRNA_DICTS_DIR,
+        MIRNA_LOOPS_DIR,
         rna=PRECURSOR,
     )
 

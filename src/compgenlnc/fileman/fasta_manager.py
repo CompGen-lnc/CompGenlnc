@@ -186,7 +186,7 @@ def iter_seq_fasta(
     if filter is None:
         filter = []
 
-    for record in load_fasta(filename, mode='seq'):
+    for record in load_fasta(filename, mode="seq"):
         if len(filter) and not any(prefix in record.id for prefix in filter):
             continue
         yield record
@@ -297,7 +297,8 @@ def load_seq_ss(dir: StrPath, **kwargs) -> list[SeqSSRecord]:
     Returns
     -------
     list of SeqSSRecord
-        A list of records with the sequence and 2D structure with their ID.
+        A list of records with the sequence and 2D structure with their
+        ID.
     """
     records = list(iter_seq_ss(dir, **kwargs))
     return records

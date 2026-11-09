@@ -15,17 +15,17 @@ from compgenlnc.consts.fields import (
 )
 from compgenlnc.consts.params import SEQ_MODE, SS_MODE
 from compgenlnc.consts.paths import (
-    BINDING_FOLDER,
+    BINDING_DIR,
     BINDING_PREFIX,
     DATA_MIRNA,
     INDEX_NPY,
     LNCRNA_FASTA,
-    LNCRNA_SEQ_SS_FOLDER,
+    LNCRNA_SEQ_SS_DIR,
     LNCRNA_SS_FASTA,
     MAT_MIRNA_FASTA,
-    MIRANDA_FOLDER,
+    MIRANDA_DIR,
     MIRANDA_PREFIX,
-    MIRNA_SEQ_SS_FOLDER,
+    MIRNA_SEQ_SS_DIR,
     MIRNA_SS_FASTA,
     PAIRS_FILE,
     PAIRS_FILE_NEGATIVE,
@@ -40,7 +40,7 @@ from compgenlnc.dict_indexer import (
     load_indexes,
 )
 from compgenlnc.extractors.interactions.binding_zone import (
-    extract_binding_zone_from_folder,
+    extract_binding_zone_from_dir,
     predict_miranda_from_files,
 )
 from compgenlnc.extractors.sourcedata.fasta_constructor import gen_fasta_2d
@@ -69,7 +69,7 @@ if TYPE_CHECKING:
 
 
 def load_source_data(
-    base_folder: StrPath | None = None,
+    base_dir: StrPath | None = None,
     *,
     lnc_seq_fasta: StrPath | None = None,
     lnc_ss_fasta: StrPath | None = None,
@@ -81,13 +81,13 @@ def load_source_data(
     pos_interactions_csv: StrPath | None = None,
     neg_interactions_csv: StrPath | None = None,
 ) -> None:
-    if base_folder is not None:
-        base_folder = Path(base_folder).resolve()
+    if base_dir is not None:
+        base_dir = Path(base_dir).resolve()
 
         def get_path(name, default):
             if default is not None:
                 return default
-            return base_folder / name
+            return base_dir / name
 
         lnc_seq_fasta = get_path(LNCRNA_FASTA.name, lnc_seq_fasta)
         lnc_ss_fasta = get_path(LNCRNA_SS_FASTA.name, lnc_ss_fasta)
@@ -165,26 +165,26 @@ def gen_source_data(
     gen_fasta_2d(LNCRNA_FASTA, LNCRNA_SS_FASTA, keep=lnc_keep)
     gen_fasta_2d(PRE_MIRNA_FASTA, MIRNA_SS_FASTA, keep=pre_mir_keep)
     fasta_to_seq_ss(
-        LNCRNA_FASTA, LNCRNA_SS_FASTA, LNCRNA_SEQ_SS_FOLDER, keep=lnc_keep
+        LNCRNA_FASTA, LNCRNA_SS_FASTA, LNCRNA_SEQ_SS_DIR, keep=lnc_keep
     )
     fasta_to_seq_ss(
-        PRE_MIRNA_FASTA, MIRNA_SS_FASTA, MIRNA_SEQ_SS_FOLDER, keep=pre_mir_keep
+        PRE_MIRNA_FASTA, MIRNA_SS_FASTA, MIRNA_SEQ_SS_DIR, keep=pre_mir_keep
     )
 
     interactions = load_interactions(PAIRS_FILE)
     miranda_exclude = binding_exclude = []
     str_interactions = ["_".join(inter[PAIR_FIELDS]) for inter in interactions]
-    if MIRANDA_FOLDER.exists():
+    if MIRANDA_DIR.exists():
         miranda_files = [
             filename.rsplit(".", 1)[0][len(MIRANDA_PREFIX) :]
-            for filename in os.listdir(MIRANDA_FOLDER)
+            for filename in os.listdir(MIRANDA_DIR)
         ]
         mask = np.isin(str_interactions, miranda_files)
         miranda_exclude = interactions[mask]
-    if BINDING_FOLDER.exists():
+    if BINDING_DIR.exists():
         binding_files = [
             filename[len(BINDING_PREFIX) : -4]
-            for filename in os.listdir(BINDING_FOLDER)
+            for filename in os.listdir(BINDING_DIR)
         ]
         mask = np.isin(str_interactions, binding_files)
         binding_exclude = interactions[mask]
@@ -193,17 +193,17 @@ def gen_source_data(
         LNCRNA_FASTA,
         PRE_MIRNA_FASTA,
         MAT_MIRNA_FASTA,
-        MIRANDA_FOLDER,
+        MIRANDA_DIR,
         exclude=miranda_exclude,
     )
-    extract_binding_zone_from_folder(
-        MIRANDA_FOLDER, BINDING_FOLDER, exclude=binding_exclude
+    extract_binding_zone_from_dir(
+        MIRANDA_DIR, BINDING_DIR, exclude=binding_exclude
     )
 
 
 def gen_database():
-    lnc_records = load_seq_ss(LNCRNA_SEQ_SS_FOLDER)
-    pre_mir_records = load_seq_ss(MIRNA_SEQ_SS_FOLDER)
+    lnc_records = load_seq_ss(LNCRNA_SEQ_SS_DIR)
+    pre_mir_records = load_seq_ss(MIRNA_SEQ_SS_DIR)
     mat_mir_records = load_fasta(MAT_MIRNA_FASTA)
     gen_seq_database(lnc_records, pre_mir_records, mat_mir_records)
     gen_ss_database(lnc_records, pre_mir_records)
@@ -212,14 +212,14 @@ def gen_database():
     pre_mir_records = index_precursor_mirna()
     mat_mir_records = index_mature_mirna()
 
-    lnc_list = [rec.id for rec in iter_seq_ss(LNCRNA_SEQ_SS_FOLDER)]
+    lnc_list = [rec.id for rec in iter_seq_ss(LNCRNA_SEQ_SS_DIR)]
     mat_mir_list = [rec.id for rec in iter_fasta(MAT_MIRNA_FASTA)]
     interactions = load_interactions(
         PAIRS_FILE, lnc_keep=lnc_list, mir_keep=mat_mir_list
     )
 
     binding_list = [
-        read_binding_zone(BINDING_FOLDER, inter) for inter in interactions
+        read_binding_zone(BINDING_DIR, inter) for inter in interactions
     ]
     precursor_map = load_precursors(DATA_MIRNA)
     gen_interaction_database(

@@ -12,12 +12,12 @@ def test_get_substructure_loops(
     for interaction in interactions[cgl.PAIR_FIELDS]:
         lnc, mir = interaction
         precursor = precursors_consverter[mir]
-        binding_folder = cgl.paths.INTERACTIONS_FOLDER / "binding"
+        binding_dir = cgl.paths.INTERACTIONS_DIR / "binding"
         with subtests.test(i=(lnc, mir)):
             mir_loops = cgl.read_2d_structure_loops(
-                cgl.paths.MIRNA_LOOPS_FOLDER, precursor
+                cgl.paths.MIRNA_LOOPS_DIR, precursor
             )
-            binding_zone = cgl.read_binding_zone(binding_folder, interaction)
+            binding_zone = cgl.read_binding_zone(binding_dir, interaction)
             sub_loops = cgl.get_substructure_loops(
                 mir_loops, binding_zone, molecule=cgl.MIRNA
             )
@@ -40,11 +40,11 @@ def test_get_substructure_loops_from_list(
     for interaction in interactions[cgl.PAIR_FIELDS]:
         _, mir = interaction
         precursor = precursors_consverter[mir]
-        binding_folder = cgl.paths.BINDING_FOLDER
+        binding_dir = cgl.paths.BINDING_DIR
         mir_loops = cgl.read_2d_structure_loops(
-            cgl.paths.MIRNA_LOOPS_FOLDER, precursor
+            cgl.paths.MIRNA_LOOPS_DIR, precursor
         )
-        binding_zone = cgl.read_binding_zone(binding_folder, interaction)
+        binding_zone = cgl.read_binding_zone(binding_dir, interaction)
         loops_list.append(mir_loops)
         binding_list.append(binding_zone)
 
@@ -72,11 +72,11 @@ def test_gen_substructure_loops_dict(
     for interaction in interactions[cgl.PAIR_FIELDS]:
         _, mir = interaction
         precursor = precursors_consverter[mir]
-        binding_folder = cgl.paths.BINDING_FOLDER
+        binding_dir = cgl.paths.BINDING_DIR
         mir_loops = cgl.read_2d_structure_loops(
-            cgl.paths.MIRNA_LOOPS_FOLDER, precursor
+            cgl.paths.MIRNA_LOOPS_DIR, precursor
         )
-        binding_zone = cgl.read_binding_zone(binding_folder, interaction)
+        binding_zone = cgl.read_binding_zone(binding_dir, interaction)
         loops_list.append(mir_loops)
         binding_list.append(binding_zone)
 

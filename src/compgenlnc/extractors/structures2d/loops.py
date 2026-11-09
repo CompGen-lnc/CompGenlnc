@@ -15,7 +15,7 @@ from compgenlnc.fileman.fasta_manager import iter_seq_ss
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.fileman.loops_manager import (
     read_2d_structure_loops,
-    read_2d_structure_loops_from_folder,
+    read_2d_structure_loops_from_dir,
 )
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 
@@ -24,17 +24,17 @@ if TYPE_CHECKING:
 
 
 def extract_2d_structure_loops(
-    loops_folder: StrPath, record: SeqSSRecord
+    loops_dir: StrPath, record: SeqSSRecord
 ) -> float:
-    loops_folder = Path(loops_folder).resolve()
-    if loops_folder.exists():
-        files = os.listdir(loops_folder)
+    loops_dir = Path(loops_dir).resolve()
+    if loops_dir.exists():
+        files = os.listdir(loops_dir)
         if f"{LOOPS_PREFIX}{record.id}.dat" in files:
-            return read_2d_structure_loops(loops_folder, record.id).energy
+            return read_2d_structure_loops(loops_dir, record.id).energy
     else:
-        loops_folder.mkdir(parents=True, exist_ok=True)
+        loops_dir.mkdir(parents=True, exist_ok=True)
 
-    filename = loops_folder / f"{LOOPS_PREFIX}{record.id}.dat"
+    filename = loops_dir / f"{LOOPS_PREFIX}{record.id}.dat"
     with open(filename, "w") as out_file:
         try:
             fc = RNA.fold_compound(str(record.seq), None, RNA.OPTION_EVAL_ONLY)
@@ -46,31 +46,31 @@ def extract_2d_structure_loops(
 
 
 def extract_2d_structure_loops_from_list(
-    loops_folder: StrPath,
+    loops_dir: StrPath,
     records: Iterable[SeqSSRecord],
 ) -> NDArray[np.float32]:
     energy_list = []
     for record in records:
-        energy_list.append(extract_2d_structure_loops(loops_folder, record))
+        energy_list.append(extract_2d_structure_loops(loops_dir, record))
 
     return np.array(energy_list, dtype=np.float32)
 
 
-def extract_2d_structure_loops_from_folder(
-    loops_folder: StrPath,
-    seq_ss_folder: StrPath,
+def extract_2d_structure_loops_from_dir(
+    loops_dir: StrPath,
+    seq_ss_dir: StrPath,
     *,
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> NDArray[np.float32]:
     return extract_2d_structure_loops_from_list(
-        loops_folder, iter_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+        loops_dir, iter_seq_ss(seq_ss_dir, keep=keep, exclude=exclude)
     )
 
 
 def gen_loops_dict(
     dict_file: StrPath,
-    loops_folder: StrPath,
+    loops_dir: StrPath,
     records: Collection[SeqSSRecord],
 ) -> None:
     send_msg("Generating loops dictionary\n")
@@ -92,10 +92,10 @@ def gen_loops_dict(
     desc = "  Calculating loops"
     records = track_progress(records, desc, total, "ss", initial)
 
-    extract_2d_structure_loops_from_list(loops_folder, records)
+    extract_2d_structure_loops_from_list(loops_dir, records)
     id_list = set(rec.id for rec in records)
     loops_list = list(
-        read_2d_structure_loops_from_folder(loops_folder, keep=id_list)
+        read_2d_structure_loops_from_dir(loops_dir, keep=id_list)
     )
     keys = (counter.rna for counter in loops_list)
     values = (counter.loops_vectorized for counter in loops_list)
@@ -104,9 +104,9 @@ def gen_loops_dict(
     send_msg("  Loops dictionary generated\n")
 
 
-def gen_loops_dict_from_folder(
+def gen_loops_dict_from_dir(
     dict_file: StrPath,
-    loops_folder: StrPath,
+    loops_dir: StrPath,
     *,
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
@@ -120,9 +120,7 @@ def gen_loops_dict_from_folder(
             exclude = set(exclude) | keys
 
     loops_list = list(
-        read_2d_structure_loops_from_folder(
-            loops_folder, keep=keep, exclude=exclude
-        )
+        read_2d_structure_loops_from_dir(loops_dir, keep=keep, exclude=exclude)
     )
     values = (counter.loops_vectorized for counter in loops_list)
     if keep:

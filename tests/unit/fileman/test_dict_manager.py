@@ -8,30 +8,30 @@ import compgenlnc as cgl
     "dict_gen, args, type_, expected_factory",
     [
         (
-            cgl.gen_ctd_dict_from_folder,
+            cgl.gen_ctd_dict_from_dir,
             [],
             np.float32,
             lambda: {
                 record.id: cgl.get_ctd(record.seq)
-                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
+                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_DIR)
             },
         ),
         (
-            cgl.gen_kmer_dict_from_folder,
+            cgl.gen_kmer_dict_from_dir,
             [3],
             np.float32,
             lambda: {
                 record.id: cgl.get_kmer(record.seq, 3)
-                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
+                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_DIR)
             },
         ),
         (
-            cgl.gen_kmer_dict_from_folder,
+            cgl.gen_kmer_dict_from_dir,
             [4],
             np.float32,
             lambda: {
                 record.id: cgl.get_kmer(record.seq, 4)
-                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_FOLDER)
+                for record in cgl.iter_seq_ss(cgl.paths.MIRNA_SEQ_SS_DIR)
             },
         ),
     ],
@@ -39,7 +39,7 @@ import compgenlnc as cgl
 def test_load_dict(dict_gen, args, type_, expected_factory, tmp_path):
     expected = expected_factory()
     filename = tmp_path / "example.dict"
-    dict_gen(filename, cgl.paths.MIRNA_SEQ_SS_FOLDER, *args)
+    dict_gen(filename, cgl.paths.MIRNA_SEQ_SS_DIR, *args)
     assert filename.exists()
     dict_ = cgl.load_dict(filename, type_)
     assert set(dict_.keys()) == set(expected.keys())

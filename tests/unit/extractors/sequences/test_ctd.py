@@ -96,8 +96,8 @@ def test_get_ctd(seq, expected):
 
 def test_get_ctd_by_name(example_id_list):
     for id_ in example_id_list:
-        ctd = cgl.get_ctd_by_name(cgl.paths.MIRNA_SEQ_SS_FOLDER, id_)
-        seq = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_FOLDER, id_)
+        ctd = cgl.get_ctd_by_name(cgl.paths.MIRNA_SEQ_SS_DIR, id_)
+        seq = cgl.read_sequence(cgl.paths.MIRNA_SEQ_SS_DIR, id_)
         expected = cgl.get_ctd(seq)
         assert np.array_equal(ctd, expected)
 
@@ -116,10 +116,10 @@ def test_gen_ctd_dict(seq_ss_list, tmp_path):
     )
 
 
-def test_gen_ctd_dict_from_folder(example_id_filter, tmp_path):
+def test_gen_ctd_dict_from_dir(example_id_filter, tmp_path):
     dict_file = tmp_path / "ctd.dict"
-    cgl.gen_ctd_dict_from_folder(
-        dict_file, cgl.paths.MIRNA_SEQ_SS_FOLDER, keep=example_id_filter
+    cgl.gen_ctd_dict_from_dir(
+        dict_file, cgl.paths.MIRNA_SEQ_SS_DIR, keep=example_id_filter
     )
     assert dict_file.exists()
 
@@ -128,7 +128,7 @@ def test_gen_ctd_dict_from_folder(example_id_filter, tmp_path):
         [
             np.array_equal(
                 ctd_dict[id_],
-                cgl.get_ctd_by_name(cgl.paths.MIRNA_SEQ_SS_FOLDER, id_),
+                cgl.get_ctd_by_name(cgl.paths.MIRNA_SEQ_SS_DIR, id_),
             )
             for id_ in example_id_filter
         ]

@@ -118,13 +118,13 @@ def gen_substructure_loops_dict(
 def gen_substructure_loops_dict_from_files(
     dict_file: StrPath,
     interactions_file: StrPath,
-    loops_folder: StrPath,
-    binding_folder: StrPath,
+    loops_dir: StrPath,
+    binding_dir: StrPath,
     *,
     molecule: str = LNCRNA,
 ) -> None:
-    loops_folder = Path(loops_folder).resolve()
-    binding_folder = Path(binding_folder).resolve()
+    loops_dir = Path(loops_dir).resolve()
+    binding_dir = Path(binding_dir).resolve()
 
     interactions = load_interactions(interactions_file)
     interactions.sort(order=PAIR_FIELDS)
@@ -137,8 +137,8 @@ def gen_substructure_loops_dict_from_files(
 
     def iter_interactions_loops():
         for key in keys:
-            loops_filename = loops_folder / f"{LOOPS_PREFIX}{key}.dat"
-            binding_filename = binding_folder / f"{BINDING_PREFIX}{key}.dat"
+            loops_filename = loops_dir / f"{LOOPS_PREFIX}{key}.dat"
+            binding_filename = binding_dir / f"{BINDING_PREFIX}{key}.dat"
             if not loops_filename.exists() or not binding_filename.exists():
                 continue
             binding_zone = read_binding_zone(binding_filename)
