@@ -31,11 +31,11 @@ def get_ctd(seq: SeqLike, /) -> NDArray[np.float32]:
     Parameters
     ----------
     seq : SeqLike
-        The RNA sequence string on ATCG alphabet.
+        The RNA sequence string on AUCG alphabet.
 
     Returns
     -------
-    ndarray of float32
+    numpy.ndarray of float32
         A 1D array with the CTD of the sequence.
     """
     if isinstance(seq, SeqSSRecord):
@@ -103,7 +103,7 @@ def get_ctd_by_name(dir: StrPath, id_: str) -> NDArray[np.float32]:
 
     Returns
     -------
-    ndarray of float32
+    numpy.ndarray of float32
         A 1D array with the CTD of the sequence.
     """
     dir = Path(dir).resolve()
@@ -117,19 +117,19 @@ def gen_ctd_dict(
     *,
     overwrite: bool = False,
 ) -> None:
-    """Generate a dictionary of CTD from a set of RNA sequences.
+    """Generate a dictionary of CTD from an RNA sequence set.
 
     Parameters
     ----------
     dict_file : str or os.PathLike
         Path of the file where the dictionary will be saved.
     records : collection of SeqSSRecord
-        Set that contains all the sequence records to save into the
+        Set containing all the sequence records to save into the
         dictionary.
     overwrite : bool, optional
-        Append the items to the existing dictionary if `True`, ignoring
-        those that have already been processed. Otherwise, replace the
-        existing dictionary. Default: `False`.
+        Replace the existing dictionary if `True` in case there is.
+        Otherwise, append the items to the existing dictionary, ignoring
+        those that have already been processed. Default: `False`.
     """
     send_msg("Generating CTD dictionary\n")
     records = list(records)
@@ -173,15 +173,15 @@ def gen_ctd_dict_from_fasta(
     fasta_file : str or os.PathLike
         Path of the FASTA file with the sequences.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
     overwrite : bool, optional
-        Append the items to the existing dictionary if `True`, ignoring
-        those that have already been processed. Otherwise, replace the
-        existing dictionary. Default: `False`.
+        Replace the existing dictionary if `True` in case there is.
+        Otherwise, append the items to the existing dictionary, ignoring
+        those that have already been processed. Default: `False`.
     """
     records = load_fasta(fasta_file, mode=SEQ_MODE, keep=keep, exclude=exclude)
     gen_ctd_dict(dict_file, records, overwrite=overwrite)
@@ -204,15 +204,15 @@ def gen_ctd_dict_from_dir(
     seq_ss_dir : str or os.PathLike
         Path of the directory where the seq+ss files are.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
     overwrite : bool, optional
-        Append the items to the existing dictionary if `True`, ignoring
-        those that have already been processed. Otherwise, replace the
-        existing dictionary. Default: `False`.
+        Replace the existing dictionary if `True` in case there is.
+        Otherwise, append the items to the existing dictionary, ignoring
+        those that have already been processed. Default: `False`.
     """
     records = load_seq_ss(seq_ss_dir, keep=keep, exclude=exclude)
     gen_ctd_dict(dict_file, records, overwrite=overwrite)

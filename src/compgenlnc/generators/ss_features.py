@@ -29,6 +29,19 @@ def gen_ss_features(
     *,
     rna: str,
 ) -> None:
+    """Generate 2D structure feature for a record set.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of records with the 2D structures to process.
+    dicts_dir : str or os.PathLike
+        Path of the directory to store the dictionaries.
+    loops_dir : str or os.PathLike
+        Path of the directory with the loops files.
+    rna : str
+        The RNA type to extract the 2D structure features.
+    """
     dicts_dir = Path(dicts_dir).resolve()
     dicts_dir.parent.mkdir(parents=True, exist_ok=True)
 
@@ -36,6 +49,7 @@ def gen_ss_features(
     gen_loops_dict(loops_path, loops_dir, records)
 
     def path_to_npy(filename):
+        """Transform a dict path to a numpy path in the dataset path."""
         return (DATASET_DIR / f"{rna}_{filename}").with_suffix(".npy")
 
     loops_npy = path_to_npy(LOOPS_DICT)
@@ -43,6 +57,13 @@ def gen_ss_features(
 
 
 def gen_lncrna_ss_features(records: Sequence[SeqSSRecord]) -> None:
+    """Generate 2D structure feature for lncRNA records.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of lncRNA records with the 2D structures to process.
+    """
     gen_ss_features(
         records,
         LNCRNA_DICTS_DIR,
@@ -52,6 +73,13 @@ def gen_lncrna_ss_features(records: Sequence[SeqSSRecord]) -> None:
 
 
 def gen_mirna_ss_features(records: Sequence[SeqSSRecord]) -> None:
+    """Generate 2D structure feature for miRNA records.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of miRNA records with the 2D structures to process.
+    """
     gen_ss_features(
         records,
         PRE_MIRNA_DICTS_DIR,
@@ -64,5 +92,14 @@ def gen_ss_database(
     lnc_records: Sequence[SeqSSRecord],
     mir_records: Sequence[SeqSSRecord],
 ) -> None:
+    """Generate 2D structure features for lncRNA and miRNA records.
+
+    Parameters
+    ----------
+    lnc_records : sequence of SeqSSRecord
+        Sequence of lncRNA records with the 2D structures to process.
+    mir_records : sequence of SeqSSRecord
+        Sequence of miRNA records with the 2D structures to process.
+    """
     gen_lncrna_ss_features(lnc_records)
     gen_mirna_ss_features(mir_records)

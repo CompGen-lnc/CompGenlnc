@@ -20,6 +20,19 @@ if TYPE_CHECKING:
 
 
 def get_adjacency_matrix(ss: SSLike, /) -> NDArray[np.bool]:
+    """Get the adjacency matrix of a RNA structure.
+
+    Parameters
+    ----------
+    ss : SSLike
+        The 2D structure string on dot-bracket notation.
+
+    Returns
+    -------
+    numpy.ndarray of bool
+        A symmetric 2D matrix that indicates the paired nucleotides in
+        the structure.
+    """
     if isinstance(ss, SeqSSRecord):
         ss = ss.ss
 
@@ -36,22 +49,50 @@ def get_adjacency_matrix(ss: SSLike, /) -> NDArray[np.bool]:
 
 
 def get_adjacency_matrix_list(
-    ss_list: Iterable[SSLike], /
+    structures: Iterable[SSLike], /
 ) -> Iterator[NDArray[np.bool]]:
-    for ss in ss_list:
+    """Get the adjacency matrices of a list of RNA structures.
+
+    Parameters
+    ----------
+    structures : iterable object of SSLike
+        Group of 2D structure strings on dot-bracket notation.
+
+    Yields
+    ------
+    numpy.ndarray of bool
+        A symmetric 2D matrix that indicates the paired nucleotides in
+        the structure.
+    """
+    for ss in structures:
         yield get_adjacency_matrix(ss)
 
 
 def normalize_matrix_list(
-    matrix_list: Iterable[NDArray[np.bool]],
+    matrices: Iterable[NDArray[np.bool]],
     /,
     normal_size: int | None = None,
 ) -> Iterator[NDArray[np.float32]]:
+    """Normalize a list of adjacency matrix.
+
+    Parameters
+    ----------
+    matrices : iterable object of numpy.ndarray of bool
+        Group of adjacency matrices.
+    normal_size : int, optional
+        Size used to resize the adjacency matrices. If `None`, it will
+        use the mean length of the matrices. Default: `None`.
+
+    Yields
+    ------
+    numpy.ndarray of bool
+        A normalized 2D matrix rescaled with bilinear interpolation.
+    """
     if normal_size is None:
-        matrix_list, matrix_copy = tee(matrix_list)
+        matrices, matrix_copy = tee(matrices)
         normal_size = math.ceil(np.mean([len(mat) for mat in matrix_copy]))
 
-    for mat in matrix_list:
+    for mat in matrices:
         yield cv2.resize(
             mat.astype(np.uint8),
             (normal_size, normal_size),
@@ -64,6 +105,19 @@ def gen_normalized_matrix_dict(
     records: Iterable[SeqSSRecord],
     normal_size: int | None = None,
 ) -> None:
+    """Generate a dictionary of normalized matrices.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    records : iterable object of SeqSSRecord
+        Set containing all the 2D structure records to save into the
+        dictionary.
+    normal_size : int, optional
+        Size used to resize the adjacency matrices. If `None`, it will
+        use the mean length of the matrices. Default: `None`.
+    """
     dict_file = Path(dict_file).resolve()
     dict_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -88,6 +142,21 @@ def gen_normalized_matrix_dict_from_fasta(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
+    """Generate a dictionary of normalized matrices from a FASTA file.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    fasta_file : str or os.PathLike
+        Path of the FASTA file with the 2D structures.
+    normal_size : int, optional
+        Size used to resize the adjacency matrices. If `None`, it will
+        use the mean length of the matrices. Default: `None`.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    """
     records = iter_fasta(fasta_file, mode="ss", keep=keep)
     gen_normalized_matrix_dict(dict_file, records, normal_size)
 
@@ -99,5 +168,20 @@ def gen_normalized_matrix_dict_from_dir(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
+    """Generate a dictionary of normalized matrices from seq+ss files.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    seq_ss_dir : str or os.PathLike
+        Path of the directory where the seq+ss files are.
+    normal_size : int, optional
+        Size used to resize the adjacency matrices. If `None`, it will
+        use the mean length of the matrices. Default: `None`.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    """
     records = iter_seq_ss(seq_ss_dir, keep=keep)
     gen_normalized_matrix_dict(dict_file, records, normal_size)

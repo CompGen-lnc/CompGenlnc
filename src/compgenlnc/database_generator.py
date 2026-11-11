@@ -81,10 +81,46 @@ def load_source_data(
     pos_interactions_csv: StrPath | None = None,
     neg_interactions_csv: StrPath | None = None,
 ) -> None:
+    """Load the base files to the data directory.
+
+    Parameters
+    ----------
+    base_dir : str or os.PathLike, optional
+        Path of the directory containing the base files to load. Those
+        files do not overwrite paths defined below. Default: `None`.
+    lnc_seq_fasta : str or os.PathLike, optional
+        Path of the FASTA file with the lncRNA sequences.
+        Default: `None`.
+    lnc_ss_fasta : str or os.PathLike, optional
+        Path of the FASTA file with the lncRNA 2D structures.
+        Default: `None`.
+    pre_mir_seq_fasta : str or os.PathLike, optional
+        Path of the FASTA file with the precursor miRNA sequences.
+        Default: `None`.
+    mat_mirna_seq_fasta : str or os.PathLike, optional
+        Path of the FASTA file with the mature miRNA sequences.
+        Default: `None`.
+    mirna_ss_fasta : str or os.PathLike, optional
+        Path of the FASTA file with the precursor miRNA 2D structures.
+        Default: `None`.
+    data_mirna_csv : str or os.PathLike, optional
+        Path of the CSV file with the mature-precursor miRNA pairs.
+        Default: `None`.
+    interactions_csv : str or os.PathLike, optional
+        Path of the CSV file with the interaction tuples. Default:
+        `None`.
+    positive_interactions_csv : str or os.PathLike, optional
+        Path of the CSV file with the positive interaction pairs.
+        Default: `None`.
+    negative_interactions_csv : str or os.PathLike, optional
+        Path of the CSV file with the negative interaction pairs.
+        Default: `None`.
+    """
     if base_dir is not None:
         base_dir = Path(base_dir).resolve()
 
         def get_path(name, default):
+            """Get the path from `base_dir` if not specified."""
             if default is not None:
                 return default
             return base_dir / name
@@ -104,6 +140,7 @@ def load_source_data(
         )
 
     def load_fasta_if_exists(old_fasta, new_fasta, mode):
+        """Load a FASTA file if is specified."""
         if old_fasta is not None and Path(old_fasta).resolve().exists():
             records = iter_fasta(old_fasta, mode=mode)
             save_fasta(new_fasta, records, mode=mode, overwrite=True)
@@ -115,6 +152,7 @@ def load_source_data(
     load_fasta_if_exists(mir_ss_fasta, MIRNA_SS_FASTA, mode=SS_MODE)
 
     def load_csv_if_exists(old_csv, new_csv):
+        """Load a CSV file if is specified."""
         if old_csv is not None and Path(old_csv).resolve().exists():
             df = pd.read_csv(old_csv)
             Path(new_csv).resolve().parent.mkdir(parents=True, exist_ok=True)
@@ -130,7 +168,21 @@ def gen_source_data(
     filter_indexes: bool = True,
     keep_data: bool = True,
     max_size: int = math.inf,
-):
+) -> None:
+    """Generate the base files that were not specified.
+
+    Parameters
+    ----------
+    filter_indexes : bool, optional
+        Whether the data should contain only the RNAs and interactions
+        in the indexes. Default: `True`.
+    keep_data : bool, optional
+        Whether the data calculated should not be recalculated. Default:
+        `True`.
+    max_size : int, optional
+        The maximum size of RNAs to process. Default: infinite.
+    """
+    # Generate the CSV files that were not specified
     if not keep_data or not DATA_MIRNA.exists():
         gen_precursors_csv_from_files(
             DATA_MIRNA, MAT_MIRNA_FASTA, PRE_MIRNA_FASTA
@@ -148,11 +200,12 @@ def gen_source_data(
             lnc_list=lnc_list,
             mir_list=mir_list,
         )
+
+    # Generate the indexes
     if not keep_data or not INDEX_NPY.exists():
         gen_indexes_from_files(
             PAIRS_FILE, DATA_MIRNA, lnc_list=lnc_list, mir_list=mir_list
         )
-
     lnc_keep = pre_mir_keep = mir_keep = []
     if filter_indexes:
         indexes = load_indexes()
@@ -162,6 +215,8 @@ def gen_source_data(
         lnc_keep = set(lnc_keep)
         mir_keep = set(mir_keep)
         pre_mir_keep = set(indexes[PRECURSOR_FIELD])
+
+    # Generate the 2D structure FASTA and seq+ss files
     gen_fasta_2d(LNCRNA_FASTA, LNCRNA_SS_FASTA, keep=lnc_keep)
     gen_fasta_2d(PRE_MIRNA_FASTA, MIRNA_SS_FASTA, keep=pre_mir_keep)
     fasta_to_seq_ss(
@@ -171,6 +226,7 @@ def gen_source_data(
         PRE_MIRNA_FASTA, MIRNA_SS_FASTA, MIRNA_SEQ_SS_DIR, keep=pre_mir_keep
     )
 
+    # Generate the binding zone files
     interactions = load_interactions(PAIRS_FILE)
     miranda_exclude = binding_exclude = []
     str_interactions = ["_".join(inter[PAIR_FIELDS]) for inter in interactions]
@@ -201,7 +257,9 @@ def gen_source_data(
     )
 
 
-def gen_database():
+def gen_database() -> None:
+    """Generate the lncRNA-miRNA interaction database."""
+    # Generate the sequence and 2D structure features
     lnc_records = load_seq_ss(LNCRNA_SEQ_SS_DIR)
     pre_mir_records = load_seq_ss(MIRNA_SEQ_SS_DIR)
     mat_mir_records = load_fasta(MAT_MIRNA_FASTA)
@@ -212,6 +270,7 @@ def gen_database():
     pre_mir_records = index_precursor_mirna()
     mat_mir_records = index_mature_mirna()
 
+    # Generate the interaction features
     lnc_list = [rec.id for rec in iter_seq_ss(LNCRNA_SEQ_SS_DIR)]
     mat_mir_list = [rec.id for rec in iter_fasta(MAT_MIRNA_FASTA)]
     interactions = load_interactions(

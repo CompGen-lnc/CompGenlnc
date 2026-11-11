@@ -33,14 +33,31 @@ def get_substructure_loops(
     loop_counter: LoopCounter,
     binding_zone: BindingZone,
     *,
-    molecule: str = LNCRNA,
+    rna: str = LNCRNA,
 ) -> LoopCounter:
+    """Extract the loops of a 2D substructure.
+
+    Parameters
+    ----------
+    loops_counter : LoopCounter
+        Loops of the respective RNA 2D structure.
+    binding_zone : BindingZone
+        Binding zone of the interaction with 2D substructure ranges.
+    rna : str, optional
+        The RNA type to extract the 2D substructure loops. Default:
+        `LNCRNA`.
+
+    Returns
+    -------
+    LoopCounter
+        Loops of the 2D substructure.
+    """
     if not binding_zone:
         return LoopCounter("", [], 0)
     loops_arr = loop_counter.loops
-    if molecule == LNCRNA:
+    if rna == LNCRNA:
         start, end = binding_zone.lnc_start, binding_zone.lnc_end
-    if molecule == MIRNA:
+    if rna == MIRNA:
         start, end = binding_zone.mir_start, binding_zone.mir_end
     mask = (loops_arr[LOW_POSITION] >= start) & (
         loops_arr[HIGH_POSITION] <= end
@@ -53,12 +70,28 @@ def get_substructure_loops_from_list(
     loops_counters: Sequence[LoopCounter],
     binding_zones: Sequence[BindingZone],
     *,
-    molecule: str = LNCRNA,
+    rna: str = LNCRNA,
 ) -> Iterator[LoopCounter]:
+    """Extract the loops from a 2D substructure set.
+
+    Parameters
+    ----------
+    loops_counters : sequence of LoopCounter
+        Sequence of loops of respective RNA 2D structures.
+    binding_zones : sequence of BindingZone
+        Sequence of binding zones of interactions with 2D substructure
+        ranges.
+    rna : str, optional
+        The RNA type to extract the 2D substructure loops. Default:
+        `LNCRNA`.
+
+    Yields
+    ------
+    LoopCounter
+        Loops of the 2D substructure.
+    """
     for loop_counter, binding_zone in zip(loops_counters, binding_zones):
-        yield get_substructure_loops(
-            loop_counter, binding_zone, molecule=molecule
-        )
+        yield get_substructure_loops(loop_counter, binding_zone, rna=rna)
 
 
 def gen_substructure_loops_dict(
@@ -67,8 +100,25 @@ def gen_substructure_loops_dict(
     loops_counters: Sequence[LoopCounter],
     binding_zones: Sequence[BindingZone],
     *,
-    molecule: str = LNCRNA,
+    rna: str = LNCRNA,
 ) -> None:
+    """Generate a dictionary of 2D substructures loops.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    interactions : sequence of InteractionTuple
+        Sequence of tuples of the interactions to save.
+    loops_counters : sequence of LoopCounter
+        Sequence of loops of respective RNA 2D structures.
+    binding_zones : sequence of BindingZone
+        Sequence of binding zones of interactions with 2D substructure
+        ranges.
+    rna : str, optional
+        The RNA type to extract the 2D substructure loops. Default:
+        `LNCRNA`.
+    """
     send_msg("Generating loops dictionary\n")
     interactions = list(interactions)
     total = len(interactions)
@@ -99,7 +149,7 @@ def gen_substructure_loops_dict(
         send_msg("\r  Existing dictionary analyzed    \n")
 
     new_loops = get_substructure_loops_from_list(
-        loops_counters, binding_zones, molecule=molecule
+        loops_counters, binding_zones, rna=rna
     )
 
     initial = total - len(keys)
@@ -114,15 +164,30 @@ def gen_substructure_loops_dict(
     save_dict(dict_file, keys=keys, values=values)
 
 
-# Fix when precursors are mapped to mature miRNAs
 def gen_substructure_loops_dict_from_files(
     dict_file: StrPath,
     interactions_file: StrPath,
     loops_dir: StrPath,
     binding_dir: StrPath,
     *,
-    molecule: str = LNCRNA,
+    rna: str = LNCRNA,
 ) -> None:
+    """Generate a dictionary of 2D substructures loops.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    interactions_file : str or os.PathLike
+        Path of the CSV file with the interaction tuples.
+    loops_dir : str or os.PathLike
+        Path of the directory with the loops files.
+    binding_dir : str or os.PathLike
+        Path of the directory with the binding zone files.
+    rna : str, optional
+        The RNA type to extract the 2D substructure loops. Default:
+        `LNCRNA`.
+    """
     loops_dir = Path(loops_dir).resolve()
     binding_dir = Path(binding_dir).resolve()
 
@@ -146,7 +211,7 @@ def gen_substructure_loops_dict_from_files(
                 yield [-1] * 3 + [0] * 4
             loop_counter = read_2d_structure_loops(loops_filename)
             yield get_substructure_loops(
-                loop_counter, binding_zone, molecule=molecule
+                loop_counter, binding_zone, rna=rna
             ).loops_vectorized
 
     save_dict(dict_file, keys=keys, values=iter_interactions_loops())

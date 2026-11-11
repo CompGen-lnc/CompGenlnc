@@ -14,7 +14,23 @@ if TYPE_CHECKING:
 
 
 def read_2d_structure_loops(dir: StrPath, id_: str) -> LoopCounter:
+    """Read the 2D structure loops of a RNA.
+
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        The directory containing the loops file.
+    id_ : str
+        The ID of the RNA.
+
+    Returns
+    -------
+    LoopCounter
+        The loops for the 2D structure of the RNA.
+    """
+
     def match_loop(line: str) -> tuple[bool, tuple[str, int, int, int]]:
+        """Match a loop line in the loops file."""
         m = LOOP_RE.match(line)
         if m:
             return True, (
@@ -48,6 +64,24 @@ def read_2d_structure_loops_from_dir(
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> Iterator[LoopCounter]:
+    """Read the 2D structure loops from loops files.
+
+    Parameters
+    ----------
+    loops_dir : str or os.PathLike
+        The directory containing the loops files.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
+
+    Yields
+    ------
+    LoopCounter
+        The loops for the 2D structure of the RNA.
+    """
     for filename in sorted(os.listdir(loops_dir)):
         id_ = filename[len(LOOPS_PREFIX) : -4]
         filtered = keep and id_ not in keep or exclude and id_ in exclude

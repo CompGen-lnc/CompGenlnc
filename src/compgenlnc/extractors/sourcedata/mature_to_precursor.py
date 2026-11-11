@@ -15,6 +15,20 @@ if TYPE_CHECKING:
 def extract_precursor(
     mature: SeqSSRecord, /, precursors: Collection[SeqSSRecord]
 ) -> str:
+    """Deduce the precursor miRNA for a mature miRNA.
+
+    Parameters
+    ----------
+    mature : SeqSSRecord
+       The mature miRNA record.
+    precursors : collection of SeqSSRecord
+        Set of precursor miRNA records.
+
+    Returns
+    -------
+    str
+        The precursor miRNA ID.
+    """
     mat_id, mat_seq = mature.id, str(mature.seq)
 
     if not mat_id.endswith("p"):
@@ -34,6 +48,17 @@ def gen_precursors_csv(
     matures: Sequence[SeqSSRecord],
     precursors: Collection[SeqSSRecord],
 ) -> None:
+    """Generate a CSV file with miRNA associations.
+
+    Parameters
+    ----------
+    csv : str or os.PathLike
+        Path of the CSV file where associations will be saved.
+    matures : sequence of SeqSSRecord
+        Sequence of mature miRNA records.
+    precursors : collection of SeqSSRecord
+        Set of precursor miRNA records.
+    """
     precursors = [extract_precursor(mir, precursors) for mir in matures]
     csv_dict = {
         "Mature": [rec.id for rec in matures],
@@ -48,6 +73,17 @@ def gen_precursors_csv_from_files(
     mature_fasta: StrPath,
     precursor_fasta: StrPath,
 ) -> None:
+    """Generate a CSV file with miRNA associations from FASTA files.
+
+    Parameters
+    ----------
+    csv : str or os.PathLike
+        Path of the CSV file where associations will be saved.
+    mature_fasta : str or os.PathLike
+        Path of the FASTA file containing mature miRNA sequences.
+    precursor_fasta : str or os.PathLike
+        Path of the FASTA file containing precursor miRNA sequences.
+    """
     matures = load_fasta(mature_fasta)
     precursors = load_fasta(precursor_fasta)
     gen_precursors_csv(csv, matures, precursors)

@@ -20,6 +20,21 @@ if TYPE_CHECKING:
 def read_binding_zone(
     binding_dir: StrPath, interaction: InteractionPair
 ) -> BindingZone:
+    """Read the binding zone of an interaction.
+
+    Parameters
+    ----------
+    binding_dir : str or os.PathLike
+        The directory containing the binding zone file.
+    interaction : InteractionPair
+        The interaction for which to read the binding zone.
+
+    Returns
+    -------
+    BindingZone
+        An object containing the ranges where the lncRNA and miRNA
+        interact.
+    """
     binding_dir = Path(binding_dir).resolve()
     lnc, mir = interaction[PAIR_FIELDS]
     filename = binding_dir / f"{BINDING_PREFIX}{lnc}_{mir}.dat"
@@ -34,9 +49,24 @@ def read_binding_zone(
     )
 
 
-def iter_binding_zones(
+def read_binding_zones_from_list(
     binding_dir: StrPath, interactions: Iterable[InteractionPair]
 ) -> Iterator[BindingZone]:
+    """Read the binding zones from an interaction set.
+
+    Parameters
+    ----------
+    binding_dir : str or os.PathLike
+        The directory containing the binding zone files.
+    interactions : iterable object of InteractionPair
+        Group of interactions to read the binding zones from.
+
+    Returns
+    -------
+    Generator of BindingZone
+        An iterator of BindingZone containing the ranges where the
+        lncRNA and miRNA interact in each interaction.
+    """
     return (
         read_binding_zone(binding_dir, interaction)
         for interaction in interactions
@@ -50,14 +80,34 @@ def get_subrecord(
     *,
     rna: str = LNCRNA,
 ) -> SeqSSRecord:
+    """Get the subrecord for an RNA in an interaction.
+
+    Parameters
+    ----------
+    record : SeqSSRecord
+        The RNA record to get the subrecord from.
+    interaction : InteractionPair
+        The interaction pair to identify the subrecord.
+    binding_zone : BindingZone
+        The binding zone to identify the subrecord.
+    rna : str, optional
+        The RNA type to identify the subrecord. Default: `LNCRNA`.
+
+    Returns
+    -------
+    SeqSSRecord
+        The subrecord for the RNA in the interaction.
+    """
     if rna == LNCRNA:
-        b_range = binding_zone._lnc_range
+        start = binding_zone.lnc_start - 1
+        stop = binding_zone.lnc_end
     elif rna == MIRNA:
-        b_range = binding_zone._mir_range
+        start = binding_zone.mir_start - 1
+        stop = binding_zone.mir_end
     return SeqSSRecord(
         "_".join(interaction[PAIR_FIELDS]),
-        record.seq[b_range.start : b_range.stop],
-        record.ss[b_range.start : b_range.stop],
+        record.seq[start:stop],
+        record.ss[start:stop],
     )
 
 
@@ -68,6 +118,25 @@ def get_subrecord_list(
     *,
     rna: str = LNCRNA,
 ) -> Iterator[SeqSSRecord]:
+    """Get the subrecord for an RNA in an interaction.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of RNA records to get the subrecords from.
+    interactions : sequence of InteractionPair
+        Sequence of interaction pairs to identify the subrecords.
+    binding_zones : sequence of BindingZone
+        Sequence of binding zones to identify the subrecords.
+    rna : str, optional
+        The RNA type to identify the subrecords. Default: `LNCRNA`.
+
+    Returns
+    -------
+    Generator of SeqSSRecord
+        An iterator that yields the subrecords for the RNAs in the
+        interactions.
+    """
     return (
         get_subrecord(*args, rna=rna)
         for args in zip(records, interactions, binding_zones)
@@ -81,5 +150,24 @@ def get_subrecord_list_from_dir(
     *,
     rna: str = LNCRNA,
 ) -> Iterator[SeqSSRecord]:
-    binding_zones = iter_binding_zones(binding_dir, interactions)
+    """Get the subrecord for an RNA in an interaction.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of RNA records to get the subrecords from.
+    interactions : sequence of InteractionPair
+        Sequence of interaction pairs to identify the subrecords.
+    binding_dir : str or os.PathLike
+        Path of the directory containing the binding zone files.
+    rna : str, optional
+        The RNA type to identify the subrecords. Default: `LNCRNA`.
+
+    Returns
+    -------
+    Generator of SeqSSRecord
+        An iterator that yields the subrecords for the RNAs in the
+        interactions.
+    """
+    binding_zones = read_binding_zones_from_list(binding_dir, interactions)
     return get_subrecord_list(records, interactions, binding_zones, rna=rna)

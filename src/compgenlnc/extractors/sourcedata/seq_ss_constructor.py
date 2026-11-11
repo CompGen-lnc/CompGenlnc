@@ -47,13 +47,13 @@ def fasta_to_seq_ss(
     Parameters
     ----------
     src_seq : str or os.PathLike
-        Path of the FASTA file that contains the RNA sequences.
+        Path of the FASTA file containing the RNA sequences.
     src_ss : str or os.PathLike
-        Path of the FASTA file that contains the RNA structures.
+        Path of the FASTA file containing the RNA structures.
     dst_dir : str or os.PathLike
         Path of the directory where the seq+ss files will be saved.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
         Default: `None`.
     """
     src_seq = Path(src_seq).resolve()

@@ -19,7 +19,7 @@ def test_get_substructure_loops(
             )
             binding_zone = cgl.read_binding_zone(binding_dir, interaction)
             sub_loops = cgl.get_substructure_loops(
-                mir_loops, binding_zone, molecule=cgl.MIRNA
+                mir_loops, binding_zone, rna=cgl.MIRNA
             )
             start, end = binding_zone.mir_start, binding_zone.mir_end
             mask = (mir_loops.loops[cgl.LOW_POSITION] >= start) & (
@@ -49,13 +49,13 @@ def test_get_substructure_loops_from_list(
         binding_list.append(binding_zone)
 
     new_loops_list = cgl.get_substructure_loops_from_list(
-        loops_list, binding_list, molecule=cgl.MIRNA
+        loops_list, binding_list, rna=cgl.MIRNA
     )
     for sub_loops, mir_loops, binding_zone in zip(
         new_loops_list, loops_list, binding_list
     ):
         expected = cgl.get_substructure_loops(
-            mir_loops, binding_zone, molecule=cgl.MIRNA
+            mir_loops, binding_zone, rna=cgl.MIRNA
         )
         assert sub_loops == expected
 
@@ -85,7 +85,7 @@ def test_gen_substructure_loops_dict(
         interaction_list,
         loops_list,
         binding_list,
-        molecule=cgl.MIRNA,
+        rna=cgl.MIRNA,
     )
     loops_dict = cgl.load_dict(dict_path)
     for interaction, mir_loops, binding_zone in zip(
@@ -93,7 +93,7 @@ def test_gen_substructure_loops_dict(
     ):
         if interaction[cgl.IS_POSITIVE_FIELD]:
             expected = cgl.get_substructure_loops(
-                mir_loops, binding_zone, molecule=cgl.MIRNA
+                mir_loops, binding_zone, rna=cgl.MIRNA
             ).loops_vectorized
         else:
             expected = np.array([-1] * 3 + [0] * 4)

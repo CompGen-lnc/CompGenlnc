@@ -31,14 +31,14 @@ def get_kmer(seq: SeqLike, /, k: int) -> NDArray[np.float32]:
     Parameters
     ----------
     seq : SeqLike
-        The RNA sequence string on ATCG alphabet.
+        The RNA sequence string on AUCG alphabet.
     k : int
         Maximum length for k-mers. It calculates k-mers with length from
         1 to `k`, included.
 
     Returns
     -------
-    ndarray of float32
+    numpy.ndarray of float32
         A 1D array with the k-mers of the sequence.
     """
     if isinstance(seq, SeqSSRecord):
@@ -48,8 +48,8 @@ def get_kmer(seq: SeqLike, /, k: int) -> NDArray[np.float32]:
 
     seq = seq.upper().replace("T", "U")
 
-    # Get the kmers of length n for the sequence
     def get_nmer(seq: str, n: int) -> NDArray[np.float32]:
+        """Get the kmers of length n for the sequence."""
         if not seq or len(seq) < n:
             return np.array([0] * 4**n, np.float32)
         kmers = Counter((seq[i : i + n] for i in range(len(seq) - n + 1)))
@@ -77,7 +77,7 @@ def get_kmer_by_name(dir: StrPath, id_: str, k: int) -> NDArray[np.float32]:
 
     Returns
     -------
-    ndarray of float32
+    numpy.ndarray of float32
         A 1D array with the k-mers of the sequence.
     """
     dir = Path(dir).resolve()
@@ -93,22 +93,22 @@ def gen_kmer_dict(
     *,
     overwrite: bool = False,
 ) -> None:
-    """Generate a dictionary of k-mers from a set of RNA sequences.
+    """Generate a dictionary of k-mers from an RNA sequence set.
 
     Parameters
     ----------
     dict_file : str or os.PathLike
         Path of the file where the dictionary will be saved.
     records : collection of SeqSSRecord
-        Set that contains all the sequence records to save into the
+        Set containing all the sequence records to save into the
         dictionary.
     k : int
         Maximum length for k-mers. It calculates k-mers with length from
         1 to `k`, included.
     overwrite : bool, optional
-        Append the items to the existing dictionary if `True`, ignoring
-        those that have already been processed. Otherwise, replace the
-        existing dictionary. Default: `False`.
+        Replace the existing dictionary if `True` in case there is.
+        Otherwise, append the items to the existing dictionary, ignoring
+        those that have already been processed. Default: `False`.
     """
     send_msg("Generating k-mer dictionary\n")
     records = list(records)
@@ -156,15 +156,15 @@ def gen_kmer_dict_from_fasta(
         Maximum length for k-mers. It calculates k-mers with length from
         1 to `k`, included.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
     overwrite : bool, optional
-        Append the items to the existing dictionary if `True`, ignoring
-        those that have already been processed. Otherwise, replace the
-        existing dictionary. Default: `False`.
+        Replace the existing dictionary if `True` in case there is.
+        Otherwise, append the items to the existing dictionary, ignoring
+        those that have already been processed. Default: `False`.
     """
     records = load_fasta(
         fasta_file,
@@ -196,15 +196,15 @@ def gen_kmer_dict_from_dir(
         Maximum length for k-mers. It calculates k-mers with length from
         1 to `k`, included.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
     overwrite : bool, optional
-        Append the items to the existing dictionary if `True`, ignoring
-        those that have already been processed. Otherwise, replace the
-        existing dictionary. Default: `False`.
+        Replace the existing dictionary if `True` in case there is.
+        Otherwise, append the items to the existing dictionary, ignoring
+        those that have already been processed. Default: `False`.
     """
     records = load_seq_ss(seq_ss_dir, keep=keep, exclude=exclude)
     gen_kmer_dict(dict_file, records, k, overwrite=overwrite)

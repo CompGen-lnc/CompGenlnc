@@ -20,15 +20,15 @@ def load_dict(
     Parameters
     ----------
     dict_file : str or os.PathLike
-        Path of the file that contains the dictionary.
+        Path of the file containing the dictionary.
     val_type : type, optional
         Type of the feature vectors contained in the dictionary.
         Default: `float32`.
 
     Returns
     -------
-    dict
-        Dictionary that contains all vectors associated to their RNA ID.
+    dict of str to numpy.ndarray
+        Dictionary containing all vectors associated to their RNA ID.
     """
     dict_file = Path(dict_file).resolve()
 
@@ -61,28 +61,27 @@ def save_dict(
     values: Sequence[NDArray] | None = None,
     overwrite: bool = False,
 ) -> None:
-    """Save a dicationary pairs of RNA names and feature vectors into a
-    file.
+    """Save a dictionary pairs of RNA names and feature vectors.
 
     Parameters
     ----------
     dict_file : str or os.PathLike
         Path of the dictionary file.
-    dict_ : dict, optional
+    dict_ : dict of str to numpy.ndarray, optional
         Dictionary with the feature vectors associated to their RNA ID.
         Should not be `None` if `keys` or `values` are `None`, if it is,
         then `save_dict` will do nothing. Default: `None`.
     keys : sequence of str, optional
         Sequence with the RNA IDs to store. Does not have effect if
         `dict_` is provided. Default: `None`.
-    values : sequence of ndarray, optional
+    values : sequence of numpy.ndarray, optional
         Sequence with the feature vectors to store. Must have the same
         length than `keys`. Does not have effect if `dict_` is provided.
         Default: `None`.
     overwrite : bool, optional
-        Append the items to the existing dictionary if `True`, ignoring
-        those that have already been processed. Otherwise, replace the
-        existing dictionary. Default: `False`.
+        Replace the existing dictionary if `True` in case there is.
+        Otherwise, append the items to the existing dictionary, ignoring
+        those that have already been processed. Default: `False`.
     """
     dict_file = Path(dict_file).resolve()
     dict_file.parent.mkdir(parents=True, exist_ok=True)

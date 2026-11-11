@@ -19,6 +19,18 @@ if TYPE_CHECKING:
 
 
 def recode_sequence(seq: SeqLike, /) -> NDArray[np.uint8]:
+    """Recode a sequence into a numerical vector.
+
+    Parameters
+    ----------
+    seq : SeqLike
+        The RNA sequence string on AUCG alphabet.
+
+    Returns
+    -------
+    numpy.ndarray of uint8
+        A 1D array with the recoded sequence.
+    """
     if isinstance(seq, SeqSSRecord):
         seq = seq.seq
 
@@ -33,19 +45,46 @@ def recode_sequence(seq: SeqLike, /) -> NDArray[np.uint8]:
 
 
 def recode_sequence_list(
-    seq_list: Iterable[SeqLike], /
+    sequences: Iterable[SeqLike], /
 ) -> Iterator[NDArray[np.uint8]]:
-    for seq in seq_list:
+    """Recode a list of sequences into numerical vectors.
+
+    Parameters
+    ----------
+    sequences : iterable object of SeqLike
+        Group of RNA sequence strings on AUCG alphabet.
+
+    Yields
+    ------
+    numpy.ndarray of uint8
+        A 1D array with the recoded sequence.
+    """
+    for seq in sequences:
         yield recode_sequence(seq)
 
 
 def normalize_sequence_list(
-    seq_list: Sequence[NDArray[np.uint8]],
+    sequences: Sequence[NDArray[np.uint8]],
     /,
     normal_size: int | None = None,
 ) -> NDArray[np.float32]:
+    """Normalize a list of recoded sequences.
+
+    Parameters
+    ----------
+    sequences : sequence of numpy.ndarray of uint8
+        List of recoded sequences.
+    normal_size : int, optional
+        Size used to resize the recoded sequences. If `None`, it will
+        use the mean length of the sequences. Default: `None`.
+
+    Returns
+    -------
+    numpy.ndarray of float32
+        A 2D matrix with the normalized sequences as rows.
+    """
     if normal_size is None:
-        normal_size = math.ceil(np.mean([len(seq) for seq in seq_list]))
+        normal_size = math.ceil(np.mean([len(seq) for seq in sequences]))
 
     matrix = np.array(
         [
@@ -53,7 +92,7 @@ def normalize_sequence_list(
                 sequence[:normal_size],
                 (0, max(0, normal_size - len(sequence))),
             )
-            for sequence in seq_list
+            for sequence in sequences
         ],
         np.float32,
     )
@@ -70,6 +109,19 @@ def gen_normalized_sequence_dict(
     records: Iterable[SeqSSRecord],
     normal_size: int | None = None,
 ) -> None:
+    """Generate a dictionary of normalized sequences.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    records : iterable object of SeqSSRecord
+        Set containing all the sequence records to save into the
+        dictionary.
+    normal_size : int, optional
+        Size used to resize the recoded sequences. If `None`, it will
+        use the mean length of the sequences. Default: `None`.
+    """
     send_msg("Generating normalized sequences dictionary\n")
     id_vector = []
     seq_vector = []
@@ -95,6 +147,21 @@ def gen_normalized_sequence_dict_from_fasta(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
+    """Generate a dictionary of normalized sequences from a FASTA file.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    fasta_file : str or os.PathLike
+        Path of the FASTA file with the sequences.
+    normal_size : int, optional
+        Size used to resize the recoded sequences. If `None`, it will
+        use the mean length of the sequences. Default: `None`.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    """
     records = iter_fasta(fasta_file, mode=SEQ_MODE, keep=keep)
     gen_normalized_sequence_dict(dict_file, records, normal_size)
 
@@ -106,5 +173,20 @@ def gen_normalized_sequence_dict_from_dir(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
+    """Generate a dictionary of normalized sequences from seq+ss files.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    seq_ss_dir : str or os.PathLike
+        Path of the directory where the seq+ss files are.
+    normal_size : int, optional
+        Size used to resize the recoded sequences. If `None`, it will
+        use the mean length of the sequences. Default: `None`.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    """
     records = load_seq_ss(seq_ss_dir, keep=keep)
     gen_normalized_sequence_dict(dict_file, records, normal_size)

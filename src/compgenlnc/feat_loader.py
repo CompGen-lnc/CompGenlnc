@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Collection
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -38,14 +38,15 @@ from compgenlnc.extractors.structures2d.recoded_structure import (
 from compgenlnc.fileman.miranda_manager import (
     get_subrecord_list,
     get_subrecord_list_from_dir,
-    iter_binding_zones,
+    read_binding_zones_from_list,
 )
 from compgenlnc.typing.numpy_dtypes import Index
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
 
-type FeatDict5 = Annotated[tuple[tuple[dict, str]], 5]
+type FeatureDictPair = tuple[dict[str, NDArray], str]
+type FeatDictTuple = tuple[FeatureDictPair, ...]
 
 
 def load_feature_set(
@@ -54,6 +55,22 @@ def load_feature_set(
     keep: Collection[Index] | None = None,
     exclude: Collection[Index] | None = None,
 ) -> NDArray[np.float32]:
+    """Load feature vectors from a numpy file.
+
+    Parameters
+    ----------
+    set_path : str or os.PathLike
+        Path of the numpy file containing the feature vectors.
+    keep : collection of Index, optional
+        Set of indexes to load. Default: `None`.
+    exclude : collection of Index, optional
+        Set of indexes to ignore. Default: `None`.
+
+    Returns
+    -------
+    numpy.ndarray of float32
+        A 2D matrix with the feature vectors loaded from the numpy file.
+    """
     feature_set = np.load(set_path)
     mask = np.ones(len(feature_set), np.bool)
     indexes = load_indexes()
@@ -72,6 +89,23 @@ def get_seq_features(
     from_interactions: bool = False,
     rna: str = LNCRNA,
 ) -> dict[str, NDArray]:
+    """Load the sequence features for the given RNA type.
+
+    Parameters
+    ----------
+    prefix : str
+        Prefix of the feature file.
+    from_interactions : bool, optional
+        Whether to load the features for the interaction subsequences
+        instead of sequences. Default: `False`.
+    rna : str, optional
+        RNA type to load the features for. Default: `LNCRNA`.
+
+    Returns
+    -------
+    dict of str to numpy.ndarray
+        Dictionary of feature names to feature vectors.
+    """
     if not prefix.endswith("_"):
         prefix += "_"
 
@@ -83,16 +117,20 @@ def get_seq_features(
         records = index_mature_mirna()
     if from_interactions:
         interactions = interactions_from_index()
-        bindings = list(iter_binding_zones(BINDING_DIR, interactions))
+        bindings = list(
+            read_binding_zones_from_list(BINDING_DIR, interactions)
+        )
         records = get_subrecord_list(records, interactions, bindings, rna=rna)
 
     features_dict = {}
     sequences = [rec.seq for rec in records]
 
     def get_npy_path(dict_name: str):
+        """Get the path of the numpy file for a feature."""
         return DATASET_DIR / f"{prefix}{dict_name}".replace(".dict", ".npy")
 
     def map_sequences(func, dtype):
+        """Map a function to the sequences."""
         it = (func(seq) for seq in sequences)
         return np.fromiter(it, dtype, len(sequences))
 
@@ -121,6 +159,26 @@ def get_ss_features(
     from_interactions: bool = False,
     rna: str = LNCRNA,
 ) -> dict[str, NDArray]:
+    """Load the 2D structure features for the given RNA type.
+
+    Parameters
+    ----------
+    prefix : str
+        Prefix of the feature file.
+    calculate_matrix : bool, optional
+        Whether to calculate the adjacency matrix for 2D structures.
+        Default: `False`.
+    from_interactions : bool, optional
+        Whether to load the features for the interaction 2D
+        substructures instead of 2D structures. Default: `False`.
+    rna : str, optional
+        RNA type to load the features for. Default: `LNCRNA`.
+
+    Returns
+    -------
+    dict of str to numpy.ndarray
+        Dictionary of feature names to feature vectors.
+    """
     if not prefix.endswith("_"):
         prefix += "_"
 
@@ -138,9 +196,11 @@ def get_ss_features(
     structures = [rec.ss for rec in records]
 
     def get_npy_path(dict_name: str):
+        """Get the path of the numpy file for a feature."""
         return DATASET_DIR / f"{prefix}{dict_name}".replace(".dict", ".npy")
 
     def map_structures(func, dtype):
+        """Map a function to the 2D structures."""
         it = (func(seq) for seq in structures)
         return np.fromiter(it, dtype, len(structures))
 
@@ -159,7 +219,17 @@ def get_ss_features(
     return features_dict
 
 
-def get_feature_dictionaries() -> FeatDict5:
+def get_feature_dictionaries() -> FeatDictTuple:
+    """Load the dictionaries for the database feature vectors.
+
+    Returns
+    -------
+    tuple of 5 FeatureDictPair
+        each element is a pair (feature_dict, label) where feature_dict
+        is a dictionary mapping feature names to numpy arrays of
+        float32, and label identifies the data source (e.g., "lnc",
+        "pre", "mat", "binding_lnc", "binding_mir").
+    """
     lnc_dict = (
         get_seq_features("lnc", rna=LNCRNA)
         | get_ss_features("lnc", rna=LNCRNA),
@@ -182,13 +252,21 @@ def get_feature_dictionaries() -> FeatDict5:
         "binding_mir",
     )
 
-    return (lnc_dict, pre_dict, mat_dict, bin_lnc_dict, bin_mir_dict)
+    return lnc_dict, pre_dict, mat_dict, bin_lnc_dict, bin_mir_dict
 
 
 def get_interactions_features() -> pd.DataFrame:
+    """Get a table with all the features for each interaction.
+
+    Returns
+    -------
+    pandas.DataFrame
+        The features for indexed interactions in the database.
+    """
     features_dict = {}
 
     def add_features(features, prefix):
+        """Add features to the dictionary with the prefix appended."""
         for key, value in features.items():
             key = f"{prefix} {key}".replace("_", " ")
             features_dict[key] = list(value)
@@ -200,6 +278,14 @@ def get_interactions_features() -> pd.DataFrame:
 
 
 def get_feature_vectors() -> NDArray[np.float32]:
+    """Get a the feature vectors of each interaction.
+
+    Returns
+    -------
+    numpy.ndarray
+        A 2D matrix with the feature vectors for indexed interactions in
+        the database.
+    """
     dicts, _ = zip(*get_feature_dictionaries())
     feat_names = [
         "size",

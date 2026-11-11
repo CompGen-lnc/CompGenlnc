@@ -32,6 +32,23 @@ if TYPE_CHECKING:
 def predict_miranda(
     dir: os.PathLike, lnc_record: SeqSSRecord, mir_record: SeqSSRecord
 ) -> bool:
+    """Predict possible binding zones for an interaction.
+
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory to save the miRanda output file.
+    lnc_record : SeqSSRecord
+        The record for the lncRNA of the interaction.
+    mir_record : SeqSSRecord
+        The record for the mature miRNA of the interaction.
+
+    Returns
+    -------
+    bool
+        `True` if the output file was created without interruptions,
+        even if there are no binding zones.
+    """
     dir = Path(dir).resolve()
     dir.mkdir(parents=True, exist_ok=True)
 
@@ -77,6 +94,7 @@ def predict_miranda(
 
 
 def _predict_miranda_with_args(args):
+    """Wrap `predict_miranda` to use a tuple with arguments."""
     return predict_miranda(*args)
 
 
@@ -88,6 +106,23 @@ def predict_miranda_from_list(
     keep: Collection[InteractionPair] | None = None,
     exclude: Collection[InteractionPair] | None = None,
 ) -> None:
+    """Predict possible binding zones from an interaction set.
+
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory to save the miRanda output file.
+    lnc_list : sequence of SeqSSRecord
+        Sequence of records for the lncRNAs of the interactions.
+    mir_list : sequence of SeqSSRecord
+        Sequence of records for the mature miRNAs of the interactions.
+    keep : collection of InteractionPair, optional
+        Set of interaction pairs to save. Do not apply if `None` or
+        empty. Default: `None`.
+    exclude : collection of InteractionPair, optional
+        Set of interaction pairs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
+    """
     send_msg("Calculating binding zone for interactions\n")
     lnc_list = list(lnc_list)
     mir_list = list(mir_list)
@@ -144,6 +179,27 @@ def predict_miranda_from_files(
     keep: Collection[InteractionPair] | None = None,
     exclude: Collection[InteractionPair] | None = None,
 ) -> None:
+    """Predict possible binding zones from the source files.
+
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory to save the miRanda output file.
+    interaction_file : str or os.PathLike
+        Path of the CSV file with the interaction pairs.
+    lnc_fasta : str or os.PathLike
+        Path of the FASTA file with the lncRNA sequences.
+    pre_mir_fasta : str or os.PathLike
+        Path of the FASTA file with the precursor miRNA sequences.
+    mat_mir_fasta : str or os.PathLike
+        Path of the FASTA file with the mature miRNA sequences.
+    keep : collection of InteractionPair, optional
+        Set of interaction pairs to save. Do not apply if `None` or
+        empty. Default: `None`.
+    exclude : collection of InteractionPair, optional
+        Set of interaction pairs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
+    """
     interactions = load_interactions(interaction_file)
 
     lnc_records = load_fasta(lnc_fasta)
@@ -166,11 +222,24 @@ def predict_miranda_from_files(
 
 
 def extract_binding_zone(
-    miranda_dir: os.PathLike,
+    miranda_dir: StrPath,
     lnc: str,
     mir: str,
-    binding_dir: os.PathLike,
+    binding_dir: StrPath,
 ) -> None:
+    """Extract the lowest energy binding zone for an interaction.
+
+    Parameters
+    ----------
+    miranda_dir : str or os.PathLike
+        Path of the directory containing the miRanda output file.
+    lnc : str
+        ID of the lncRNA.
+    mir : str
+        ID of the mature miRNA.
+    binding_dir : str or os.PathLike
+        Path of the directory where the binding zone will be saved.
+    """
     miranda_dir = Path(miranda_dir).resolve()
     binding_dir = Path(binding_dir).resolve()
 
@@ -189,14 +258,33 @@ def extract_binding_zone(
 
 
 def extract_binding_zone_from_dir(
-    miranda_dir: os.PathLike,
-    binding_dir: os.PathLike,
+    miranda_dir: StrPath,
+    binding_dir: StrPath,
     *,
     lnc_set: Collection[str] | None = None,
     mir_set: Collection[str] | None = None,
     keep: Collection[InteractionPair] | None = [],
     exclude: Collection[InteractionPair] | None = [],
 ) -> None:
+    """Extract the lowest energy binding zone from miRanda output files.
+
+    Parameters
+    ----------
+    miranda_dir : str or os.PathLike
+        Path of the directory containing the miRanda output files.
+    binding_dir : str or os.PathLike
+        Path of the directory where the binding zones will be saved.
+    lnc_set : collection of str, optional
+        Set of IDs of the lncRNA in the interactions.
+    mir_set : collection of str, optional
+        Set of IDs of the mature miRNA in the interactions.
+    keep : collection of InteractionPair, optional
+        Set of interaction pairs to save. Do not apply if `None` or
+        empty. Default: `None`.
+    exclude : collection of InteractionPair, optional
+        Set of interaction pairs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
+    """
     miranda_files = os.listdir(miranda_dir)
     keep = ["_".join(pair[PAIR_FIELDS]) for pair in keep]
     exclude = ["_".join(pair[PAIR_FIELDS]) for pair in exclude]

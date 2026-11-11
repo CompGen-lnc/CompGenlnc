@@ -58,6 +58,27 @@ def gen_interaction_features(
     *,
     rna: str,
 ) -> None:
+    """Generate interaction features for a subrecord set.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of the subrecords of the interactions.
+    interactions : sequence of InteractionPair
+        Sequence of the interaction pairs to process.
+    dicts_dir : str or os.PathLike
+        Path of the directory to store the dictionaries.
+    loops_counters : sequence of LoopCounter
+        Sequence of the loops from the whole 2D structures.
+    binding_zones : sequence of BindingZone
+        Sequence of the binding zones of the interactions.
+    k : int
+        The k-mer size to use for the interaction features.
+    dv2_model_file : str or os.PathLike
+        Path of the DV2 model file to use for the interaction features.
+    rna : str
+        The RNA type to extract the interaction features.
+    """
     dicts_dir = Path(dicts_dir).resolve()
     dicts_dir.parent.mkdir(parents=True, exist_ok=True)
 
@@ -74,10 +95,11 @@ def gen_interaction_features(
     gen_role2vec_dict_from_files(r2v_path, kmer_path, ctd_path, d2v_path)
     gen_normalized_sequence_dict(normal_path, records)
     gen_substructure_loops_dict(
-        loops_path, interactions, loops_counters, binding_zones, molecule=rna
+        loops_path, interactions, loops_counters, binding_zones, rna=rna
     )
 
     def path_to_npy(filename):
+        """Transform a dict path to a numpy path in the dataset path."""
         path = DATASET_DIR / f"binding_{rna}_{filename}"
         return path.with_suffix(".npy")
 
@@ -101,6 +123,19 @@ def gen_lncrna_interaction_features(
     loops_counters: Sequence[LoopCounter],
     binding_zones: Sequence[BindingZone],
 ) -> None:
+    """Generate interaction features for lncRNA subrecords.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of the subrecords of the interactions.
+    interactions : sequence of InteractionPair
+        Sequence of the interaction pairs to process.
+    loops_counters : sequence of LoopCounter
+        Sequence of the 2D structure loops from the whole structures.
+    binding_zones : sequence of BindingZone
+        Sequence of the binding zones of the interactions.
+    """
     gen_interaction_features(
         records,
         interactions,
@@ -120,16 +155,27 @@ def gen_mirna_interaction_features(
     loops_counters: Sequence[LoopCounter],
     binding_zones: Sequence[BindingZone],
 ) -> None:
+    """Generate interaction features for miRNA subrecords.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of the subrecords of the interactions.
+    interactions : sequence of InteractionPair
+        Sequence of the interaction pairs to process.
+    loops_counters : sequence of LoopCounter
+        Sequence of the 2D structure loops from the whole structures.
+    binding_zones : sequence of BindingZone
+        Sequence of the binding zones of the interactions.
+    """
+
     def adjust_binding_list():
+        """Get the binding zone with the range for precursor miRNA."""
         for record, precursor, binding_zone in zip(
             records, pre_mir_records, binding_zones
         ):
-            # print(precursor.id, record.id)
             index = str(precursor.seq).index(str(record.seq))
-            yield binding_zone.adjust_mirna_range(index)
-
-    for binding in adjust_binding_list():
-        pass
+            yield binding_zone.fit_mirna_range(index)
 
     gen_interaction_features(
         records,
@@ -152,6 +198,24 @@ def gen_interaction_database(
     precursor_map: dict[str, str],
     binding_zones: Sequence[BindingZone],
 ) -> None:
+    """Generate interaction features for lncRNA and miRNA subrecords.
+
+    Parameters
+    ----------
+    lnc_records : sequence of SeqSSRecord
+        Sequence of the lncRNA records of the interactions.
+    mir_records : sequence of SeqSSRecord
+        Sequence of the mature miRNA records of the interactions.
+    pre_mir_records : sequence of SeqSSRecord
+        Sequence of the precursor miRNA records of the interactions.
+    interactions : sequence of InteractionPair
+        Sequence of the interaction pairs to process.
+    precursor_map : dict of str to str
+        Mapping of the mature miRNA to its precursor.
+    binding_zones : sequence of BindingZone
+        Sequence of the binding zones of the interactions.
+    """
+
     def subrecords(records, rna) -> Sequence[SeqSSRecord]:
         count = len(records)
         subrecord_list = np.fromiter(

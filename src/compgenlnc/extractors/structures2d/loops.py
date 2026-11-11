@@ -26,6 +26,20 @@ if TYPE_CHECKING:
 def extract_2d_structure_loops(
     loops_dir: StrPath, record: SeqSSRecord
 ) -> float:
+    """Calculate the loops of a RNA structure.
+
+    Parameters
+    ----------
+    loops_dir : str or os.PathLike
+        Path of the directory to save the loops file.
+    record : SeqSSRecord
+        The 2D structure record to calculate the loops.
+
+    Returns
+    -------
+    float
+        The structure MFE obtained from the loops.
+    """
     loops_dir = Path(loops_dir).resolve()
     if loops_dir.exists():
         files = os.listdir(loops_dir)
@@ -49,6 +63,20 @@ def extract_2d_structure_loops_from_list(
     loops_dir: StrPath,
     records: Iterable[SeqSSRecord],
 ) -> NDArray[np.float32]:
+    """Calculate the loops of an RNA structure set.
+
+    Parameters
+    ----------
+    loops_dir : str or os.PathLike
+        Path of the directory to save the loops files.
+    records : iterable object of SeqSSRecord
+        Group of 2D structure records to calculate the loops.
+
+    Returns
+    -------
+    numpy.ndarray of float
+        The structure MFEs obtained from the loops.
+    """
     energy_list = []
     for record in records:
         energy_list.append(extract_2d_structure_loops(loops_dir, record))
@@ -63,6 +91,26 @@ def extract_2d_structure_loops_from_dir(
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> NDArray[np.float32]:
+    """Calculate the loops of an RNA structure set in seq+ss files.
+
+    Parameters
+    ----------
+    loops_dir : str or os.PathLike
+        Path of the directory to save the loops files.
+    seq_ss_dir : str or os.PathLike
+        Path of the directory where the seq+ss files are.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
+
+    Returns
+    -------
+    numpy.ndarray of float
+        The structure MFEs obtained from the loops.
+    """
     return extract_2d_structure_loops_from_list(
         loops_dir, iter_seq_ss(seq_ss_dir, keep=keep, exclude=exclude)
     )
@@ -73,6 +121,18 @@ def gen_loops_dict(
     loops_dir: StrPath,
     records: Collection[SeqSSRecord],
 ) -> None:
+    """Generate a dictionary of loops from a 2D structure set.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    loops_dir : str or os.PathLike
+        Path of the directory to save the loops files.
+    records : collection of SeqSSRecord
+        Set containing all the 2D structure records to save into the
+        dictionary.
+    """
     send_msg("Generating loops dictionary\n")
     records = list(records)
     total = len(records)
@@ -111,6 +171,21 @@ def gen_loops_dict_from_dir(
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> None:
+    """Generate a dictionary of loops from loops files.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    loops_dir : str or os.PathLike
+        Path of the directory containing the loops files.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
+    """
     dict_file = Path(dict_file).resolve()
     if dict_file.exists():
         keys = load_dict(dict_file).keys()

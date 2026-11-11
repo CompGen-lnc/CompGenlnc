@@ -30,7 +30,25 @@ def save_interactions(
     pos_list: NDArray[InteractionPair] | None = None,
     neg_list: NDArray[InteractionPair] | None = None,
 ) -> None:
+    """Save interactions to a CSV file.
+
+    Parameters
+    ----------
+    new_csv : str or os.PathLike
+        Path to the new CSV file.
+    interactions_list : numpy.ndarray of InteractionTuple, optional
+        A 1D array with the interaction tuples to save. Cannot be `None`
+        if `pos_list` and `neg_list` are not provided. Default: `None`.
+    pos_list : numpy.ndarray of InteractionPair, optional
+        A 1D array with the positive interaction pairs to save. Default:
+        `None`.
+    neg_list : numpy.ndarray of InteractionPair, optional
+        A 1D array with the negative interaction pairs to save. Default:
+        `None`.
+    """
+
     def parse_interactions(interactions, positive):
+        """Parse interaction tuples into a structured array."""
         arr = np.empty(interactions.shape, dtype=dtype_interaction_tuple)
         arr[PAIR_FIELDS] = interactions[PAIR_FIELDS]
         arr[IS_POSITIVE_FIELD] = positive
@@ -49,12 +67,30 @@ def save_interactions(
 
 
 def load_interactions(
-    filename: StrPath,
+    csv_file: StrPath,
     *,
     lnc_keep: Sequence[str] | None = None,
     mir_keep: Sequence[str] | None = None,
 ) -> NDArray[InteractionTuple]:
-    df = pd.read_csv(filename)
+    """Load interactions from a CSV file.
+
+    Parameters
+    ----------
+    csv_file : str or os.PathLike
+        Path of the CSV file with the interactions.
+    lnc_keep : sequence of str, optional
+        Sequence of lncRNA IDs to filter the interactions. Does not
+        apply if `None`.
+    mir_keep : sequence of str, optional
+        Sequence of miRNA IDs to filter the interactions. Does not
+        apply if `None`.
+
+    Returns
+    -------
+    numpy.ndarray of InteractionTuple
+        A 1D array of interaction tuples.
+    """
+    df = pd.read_csv(csv_file)
     interactions = df.to_records(index=False)
     mask = np.ones(len(interactions), np.bool)
     if lnc_keep is not None and len(lnc_keep):
@@ -65,5 +101,17 @@ def load_interactions(
 
 
 def load_precursors(precursors_file: StrPath) -> dict[str, str]:
+    """Load the mature-precursor miRNA associations.
+
+    Parameters
+    ----------
+    precursors_file : str or os.PathLike
+        Path of the CSV file with the miRNA associations.
+
+    Returns
+    -------
+    dict of str to str
+        A dictionary mapping mature miRNA to its precursor.
+    """
     df = pd.read_csv(precursors_file)
     return {mat: pre for mat, pre in df.itertuples(index=False)}

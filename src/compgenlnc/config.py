@@ -11,25 +11,47 @@ if TYPE_CHECKING:
     from _typeshed import StrPath
 
 # Files
-LOG_FILE = sys.stdout
+log_file: TextIOBase = sys.stdout
 
 # Seeds
-DOC2VEC_MODEL_SEED = 0
+doc2vec_seed: _ArrayLikeFloat_co | None = None
 
 # Paths
-BASE_PATH: Final[Path] = Path(__file__).resolve().parent
+PACKAGE_DIR: Final[Path] = Path(__file__).resolve().parent
+base_path: Path = Path(__file__).resolve().parent
 
 
-def set_base_path(path: StrPath) -> None:
-    global BASE_PATH
-    BASE_PATH = Path(path).resolve()
+def set_base_path(path: StrPath = PACKAGE_DIR) -> None:
+    """Set the base path of the data directory.
+
+    Parameters
+    ----------
+    path : str or os.PathLike, optional
+        Path of the new base directory. Default: package directory.
+    """
+    global base_path
+    base_path = Path(path).resolve()
 
 
-def set_doc2vec_seed(seed: _ArrayLikeFloat_co | None) -> None:
-    global DOC2VEC_MODEL_SEED
-    DOC2VEC_MODEL_SEED = seed
+def set_doc2vec_seed(seed: _ArrayLikeFloat_co | None = None) -> None:
+    """Set the Doc2Vec seed for the vectors calculation.
+
+    Parameters
+    ----------
+    seed : number or array of number, optional
+        Seed for the Doc2Vec calculations. Default: `None`.
+    """
+    global doc2vec_seed
+    doc2vec_seed = seed
 
 
-def set_log_file(file: TextIOBase) -> None:
-    global LOG_FILE
-    LOG_FILE = file
+def set_log_file(file: TextIOBase = sys.stdout) -> None:
+    """Set the file to which the logs will be written.
+
+    Parameters
+    ----------
+    file : TextIOBase, optional
+        Buffer to which the logs will be written. Default: `sys.stdout`.
+    """
+    global log_file
+    log_file = file

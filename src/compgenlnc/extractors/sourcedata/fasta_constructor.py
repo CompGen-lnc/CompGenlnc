@@ -57,7 +57,7 @@ def gen_fasta_2d(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
-    """Generate a FASTA file that contains the 2D structures calculated.
+    """Generate a FASTA file containing the 2D structures calculated.
 
     Parameters
     ----------
@@ -67,7 +67,7 @@ def gen_fasta_2d(
     dst : str or os.PathLike
         Path of the FASTA file where the 2D structures will be stored.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
         Default: `None`.
     """
     send_msg("Generating 2D structures for sequences\n")
@@ -113,13 +113,13 @@ def seq_ss_to_fasta(
     Parameters
     ----------
     src_dir : str or os.PathLike
-        Path of the directory that contains the seq+ss files.
+        Path of the directory containing the seq+ss files.
     dst_seq : str or os.PathLike
         Path of the FASTA file where the sequences will be stored.
     dst_ss : str or os.PathLike
         Path of the FASTA file where the 2D structures will be stored.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
         Default: `None`.
     """
     src_dir = Path(src_dir).resolve()

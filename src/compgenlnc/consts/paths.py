@@ -1,4 +1,8 @@
+from __future__ import annotations
+
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from compgenlnc import config
 
@@ -9,32 +13,109 @@ BINDING_PREFIX = "binding_"
 
 
 class DyPath(Path):
+    """A path that is relative to `config.base_path`."""
+
     def __new__(cls, relative_subpath=""):
+        """Create a new `DyPath` instance.
+
+        Parameters
+        ----------
+        relative_subpath : str, optional
+            The relative path to the file or directory. Default: `""`.
+        """
         return super().__new__(cls)
 
     def __init__(self, relative_subpath=""):
+        """Initialize the `DyPath` object.
+
+        Parameters
+        ----------
+        relative_subpath : str, optional
+            The relative path to the file or directory. Default: `""`.
+        """
         self._relative_subpath = str(relative_subpath)
 
     @property
     def _real_path(self) -> Path:
-        return config.BASE_PATH / self._relative_subpath
+        """Get the absolute path of the file or directory.
 
-    def __str__(self):
+        Returns
+        -------
+        pathlib.Path
+            The absolute path.
+        """
+        return config.base_path / self._relative_subpath
+
+    def __str__(self) -> str:
+        """Get the string representation of the path.
+
+        Returns
+        -------
+        str
+            The string representation.
+        """
         return str(self._real_path)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Get the printable representation of the object.
+
+        Returns
+        -------
+        str
+            The printable representation.
+        """
         return repr(self._real_path)
 
-    def __fspath__(self):
+    def __fspath__(self) -> str:
+        """Get the file system path representation of the object.
+
+        Returns
+        -------
+        str
+            The file system path representation.
+        """
         return str(self._real_path)
 
-    def __truediv__(self, other):
-        return DyPath(Path(self._relative_subpath) / other)
+    def __truediv__(self, key) -> DyPath:
+        """Get the path of given key relative to the current path.
 
-    def __getattr__(self, name):
+        Parameters
+        ----------
+        key : str
+            The key to be used to get the path.
+
+        Returns
+        -------
+        DyPath
+            The new path.
+        """
+        return DyPath(Path(self._relative_subpath) / key)
+
+    def __getattr__(self, name) -> Any:
+        """Provide attribute access to the underlying path object.
+
+        Parameters
+        ----------
+        name : str
+            Name of the attribute to get.
+
+        Returns
+        -------
+        Any
+            The value of the attribute.
+        """
         return getattr(self._real_path, name)
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple[Callable, tuple[str]]:
+        """Reduce the path object to a tuple for pickling.
+
+        Returns
+        -------
+        func : callable
+            The function to call to create a new path object.
+        args : tuple of str
+            The arguments to pass to the function.
+        """
         return Path, (str(self._real_path),)
 
 
@@ -45,7 +126,6 @@ INTERACTIONS_DIR = DATA_DIR / "interactions"
 LNCRNA_DIR = DATA_DIR / "lncrna"
 MIRNA_DIR = DATA_DIR / "mirna"
 TEMP_DIR = DATA_DIR / "temp"
-LNCRNA_DIR.exists
 
 # Embedding
 INDEX_NPY = EMBEDDING_DIR / "index.npy"

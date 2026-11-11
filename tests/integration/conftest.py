@@ -15,7 +15,7 @@ def pytest_collection_modifyitems(items):
 
 @pytest.fixture(scope="package", autouse=True)
 def set_base_path():
-    original_path = cgl.config.BASE_PATH
+    original_path = cgl.config.base_path
     cgl.set_base_path(integration_path)
     cgl.dict_indexer._cgl_indexes = None
     cgl.dict_indexer._lnc_indexed_records = None

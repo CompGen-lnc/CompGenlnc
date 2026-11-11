@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from collections.abc import Collection
+from collections.abc import Collection, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
 import torch
-from numpy.typing import NDArray
 from torch_geometric.data import Data
 from torch_geometric.nn import Node2Vec, knn_graph
 
@@ -28,10 +27,23 @@ if TYPE_CHECKING:
 
 def gen_role2vec_dict(
     dict_file: StrPath,
-    kmer_dict: dict[str, NDArray],
-    ctd_dict: dict[str, NDArray],
-    doc2vec_dict: dict[str, NDArray],
+    kmer_dict: dict[str, Sequence],
+    ctd_dict: dict[str, Sequence],
+    doc2vec_dict: dict[str, Sequence],
 ) -> None:
+    """Generate a dictionary of Role2Vec from other dictionaries.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    kmer_dict : dict of str to sequence
+        Dictionary with the pairs {ID : kmers}.
+    ctd_dict : dict of str to sequence
+        Dictionary with the pairs {ID : CTD}.
+    doc2vec_dict : dict of str to sequence
+        Dictionary with the pairs {ID : Doc2Vec}.
+    """
     send_msg("Generating Role2Vec dictionary\n", flush=False)
     send_msg("  Extracting vector set")
 
@@ -84,6 +96,19 @@ def gen_role2vec_dict_from_files(
     ctd_file: StrPath,
     doc2vec_file: StrPath,
 ) -> None:
+    """Generate a dictionary of Role2Vec from other dictionaries.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    kmer_file : str or os.PathLike
+        Path of the file where the k-mers dictionary is stored.
+    ctd_file : str or os.PathLike
+        Path of the file where the CTD dictionary is stored.
+    doc2vec_file : str or os.PathLike
+        Path of the file where the Doc2Vec dictionary is stored.
+    """
     kmer_file = Path(kmer_file).resolve()
     ctd_file = Path(ctd_file).resolve()
     doc2vec_file = Path(doc2vec_file).resolve()
@@ -103,6 +128,21 @@ def gen_role2vec_dict_from_fasta(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
+    """Generate a dictionary of Role2Vec from a FASTA file.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    fasta_file : str or os.PathLike
+        Path of the FASTA file with the sequences.
+    k : int
+        Maximum length for k-mers. It calculates k-mers with length from
+        1 to `k`, included.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    """
     doc2vec_model = train_doc2vec_model_from_fasta(fasta_file)
     records = load_fasta(fasta_file, mode=SEQ_MODE)
 
@@ -132,6 +172,21 @@ def gen_role2vec_dict_from_dir(
     *,
     keep: Collection[str] | None = None,
 ) -> None:
+    """Generate a dictionary of Role2Vec from seq+ss files.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    seq_ss_dir : str or os.PathLike
+        Path of the directory where the seq+ss files are.
+    k : int
+        Maximum length for k-mers. It calculates k-mers with length from
+        1 to `k`, included.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    """
     records = load_seq_ss(seq_ss_dir, keep=keep)
     doc2vec_model = train_doc2vec_model(records)
 

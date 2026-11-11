@@ -8,7 +8,7 @@ import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from numpy.typing import NDArray
 
-from compgenlnc.config import DOC2VEC_MODEL_SEED
+from compgenlnc.config import doc2vec_seed
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (
@@ -29,8 +29,23 @@ if TYPE_CHECKING:
 def train_doc2vec_model(
     sequences: Iterable[SeqSSRecord],
     /,
+    *,
     model_file: StrPath | None = None,
 ) -> Doc2Vec:
+    """Train a Doc2Vec model from an RNA sequence set.
+
+    Parameters
+    ----------
+    sequences : iterable object of SeqSSRecord
+        Group of RNA sequences to train the model with.
+    model_file : str or os.PathLike, optional
+        Path of the file to save the model. Default: `None`.
+
+    Returns
+    -------
+    gensim.models.Doc2Vec
+        The model to extract the Doc2Vec vectors from the sequences.
+    """
     tokens = [
         TaggedDocument(
             [record.seq[j : j + 3] for j in range(len(record.seq) - 2)], [i]
@@ -50,8 +65,23 @@ def train_doc2vec_model(
 def train_doc2vec_model_from_fasta(
     fasta_file: StrPath,
     /,
+    *,
     model_file: StrPath | None = None,
 ) -> Doc2Vec:
+    """Train a Doc2Vec model from an RNA sequence set.
+
+    Parameters
+    ----------
+    fasta_file : str or os.PathLike
+        Path of the FASTA file containing the sequences.
+    model_file : str or os.PathLike, optional
+        Path of the file to save the model. Default: `None`.
+
+    Returns
+    -------
+    gensim.models.Doc2Vec
+        The model to extract the Doc2Vec from the sequences.
+    """
     fasta_file = Path(fasta_file).resolve()
     return train_doc2vec_model(
         iter_fasta(fasta_file, mode=SEQ_MODE), model_file
@@ -65,6 +95,23 @@ def get_doc2vec(
     model: Doc2Vec | None = None,
     model_file: StrPath | None = None,
 ) -> NDArray[np.float32]:
+    """Get the Doc2Vec of a RNA sequence.
+
+    Parameters
+    ----------
+    seq : SeqLike
+        The RNA sequence string on AUCG alphabet.
+    model : Doc2Vec, optional
+        The model to extract the Doc2Vec from `seq`. Cannot be `None` if
+        model_file is `None`. Default: `None`.
+    model_file : str or os.PathLike, optional
+        Path of the file where the model is stored. Default: `None`.
+
+    Returns
+    -------
+    numpy.ndarray of float32
+        A 1D array with the Doc2Vec of the sequence.
+    """
     if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
     if isinstance(seq, SeqRecord):
@@ -76,7 +123,7 @@ def get_doc2vec(
     if model is None:
         model = Doc2Vec.load(str(model_file))
 
-    model.random.seed(DOC2VEC_MODEL_SEED)
+    model.random.seed(doc2vec_seed)
     return model.infer_vector(doc)
 
 
@@ -87,8 +134,25 @@ def get_doc2vec_by_name(
     model: Doc2Vec | None = None,
     model_file: StrPath | None = None,
 ) -> NDArray[np.float32]:
-    folder = Path(folder).resolve()
-    seq = read_sequence(folder, id_)
+    """Get the Doc2Vec of a RNA sequence.
+
+    Parameters
+    ----------
+    dir : str or os.PathLike
+        Path of the directory where the seq+ss file is.
+    id_ : str
+        ID of the RNA sequence to read.
+    model : Doc2Vec, optional
+        The model to extract the Doc2Vec from the sequence. Cannot be
+        `None` if model_file is `None`. Default: `None`.
+    model_file : str or os.PathLike, optional
+        Path of the file where the model is stored. Default: `None`.
+
+    Returns
+    -------
+    numpy.ndarray of float32
+        A 1D array with the Doc2Vec of the sequence.
+    """
     dir = Path(dir).resolve()
     seq = read_sequence(dir, id_)
     return get_doc2vec(seq, model=model, model_file=model_file)
@@ -101,6 +165,21 @@ def gen_doc2vec_dict(
     model: Doc2Vec | None = None,
     model_file: StrPath | None = None,
 ) -> None:
+    """Generate a dictionary of Doc2Vec from an RNA sequence set.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    records : collection of SeqSSRecord
+        Set containing all the sequence records to save into the
+        dictionary.
+    model : Doc2Vec, optional
+        The model to extract the Doc2Vec from the sequences. Cannot be
+        `None` if model_file is `None`. Default: `None`.
+    model_file : str or os.PathLike, optional
+        Path of the file where the model is stored. Default: `None`.
+    """
     send_msg("Generating Doc2Vec dictionary\n")
 
     if model is None:
@@ -135,28 +214,58 @@ def gen_doc2vec_dict_from_fasta(
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> None:
+    """Generate a dictionary of Doc2Vec from a FASTA file.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    fasta_file : str or os.PathLike
+        Path of the FASTA file with the sequences.
+    model : Doc2Vec, optional
+        The model to extract the Doc2Vec from the sequences. Cannot be
+        `None` if model_file is `None`. Default: `None`.
+    model_file : str or os.PathLike, optional
+        Path of the file where the model is stored. Default: `None`.
+    keep : collection of str, optional
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
+        Default: `None`.
+    exclude : collection of str, optional
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
+    """
     records = load_fasta(fasta_file, mode=SEQ_MODE, keep=keep, exclude=exclude)
     gen_doc2vec_dict(dict_file, records, model=model, model_file=model_file)
 
 
 def gen_doc2vec_dict_from_dir(
     dict_file: StrPath,
-    seq_ss_folder: StrPath,
+    seq_ss_dir: StrPath,
     *,
     model: Doc2Vec | None = None,
     model_file: StrPath | None = None,
     keep: Collection[str] | None = None,
     exclude: Collection[str] | None = None,
 ) -> None:
-    records = load_seq_ss(seq_ss_folder, keep=keep, exclude=exclude)
+    """Generate a dictionary of Doc2Vec from seq+ss files.
+
+    Parameters
+    ----------
+    dict_file : str or os.PathLike
+        Path of the file where the dictionary will be saved.
+    seq_ss_dir : str or os.PathLike
+        Path of the directory where the seq+ss files are.
+    model : Doc2Vec, optional
+        The model to extract the Doc2Vec from the sequences. Cannot be
+        `None` if model_file is `None`. Default: `None`.
     model_file : str or os.PathLike, optional
-        Path of the file where the model is stored.
+        Path of the file where the model is stored. Default: `None`.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to save. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
     """
     records = load_seq_ss(seq_ss_dir, keep=keep, exclude=exclude)
     gen_doc2vec_dict(dict_file, records, model=model, model_file=model_file)

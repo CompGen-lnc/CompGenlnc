@@ -46,6 +46,21 @@ _indexed_interactions = None
 def get_mature_index(
     interaction: InteractionPair, precursor_dict: dict[str, str]
 ) -> Index:
+    """Get the index for an lncRNA-mature miRNA interaction.
+
+    Parameters
+    ----------
+    interaction : InteractionPair
+        The interaction to get the index for.
+    precursor_dict : dict of str to str
+        Mapping of the mature miRNA to its precursor.
+
+    Returns
+    -------
+    Index
+        The index for the interaction. If the miRNA is not in
+        `precursor_dict`, `None` is returned.
+    """
     lnc, mir = interaction[PAIR_FIELDS]
     if mir not in precursor_dict.keys():
         return None
@@ -60,6 +75,18 @@ def gen_indexes(
     *,
     index_file: StrPath = INDEX_NPY,
 ) -> None:
+    """Generate the indexes from an interaction set.
+
+    Parameters
+    ----------
+    interactions : collection of InteractionPair
+        Set of interaction pairs to index.
+    precursor_dict : dict of str to str
+        Mapping of the mature miRNA to its precursor.
+    index_file : str or os.PathLike, optional
+        Path of the file to save the indexes. Default:
+        `paths.INDEX_NPY`.
+    """
     array = np.empty((len(interactions), 3), dtype=dtype_index)
     fails = []
     for i, interaction in enumerate(interactions):
@@ -84,6 +111,19 @@ def gen_indexes_from_files(
     lnc_list: Sequence[str] | None = None,
     mir_list: Sequence[str] | None = None,
 ) -> None:
+    """Generate the indexes from interaction and precursor files.
+
+    Parameters
+    ----------
+    interaction_csv : str or os.PathLike
+        Path of the CSV file with the interaction pairs.
+    precursor_csv : str or os.PathLike
+        Path of the CSV file with the precursor-mature miRNA pairs.
+    lnc_list : sequence of str, optional
+        Set of IDs of LNCRNAs to include in the indexes.
+    mir_list : sequence of str, optional
+        Set of IDs of miRNAs to include in the indexes.
+    """
     interactions = load_interactions(interaction_csv)
     mask = np.ones(len(interactions), dtype=np.bool)
     if lnc_list is not None and len(lnc_list):
@@ -98,6 +138,22 @@ def gen_indexes_from_files(
 def load_indexes(
     *, index_file: StrPath = INDEX_NPY, rna: str | None = None
 ) -> NDArray[Index]:
+    """Load the indexes from a file.
+
+    Parameters
+    ----------
+    index_file : str or os.PathLike, optional
+        Path of the file containing the indexes. Default:
+        `paths.INDEX_PY`.
+    rna : str, optional
+        The index column to return. If `None`, all columns are returned.
+        Default: `None`.
+
+    Returns
+    -------
+    numpy.ndarray of Index
+        A 1D array with indexes for the database.
+    """
     global _cgl_indexes
     global _lnc_indexed_records
     global _pre_mir_indexed_records
@@ -124,6 +180,19 @@ def load_indexes(
 
 
 def index_lncrna(*, index_file: StrPath = INDEX_NPY) -> NDArray[np.object_]:
+    """Index the lncRNA records.
+
+    Parameters
+    ----------
+    index_file : str or os.PathLike, optional
+        Path of the file containing the indexes. Default:
+        `paths.INDEX_PY`.
+
+    Returns
+    -------
+    numpy.ndarray of SeqSSRecord
+        A 1D array of the lncRNA records sorted by indexes.
+    """
     global _lnc_indexed_records
     if _lnc_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=LNCRNA)
@@ -138,6 +207,19 @@ def index_lncrna(*, index_file: StrPath = INDEX_NPY) -> NDArray[np.object_]:
 def index_precursor_mirna(
     *, index_file: StrPath = INDEX_NPY
 ) -> NDArray[np.object_]:
+    """Index the precursor miRNA records.
+
+    Parameters
+    ----------
+    index_file : str or os.PathLike, optional
+        Path of the file containing the indexes. Default:
+        `paths.INDEX_PY`.
+
+    Returns
+    -------
+    numpy.ndarray of SeqSSRecord
+        A 1D array of the precursor miRNA records sorted by indexes.
+    """
     global _pre_mir_indexed_records
     if _pre_mir_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=PRECURSOR)
@@ -152,6 +234,19 @@ def index_precursor_mirna(
 def index_mature_mirna(
     *, index_file: StrPath = INDEX_NPY
 ) -> NDArray[np.object_]:
+    """Index the mature miRNA records.
+
+    Parameters
+    ----------
+    index_file : str or os.PathLike, optional
+        Path of the file containing the indexes. Default:
+        `paths.INDEX_PY`.
+
+    Returns
+    -------
+    numpy.ndarray of SeqSSRecord
+        A 1D array of the mature miRNA records sorted by indexes.
+    """
     global _mat_mir_indexed_records
     if _mat_mir_indexed_records is None:
         indexes = load_indexes(index_file=index_file, rna=MATURE)
@@ -168,6 +263,19 @@ def interactions_from_index(
     interactions_csv: StrPath = PAIRS_FILE,
     index_file: StrPath = INDEX_NPY,
 ) -> NDArray[InteractionPair]:
+    """Index the interaction pairs.
+
+    Parameters
+    ----------
+    index_file : str or os.PathLike, optional
+        Path of the file containing the indexes. Default:
+        `paths.INDEX_PY`.
+
+    Returns
+    -------
+    numpy.ndarray of InteractionPair
+        A 1D array of the interaction pairs sorted by indexes.
+    """
     global _indexed_interactions
     if _indexed_interactions is None:
         indexes = load_indexes(rna=INTERACTION)
@@ -188,6 +296,19 @@ def dict_to_numpy(
     index_file: StrPath = INDEX_NPY,
     rna: str = LNCRNA,
 ) -> None:
+    """Convert a dictionary of numpy arrays to a indexed numpy array.
+
+    Parameters
+    ----------
+    np_file : str or os.PathLike
+        Path of the numpy file to save the indexed array.
+    feat_dict : dict of str to numpy.ndarray
+        Dictionary with the ID-array pairs to index.
+    index_file : str or os.PathLike, optional
+        Path of the index file to load. Default: `paths.INDEX_NPY`.
+    rna : str, optional
+        RNA type to use for indexing. Default: `LNCRNA`.
+    """
     indexes = load_indexes(index_file=index_file, rna=rna)
 
     sample_vec = next(iter(feat_dict.values()))

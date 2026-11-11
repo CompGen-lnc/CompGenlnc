@@ -13,6 +13,7 @@ from compgenlnc.typing.molecules import SeqLike
 
 
 def extract_massive_2d_structure(seq: SeqLike, /) -> str:
+    """Extract 2D structure from sequence windows."""
     ss = io.StringIO("." * len(seq))
     sub_ss_list = []
     events = []
@@ -80,6 +81,18 @@ def extract_massive_2d_structure(seq: SeqLike, /) -> str:
 
 
 def extract_2d_structure(seq: SeqLike, /) -> StructureRecord:
+    """Extract the 2D structure of a RNA sequence.
+
+    Parameters
+    ----------
+    seq : SeqLike
+        The sequence to extract the 2D structure from.
+
+    Returns
+    -------
+    StructureRecord
+        The 2D structure of the sequence.
+    """
     if isinstance(seq, SeqSSRecord):
         seq = str(seq.seq)
     elif isinstance(seq, SeqRecord):
@@ -97,10 +110,34 @@ def extract_2d_structure(seq: SeqLike, /) -> StructureRecord:
 
 
 def extract_2d_structure_list(
-    seq_list: Iterable[SeqLike], /
+    sequences: Iterable[SeqLike], /
 ) -> Iterator[StructureRecord]:
-    return (extract_2d_structure(seq) for seq in seq_list)
+    """Extract the 2D structure from an RNA sequence set.
+
+    Parameters
+    ----------
+    sequences : iterable object of SeqLike
+        Set of RNA sequences to extract the 2D structures from.
+
+    Returns
+    -------
+    Generator of StructureRecord
+        An iterator that yields the 2D structures of the sequences.
+    """
+    return (extract_2d_structure(seq) for seq in sequences)
 
 
 def extract_2d_structure_identified(seq: SeqSSRecord, /) -> SeqSSRecord:
+    """Extract the 2D structure from an RNA record.
+
+    Parameters
+    ----------
+    seq : SeqSSRecord
+        The RNA record to extract the 2D structure from.
+
+    Returns
+    -------
+    SeqSSRecord
+        The RNA record with the extracted 2D structure.
+    """
     return SeqSSRecord(seq.id, seq.seq, extract_2d_structure(seq))

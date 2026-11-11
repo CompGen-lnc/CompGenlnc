@@ -1,8 +1,8 @@
 from . import consts, extractors, fileman, generators, structs, typing
 from .config import (
-    BASE_PATH,
-    DOC2VEC_MODEL_SEED,
-    LOG_FILE,
+    base_path,
+    doc2vec_seed,
+    log_file,
     set_base_path,
     set_doc2vec_seed,
     set_log_file,
@@ -37,9 +37,9 @@ from .typing import (
 from .version import __version__
 
 __all__ = [
-    "BASE_PATH",
-    "DOC2VEC_MODEL_SEED",
-    "LOG_FILE",
+    "base_path",
+    "doc2vec_seed",
+    "log_file",
     "dict_to_numpy",
     "dtype_index",
     "dtype_interaction_pair",

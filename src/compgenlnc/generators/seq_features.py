@@ -44,6 +44,21 @@ def gen_seq_features(
     *,
     rna: str,
 ) -> None:
+    """Generate sequence features for a record set.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of records with the sequences to process.
+    dicts_dir : str or os.PathLike
+        Path of the directory to store the dictionaries.
+    k : int
+        The k-mer size to use for the sequence features.
+    dv2_model_file : str or os.PathLike
+        Path of the DV2 model file to use for the sequence features.
+    rna : str
+        The RNA type to extract the sequence features.
+    """
     dicts_dir = Path(dicts_dir).resolve()
     dicts_dir.parent.mkdir(parents=True, exist_ok=True)
 
@@ -60,6 +75,7 @@ def gen_seq_features(
     gen_normalized_sequence_dict(normal_path, records)
 
     def path_to_npy(filename):
+        """Transform a dict path to a numpy path in the dataset path."""
         return (DATASET_DIR / f"{rna}_{filename}").with_suffix(".npy")
 
     kmer_npy = path_to_npy(KMER_DICT)
@@ -75,6 +91,13 @@ def gen_seq_features(
 
 
 def gen_lncrna_seq_features(records: Sequence[SeqSSRecord]) -> None:
+    """Generate sequence features for lncRNA records.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of lncRNA records with the sequences to process.
+    """
     gen_seq_features(
         records,
         LNCRNA_DICTS_DIR,
@@ -85,6 +108,14 @@ def gen_lncrna_seq_features(records: Sequence[SeqSSRecord]) -> None:
 
 
 def gen_pre_mirna_seq_features(records: Sequence[SeqSSRecord]) -> None:
+    """Generate sequence features for precursor miRNA records.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of precursor miRNA records with the sequences to
+        process.
+    """
     gen_seq_features(
         records,
         PRE_MIRNA_DICTS_DIR,
@@ -95,6 +126,13 @@ def gen_pre_mirna_seq_features(records: Sequence[SeqSSRecord]) -> None:
 
 
 def gen_mat_mirna_seq_features(records: Sequence[SeqSSRecord]) -> None:
+    """Generate sequence features for mature miRNA records.
+
+    Parameters
+    ----------
+    records : sequence of SeqSSRecord
+        Sequence of mature miRNA records with the sequences to process.
+    """
     gen_seq_features(
         records,
         MAT_MIRNA_DICTS_DIR,
@@ -109,6 +147,18 @@ def gen_seq_database(
     pre_mir_records: Sequence[SeqSSRecord],
     mat_mir_records: Sequence[SeqSSRecord],
 ) -> None:
+    """Generate sequence features for lncRNA and miRNA records.
+
+    Parameters
+    ----------
+    lnc_records : sequence of SeqSSRecord
+        Sequence of lncRNA records with the sequences to process.
+    mir_records : sequence of SeqSSRecord
+        Sequence of mature miRNA records with the sequences to process.
+    pre_mir_records : sequence of SeqSSRecord
+        Sequence of precursor miRNA records with the sequences to
+        process.
+    """
     gen_lncrna_seq_features(lnc_records)
     gen_pre_mirna_seq_features(pre_mir_records)
     gen_mat_mirna_seq_features(mat_mir_records)

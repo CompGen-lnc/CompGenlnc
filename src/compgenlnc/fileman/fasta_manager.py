@@ -34,11 +34,11 @@ def iter_fasta(
         the data as sequences. If `'ss'`, it will treat the data as 2D
         structures.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to load. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
 
     Yields
     ------
@@ -61,7 +61,7 @@ def iter_fasta(
     filename = Path(filename).resolve()
     id_ = seq = ss = value = ""
     with open(filename) as file:
-        # Add the '>' at the end for capturing the last molecule
+        # Add the '>' at the end for capturing the last RNA
         for raw_line in file.readlines() + [">"]:
             if raw_line[0] != ">":
                 if id_ and raw_line.strip():
@@ -99,11 +99,11 @@ def load_fasta(filename: StrPath, **kwargs) -> list[SeqSSRecord]:
         the data as sequences. If `'ss'`, it will treat the data as 2D
         structures.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to load. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
 
     Returns
     -------
@@ -127,7 +127,7 @@ def save_fasta(
     mode: str,
     overwrite: bool = False,
 ) -> None:
-    """Save sequences or 2D structures from a set of RNA molecules.
+    """Save sequences or 2D structures from an RNA set.
 
     Parameters
     ----------
@@ -139,9 +139,9 @@ def save_fasta(
         Type of the data saved in the file. If `'seq'`, it will save the
         sequences. If `'ss'`, it will save the 2Dstructures.
     overwrite : bool, optional
-        Append the items to the existing dictionary if `True`, ignoring
-        those that have already been processed. Otherwise, replace the
-        existing dictionary. Default: `False`.
+        Replace the existing dictionary if `True` in case there is.
+        Otherwise, append the items to the existing dictionary, ignoring
+        those that have already been processed. Default: `False`.
 
     Raises
     ------
@@ -198,7 +198,7 @@ def read_sequence(dir: StrPath, id_: str) -> str:
     Parameters
     ----------
     dir : str or os.PathLike
-        Path of the directory that contains the seq+ss file.
+        Path of the directory containing the seq+ss file.
     id_ : str
         ID of the RNA to read the sequence
 
@@ -221,7 +221,7 @@ def read_structure(dir: StrPath, id_: str) -> str:
     Parameters
     ----------
     dir : str or os.PathLike
-        Path of the directory that contains the seq+ss file.
+        Path of the directory containing the seq+ss file.
     id_ : str
         ID of the RNA to read the 2D structure
 
@@ -249,13 +249,13 @@ def iter_seq_ss(
     Parameters
     ----------
     dir : str or os.PathLike
-        Path of the directory that contains the seq+ss file.
+        Path of the directory containing the seq+ss file.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to load. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
 
     Yields
     ------
@@ -286,13 +286,13 @@ def load_seq_ss(dir: StrPath, **kwargs) -> list[SeqSSRecord]:
     Parameters
     ----------
     dir : str or os.PathLike
-        Path of the directory that contains the seq+ss file.
+        Path of the directory containing the seq+ss file.
     keep : collection of str, optional
-        Set of the RNA IDs to save. Do not apply if `None` or empty.
+        Set of IDs of the RNAs to load. Do not apply if `None` or empty.
         Default: `None`.
     exclude : collection of str, optional
-        Set of the RNA IDs to ignore. Do not apply if `None` or empty.
-        Default: `None`.
+        Set of IDs of the RNAs to ignore. Do not apply if `None` or
+        empty. Default: `None`.
 
     Returns
     -------

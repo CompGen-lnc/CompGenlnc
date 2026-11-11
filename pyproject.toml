@@ -58,6 +58,7 @@ filterwarnings = [
 target-version = "py312"
 line-length = 79
 include = ["src/**/*.py", "tests/**/*.py"]
+fix = true
 
 [tool.ruff.lint]
 select = [

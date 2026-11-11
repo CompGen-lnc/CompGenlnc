@@ -1,7 +1,7 @@
 import sys
 from multiprocessing import cpu_count
 
-# molecule type
+# RNA type
 LNCRNA = "lnc"
 MIRNA = "mir"
 PRECURSOR = "pre"
