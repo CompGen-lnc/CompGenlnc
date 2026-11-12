@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from tqdm import tqdm
 
-from compgenlnc.config import log_file
+import compgenlnc.config as config
 
 T = TypeVar("T")
 
@@ -26,13 +26,13 @@ def send_msg(
     seek_mode : int, optional
         The mode to use when seeking in the log file. Default: `0`.
     """
-    if log_file is None:
+    if config.log_file is None:
         return
     if seek is not None:
-        log_file.seek(seek, seek_mode)
-    log_file.write(msg)
+        config.log_file.seek(seek, seek_mode)
+    config.log_file.write(msg)
     if flush:
-        log_file.flush()
+        config.log_file.flush()
 
 
 def track_progress(
@@ -67,13 +67,13 @@ def track_progress(
         An iterator that yields the elements of the iterable with a
         progress bar.
     """
-    if log_file is None:
+    if config.log_file is None:
         return it
     if total is None:
         it = list(it)
         total = len(it)
     progress = tqdm(
-        desc=desc, total=total, file=log_file, unit=unit, initial=initial
+        desc=desc, total=total, file=config.log_file, unit=unit, initial=initial
     )
 
     def iterator():

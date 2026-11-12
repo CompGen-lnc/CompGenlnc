@@ -8,7 +8,7 @@ import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from numpy.typing import NDArray
 
-from compgenlnc.config import doc2vec_seed
+import compgenlnc.config as config
 from compgenlnc.consts.params import SEQ_MODE
 from compgenlnc.fileman.dict_manager import save_dict
 from compgenlnc.fileman.fasta_manager import (
@@ -123,7 +123,7 @@ def get_doc2vec(
     if model is None:
         model = Doc2Vec.load(str(model_file))
 
-    model.random.seed(doc2vec_seed)
+    model.random.seed(config.doc2vec_seed)
     return model.infer_vector(doc)
 
 

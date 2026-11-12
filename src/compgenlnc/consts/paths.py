@@ -4,7 +4,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from compgenlnc import config
+import compgenlnc.config as config
 
 SEQ_SS_PREFIX = "seq+ss_join_"
 LOOPS_PREFIX = "loops_"

@@ -3,9 +3,6 @@ from warnings import warn
 
 from . import consts, extractors, fileman, generators, structs, typing
 from .config import (
-    base_path,
-    doc2vec_seed,
-    log_file,
     set_base_path,
     set_doc2vec_seed,
     set_log_file,
