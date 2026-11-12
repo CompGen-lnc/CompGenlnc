@@ -1,6 +1,7 @@
 # Contributing to CompGen-lnc
 
-Thank you for your interest in contributing to CompGen-lnc! You can follow the guidelines below when contributing to this project.
+Thank you for your interest in contributing to CompGen-lnc! You can follow the
+guidelines below when contributing to this project.
 
 ## Summary
 
@@ -22,33 +23,31 @@ Thank you for your interest in contributing to CompGen-lnc! You can follow the g
 ## Preparing the Environment
 
 1. Make a fork of the repository (if not administrator) and clone:
-
     ```bash
     git clone https://github.com/CompGen-lnc/CompGenlnc.git
     cd CompGenlnc
     ```
 
 2. Create and activate and virtual environment:
-
     ```bash
-    python3.12 -m venv .venv
+    python -m venv .venv
     source .venv/bin/activate  # On Windows: .venv\Scripts\activate
     ```
     
-3. Install the dependencies:
-
+3. Install the package:
     ```bash
-    # Manually by the time being
-    pip install <package>
+    pip install -e .
+    compgenlnc-install-deps
     ```
 
 ## Code Convention
 
-- Follow the PEP8 guide for names and format
+- Follow the PEP8 guide for names and format.
 
 ## Commit Messages
 
-It is recommended to follow the [Conventional Commits](https://www.conventionalcommits.org/) format:
+It is recommended to follow the
+[Conventional Commits](https://www.conventionalcommits.org/) format:
 
 - `feat:` feature addition, modification or removal
 - `fix:` bug correction
@@ -69,4 +68,4 @@ Open an issue that includes:
 
 ## Suggestions
 
-Issues also can be opened for making suggestions for improving or changing
+Issues also can be opened for making suggestions for improving or changing.
