@@ -1,3 +1,6 @@
+import importlib.util
+from warnings import warn
+
 from . import consts, extractors, fileman, generators, structs, typing
 from .config import (
     base_path,
@@ -35,6 +38,14 @@ from .typing import (
     dtype_loop_tuple,
 )
 from .version import __version__
+
+HAS_PYG = importlib.util.find_spec("pyg_lib") is not None
+if not HAS_PYG:
+    warn(
+        "pyg_lib not installed, some functions will not work. Please install "
+        "it manually or run `compgenlnc-install-deps` instead",
+        stacklevel=2
+    )
 
 __all__ = [
     "base_path",
