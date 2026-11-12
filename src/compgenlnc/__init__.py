@@ -41,13 +41,10 @@ if not HAS_PYG:
     warn(
         "pyg_lib not installed, some functions will not work. Please install "
         "it manually or run `compgenlnc-install-deps` instead",
-        stacklevel=2
+        stacklevel=2,
     )
 
 __all__ = [
-    "base_path",
-    "doc2vec_seed",
-    "log_file",
     "dict_to_numpy",
     "dtype_index",
     "dtype_interaction_pair",

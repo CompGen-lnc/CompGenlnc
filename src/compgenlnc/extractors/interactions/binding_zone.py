@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+import compgenlnc.config as config
 from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
 from compgenlnc.consts.paths import BINDING_PREFIX, MIRANDA_PREFIX
 from compgenlnc.consts.regex import MIRANDA_INFO
@@ -59,7 +60,9 @@ def predict_miranda(
         return "/mnt/" + disk.lower() + sub_path.replace("\\", "/")
 
     def command(mir, lnc, out):
-        return ["conda", "run", "-n", "base", "miranda", mir, lnc, "-out", out]
+        conda_cmd = ["conda", "run", "-n", config.conda_environment]
+        miranda_cmd = ["miranda", mir, lnc, "-out", out]
+        return conda_cmd + miranda_cmd
 
     success = False
 

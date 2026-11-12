@@ -73,7 +73,11 @@ def track_progress(
         it = list(it)
         total = len(it)
     progress = tqdm(
-        desc=desc, total=total, file=config.log_file, unit=unit, initial=initial
+        desc=desc,
+        total=total,
+        file=config.log_file,
+        unit=unit,
+        initial=initial,
     )
 
     def iterator():

@@ -19,6 +19,7 @@ def get_pyg_wheel_url() -> str:
     base_url = "https://data.pyg.org/whl/"
     return f"{base_url}torch-{torch_main_version}+{cuda_tag}.html"
 
+
 def install_pyg_lib() -> None:
     """Install pyg_lib for the current PyTorch version."""
     try:
@@ -28,6 +29,7 @@ def install_pyg_lib() -> None:
         cmd = [sys.executable, "-m", "pip", "install", "pyg_lib", "-f", url]
         print(f"Ejecutando: {' '.join(cmd)}")
         subprocess.check_call(cmd)
+
 
 def install_deps() -> None:
     """Install the rest of the dependencies for the package."""

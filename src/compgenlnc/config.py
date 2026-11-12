@@ -20,6 +20,9 @@ doc2vec_seed: _ArrayLikeFloat_co | None = None
 PACKAGE_DIR: Final[Path] = Path(__file__).resolve().parent
 base_path: Path = Path(__file__).resolve().parent
 
+# Environments
+conda_environment: str = "base"
+
 
 def set_base_path(path: StrPath = PACKAGE_DIR) -> None:
     """Set the base path of the data directory.
@@ -31,6 +34,18 @@ def set_base_path(path: StrPath = PACKAGE_DIR) -> None:
     """
     global base_path
     base_path = Path(path).resolve()
+
+
+def set_conda_env(env: str = "base") -> None:
+    """Set the file to which the logs will be written.
+
+    Parameters
+    ----------
+    file : TextIOBase, optional
+        Buffer to which the logs will be written. Default: `base`.
+    """
+    global conda_environment
+    conda_environment = env
 
 
 def set_doc2vec_seed(seed: _ArrayLikeFloat_co | None = None) -> None:
