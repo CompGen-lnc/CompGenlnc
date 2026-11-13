@@ -7,7 +7,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from compgenlnc.consts.fields import ENERGY_FIELD, KIND_FIELD
-from compgenlnc.typing.numpy_dtypes import LoopTuple, dtype_loop_tuple
+from compgenlnc.dtypes import dtype_loop_tuple
+from compgenlnc.typing.numpy_dtypes import LoopTuple
 
 
 @dataclass(slots=True)

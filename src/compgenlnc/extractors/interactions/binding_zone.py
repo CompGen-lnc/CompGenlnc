@@ -17,13 +17,15 @@ import compgenlnc.config as config
 from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD, PAIR_FIELDS
 from compgenlnc.consts.paths import BINDING_PREFIX, MIRANDA_PREFIX
 from compgenlnc.consts.regex import MIRANDA_INFO
+from compgenlnc.dtypes import (
+    dtype_interaction_pair,
+)
 from compgenlnc.fileman.csv_manager import load_interactions
 from compgenlnc.fileman.fasta_manager import load_fasta
 from compgenlnc.fileman.log_manager import send_msg, track_progress
 from compgenlnc.structs.seq_ss_record import SeqSSRecord
 from compgenlnc.typing.numpy_dtypes import (
     InteractionPair,
-    dtype_interaction_pair,
 )
 
 if TYPE_CHECKING:

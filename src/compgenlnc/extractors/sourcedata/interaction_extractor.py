@@ -10,13 +10,13 @@ import pandas as pd
 from numpy.typing import NDArray
 
 from compgenlnc.consts.fields import LNCRNA_FIELD, MIRNA_FIELD
+from compgenlnc.dtypes import dtype_interaction_pair
 from compgenlnc.fileman.csv_manager import (
     load_interactions,
     save_interactions,
 )
 from compgenlnc.typing.numpy_dtypes import (
     InteractionPair,
-    dtype_interaction_pair,
 )
 
 if TYPE_CHECKING:

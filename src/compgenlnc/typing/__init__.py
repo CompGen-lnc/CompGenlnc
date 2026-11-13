@@ -4,10 +4,6 @@ from .numpy_dtypes import (
     InteractionPair,
     InteractionTuple,
     LoopTuple,
-    dtype_index,
-    dtype_interaction_pair,
-    dtype_interaction_tuple,
-    dtype_loop_tuple,
 )
 
 __all__ = [
@@ -18,8 +14,4 @@ __all__ = [
     "SeqLike",
     "SeqSSRecord",
     "SSLike",
-    "dtype_index",
-    "dtype_interaction_pair",
-    "dtype_interaction_tuple",
-    "dtype_loop_tuple",
 ]

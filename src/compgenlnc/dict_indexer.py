@@ -23,13 +23,15 @@ from compgenlnc.consts.paths import (
     MIRNA_SEQ_SS_DIR,
     PAIRS_FILE,
 )
+from compgenlnc.dtypes import (
+    dtype_index,
+    dtype_interaction_pair,
+)
 from compgenlnc.fileman.csv_manager import load_interactions, load_precursors
 from compgenlnc.fileman.fasta_manager import iter_fasta, iter_seq_ss
 from compgenlnc.typing.numpy_dtypes import (
     Index,
     InteractionPair,
-    dtype_index,
-    dtype_interaction_pair,
 )
 
 if TYPE_CHECKING:

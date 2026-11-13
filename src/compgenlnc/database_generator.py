@@ -86,7 +86,7 @@ def load_source_data(
     Parameters
     ----------
     base_dir : str or os.PathLike, optional
-        Path of the directory containing the base files to load. Those
+        Path of the directory containing the base files to load. These
         files do not overwrite paths defined below. Default: `None`.
     lnc_seq_fasta : str or os.PathLike, optional
         Path of the FASTA file with the lncRNA sequences.

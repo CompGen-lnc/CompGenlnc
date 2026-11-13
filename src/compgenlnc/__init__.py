@@ -1,7 +1,7 @@
 import importlib.util
 from warnings import warn
 
-from . import consts, extractors, fileman, generators, structs, typing
+from . import consts, extractors, fileman, generators, structs
 from .config import (
     set_base_path,
     set_doc2vec_seed,
@@ -19,6 +19,12 @@ from .dict_indexer import (
     interactions_from_index,
     load_indexes,
 )
+from .dtypes import (
+    dtype_index,
+    dtype_interaction_pair,
+    dtype_interaction_tuple,
+    dtype_loop_tuple,
+)
 from .extractors import *
 from .feat_loader import (
     get_feature_vectors,
@@ -28,12 +34,6 @@ from .feat_loader import (
 )
 from .fileman import *
 from .generators import *
-from .typing import (
-    dtype_index,
-    dtype_interaction_pair,
-    dtype_interaction_tuple,
-    dtype_loop_tuple,
-)
 from .version import __version__
 
 HAS_PYG = importlib.util.find_spec("pyg_lib") is not None
@@ -73,4 +73,3 @@ __all__.extend(extractors.__all__)
 __all__.extend(fileman.__all__)
 __all__.extend(generators.__all__)
 __all__.extend(structs.__all__)
-__all__.extend(typing.__all__)

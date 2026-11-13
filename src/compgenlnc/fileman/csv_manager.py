@@ -13,10 +13,10 @@ from compgenlnc.consts.fields import (
     MIRNA_FIELD,
     PAIR_FIELDS,
 )
+from compgenlnc.dtypes import dtype_interaction_tuple
 from compgenlnc.typing.numpy_dtypes import (
     InteractionPair,
     InteractionTuple,
-    dtype_interaction_tuple,
 )
 
 if TYPE_CHECKING:
