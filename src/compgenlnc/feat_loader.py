@@ -255,7 +255,7 @@ def get_feature_dictionaries() -> FeatDictTuple:
     return lnc_dict, pre_dict, mat_dict, bin_lnc_dict, bin_mir_dict
 
 
-def get_interactions_features() -> pd.DataFrame:
+def get_interaction_features() -> pd.DataFrame:
     """Get a table with all the features for each interaction.
 
     Returns

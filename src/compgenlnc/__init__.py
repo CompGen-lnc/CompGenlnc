@@ -28,7 +28,7 @@ from .dtypes import (
 from .extractors import *
 from .feat_loader import (
     get_feature_vectors,
-    get_interactions_features,
+    get_interaction_features,
     get_seq_features,
     get_ss_features,
 )
@@ -51,7 +51,7 @@ __all__ = [
     "dtype_interaction_tuple",
     "dtype_loop_tuple",
     "get_feature_vectors",
-    "get_interactions_features",
+    "get_interaction_features",
     "get_mature_index",
     "get_seq_features",
     "get_ss_features",
