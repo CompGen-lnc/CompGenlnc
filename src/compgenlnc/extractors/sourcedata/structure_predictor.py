@@ -53,6 +53,7 @@ def extract_massive_2d_structure(seq: SeqLike, /) -> str:
     for index, collision_set in first_appear.items():
         set_beginnings[collision_set].append(index)
 
+    # Improve comparison method
     def indexes_from(k):
         if k == total_sets:
             yield []

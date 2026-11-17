@@ -196,7 +196,7 @@ def index_lncrna(*, index_file: StrPath = INDEX_NPY) -> NDArray[np.object_]:
         A 1D array of the lncRNA records sorted by indexes.
     """
     global _lnc_indexed_records
-    if _lnc_indexed_records is None:
+    if _lnc_indexed_records is None or _index_file != index_file:
         indexes = load_indexes(index_file=index_file, rna=LNCRNA)
         records = {
             rec.id: rec for rec in iter_seq_ss(LNCRNA_SEQ_SS_DIR, keep=indexes)
@@ -223,7 +223,7 @@ def index_precursor_mirna(
         A 1D array of the precursor miRNA records sorted by indexes.
     """
     global _pre_mir_indexed_records
-    if _pre_mir_indexed_records is None:
+    if _pre_mir_indexed_records is None or _index_file != index_file:
         indexes = load_indexes(index_file=index_file, rna=PRECURSOR)
         records = {
             rec.id: rec for rec in iter_seq_ss(MIRNA_SEQ_SS_DIR, keep=indexes)
@@ -250,7 +250,7 @@ def index_mature_mirna(
         A 1D array of the mature miRNA records sorted by indexes.
     """
     global _mat_mir_indexed_records
-    if _mat_mir_indexed_records is None:
+    if _mat_mir_indexed_records is None or _index_file != index_file:
         indexes = load_indexes(index_file=index_file, rna=MATURE)
         records = {
             rec.id: rec for rec in iter_fasta(MAT_MIRNA_FASTA, keep=indexes)
@@ -269,6 +269,9 @@ def interactions_from_index(
 
     Parameters
     ----------
+    interactions_csv : str or os.PathLike, optional
+        Path of the file containing the interaction pairs. Default:
+        `paths.PAIRS_FILE`.
     index_file : str or os.PathLike, optional
         Path of the file containing the indexes. Default:
         `paths.INDEX_PY`.
@@ -279,8 +282,8 @@ def interactions_from_index(
         A 1D array of the interaction pairs sorted by indexes.
     """
     global _indexed_interactions
-    if _indexed_interactions is None:
-        indexes = load_indexes(rna=INTERACTION)
+    if _indexed_interactions is None or _index_file != index_file:
+        indexes = load_indexes(index_file=index_file, rna=INTERACTION)
         interactions = load_interactions(interactions_csv)
         it = (tuple(interaction.split("_")) for interaction in indexes)
         tuples = np.fromiter(
