@@ -37,12 +37,13 @@ def set_base_path(path: StrPath = PACKAGE_DIR) -> None:
 
 
 def set_conda_env(env: str = "base") -> None:
-    """Set the file to which the logs will be written.
+    """Set conda virtual environment where miRanda is installed.
 
     Parameters
     ----------
-    file : TextIOBase, optional
-        Buffer to which the logs will be written. Default: `base`.
+    env : str, optional
+        Conda virtual environment where miRanda is installed. Default:
+        `base`.
     """
     global conda_environment
     conda_environment = env
