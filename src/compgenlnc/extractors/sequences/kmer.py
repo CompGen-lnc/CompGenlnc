@@ -62,14 +62,14 @@ def get_kmer(seq: SeqLike, /, k: int) -> NDArray[np.float32]:
     return np.concatenate([get_nmer(seq, n) for n in range(1, k + 1)])
 
 
-def get_kmer_by_name(dir: StrPath, id_: str, k: int) -> NDArray[np.float32]:
+def get_kmer_by_name(dir: StrPath, seq_id: str, k: int) -> NDArray[np.float32]:
     """Get the k-mers of a RNA sequence from the seq+ss file.
 
     Parameters
     ----------
     dir : str or os.PathLike
         Path of the directory where the seq+ss file is.
-    id_ : str
+    seq_id : str
         ID of the RNA sequence.
     k : int
         Maximum length for k-mers. It calculates k-mers with length from
@@ -82,7 +82,7 @@ def get_kmer_by_name(dir: StrPath, id_: str, k: int) -> NDArray[np.float32]:
     """
     dir = Path(dir).resolve()
 
-    seq = read_sequence(dir, id_)
+    seq = read_sequence(dir, seq_id)
     return get_kmer(seq, k)
 
 

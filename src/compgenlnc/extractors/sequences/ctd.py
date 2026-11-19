@@ -91,14 +91,14 @@ def get_ctd(seq: SeqLike, /) -> NDArray[np.float32]:
     return np.concatenate((nums_array, trans_array, dist_array))
 
 
-def get_ctd_by_name(dir: StrPath, id_: str) -> NDArray[np.float32]:
+def get_ctd_by_name(dir: StrPath, seq_id: str) -> NDArray[np.float32]:
     """Get the CTD of a RNA sequence from the seq+ss file.
 
     Parameters
     ----------
     dir : str or os.PathLike
         Path of the directory where the seq+ss file is.
-    id_ : str
+    seq_id : str
         ID of the RNA sequence to read.
 
     Returns
@@ -107,7 +107,7 @@ def get_ctd_by_name(dir: StrPath, id_: str) -> NDArray[np.float32]:
         A 1D array with the CTD of the sequence.
     """
     dir = Path(dir).resolve()
-    seq = read_sequence(dir, id_)
+    seq = read_sequence(dir, seq_id)
     return get_ctd(seq)
 
 

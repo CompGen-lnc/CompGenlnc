@@ -13,14 +13,14 @@ if TYPE_CHECKING:
     from _typeshed import StrPath
 
 
-def read_2d_structure_loops(dir: StrPath, id_: str) -> LoopCounter:
+def read_2d_structure_loops(dir: StrPath, ss_id: str) -> LoopCounter:
     """Read the 2D structure loops of a RNA.
 
     Parameters
     ----------
     dir : str or os.PathLike
         The directory containing the loops file.
-    id_ : str
+    ss_id : str
         The ID of the RNA.
 
     Returns
@@ -42,7 +42,7 @@ def read_2d_structure_loops(dir: StrPath, id_: str) -> LoopCounter:
             return True, (m.group(1).split()[0], 0, 0, int(m.group(2)))
         return False, ()
 
-    loops_file = Path(dir).resolve() / f"{LOOPS_PREFIX}{id_}.dat"
+    loops_file = Path(dir).resolve() / f"{LOOPS_PREFIX}{ss_id}.dat"
     energy = 0
     loops = []
     with open(loops_file) as file:
@@ -55,7 +55,7 @@ def read_2d_structure_loops(dir: StrPath, id_: str) -> LoopCounter:
                 loops.append(loop)
             elif words[0] == "Energy":
                 energy = float(words[-1])
-    return LoopCounter(id_, loops, energy)
+    return LoopCounter(ss_id, loops, energy)
 
 
 def read_2d_structure_loops_from_dir(

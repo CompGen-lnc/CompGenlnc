@@ -55,7 +55,7 @@ def load_dict(
 
 def save_dict(
     dict_file: StrPath,
-    dict_: dict[str, NDArray] | None = None,
+    src_dict: dict[str, NDArray] | None = None,
     *,
     keys: Sequence[str] | None = None,
     values: Sequence[NDArray] | None = None,
@@ -67,17 +67,17 @@ def save_dict(
     ----------
     dict_file : str or os.PathLike
         Path of the dictionary file.
-    dict_ : dict of str to numpy.ndarray, optional
+    src_dict : dict of str to numpy.ndarray, optional
         Dictionary with the feature vectors associated to their RNA ID.
         Should not be `None` if `keys` or `values` are `None`, if it is,
         then `save_dict` will do nothing. Default: `None`.
     keys : sequence of str, optional
         Sequence with the RNA IDs to store. Does not have effect if
-        `dict_` is provided. Default: `None`.
+        `src_dict` is provided. Default: `None`.
     values : sequence of numpy.ndarray, optional
         Sequence with the feature vectors to store. Must have the same
-        length than `keys`. Does not have effect if `dict_` is provided.
-        Default: `None`.
+        length than `keys`. Does not have effect if `src_dict` is
+        provided. Default: `None`.
     overwrite : bool, optional
         Replace the existing dictionary if `True` in case there is.
         Otherwise, append the items to the existing dictionary, ignoring
@@ -86,8 +86,8 @@ def save_dict(
     dict_file = Path(dict_file).resolve()
     dict_file.parent.mkdir(parents=True, exist_ok=True)
 
-    if dict_ is not None:
-        items = dict_.items()
+    if src_dict is not None:
+        items = src_dict.items()
     elif keys is not None and values is not None:
         items = zip(keys, values, strict=True)
     else:

@@ -48,7 +48,7 @@ class LoopCounter:
 
     def __init__(
         self,
-        id_: str,
+        ss_id: str,
         loops: Sequence[LoopTuple],
         energy: float | None = None,
     ) -> None:
@@ -56,7 +56,7 @@ class LoopCounter:
 
         Parameters
         ----------
-        id_: str
+        ss_id: str
             The ID of the RNA.
         loops: sequence of LoopTuple
             The loops of the RNA.
@@ -64,7 +64,7 @@ class LoopCounter:
             The energy of the RNA. If not provided, it will be
             calculated from the loops. Default: `None`.
         """
-        self._rna = id_
+        self._rna = ss_id
         loops_arr = np.array(loops, dtype_loop_tuple)
         self._loops = loops_arr
         if energy is not None:

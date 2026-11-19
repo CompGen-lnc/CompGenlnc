@@ -129,7 +129,7 @@ def get_doc2vec(
 
 def get_doc2vec_by_name(
     dir: StrPath,
-    id_: str,
+    seq_id: str,
     *,
     model: Doc2Vec | None = None,
     model_file: StrPath | None = None,
@@ -140,7 +140,7 @@ def get_doc2vec_by_name(
     ----------
     dir : str or os.PathLike
         Path of the directory where the seq+ss file is.
-    id_ : str
+    seq_id : str
         ID of the RNA sequence to read.
     model : Doc2Vec, optional
         The model to extract the Doc2Vec from the sequence. Cannot be
@@ -154,7 +154,7 @@ def get_doc2vec_by_name(
         A 1D array with the Doc2Vec of the sequence.
     """
     dir = Path(dir).resolve()
-    seq = read_sequence(dir, id_)
+    seq = read_sequence(dir, seq_id)
     return get_doc2vec(seq, model=model, model_file=model_file)
 
 

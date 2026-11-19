@@ -192,14 +192,14 @@ def iter_seq_fasta(
         yield record
 
 
-def read_sequence(dir: StrPath, id_: str) -> str:
+def read_sequence(dir: StrPath, rna_id: str) -> str:
     """Read the first line of a seq+ss file.
 
     Parameters
     ----------
     dir : str or os.PathLike
         Path of the directory containing the seq+ss file.
-    id_ : str
+    rna_id : str
         ID of the RNA to read the sequence
 
     Returns
@@ -208,21 +208,21 @@ def read_sequence(dir: StrPath, id_: str) -> str:
         Sequence of the RNA searched.
     """
     dir = Path(dir).resolve()
-    filename = dir / f"{SEQ_SS_PREFIX}{id_}.dat"
+    filename = dir / f"{SEQ_SS_PREFIX}{rna_id}.dat"
 
     with open(filename) as f:
         seq = f.readlines()[0].strip()
     return seq.upper().replace("T", "U")
 
 
-def read_structure(dir: StrPath, id_: str) -> str:
+def read_structure(dir: StrPath, rna_id: str) -> str:
     """Read the second line of a seq+ss file.
 
     Parameters
     ----------
     dir : str or os.PathLike
         Path of the directory containing the seq+ss file.
-    id_ : str
+    rna_id : str
         ID of the RNA to read the 2D structure
 
     Returns
@@ -231,7 +231,7 @@ def read_structure(dir: StrPath, id_: str) -> str:
         2D structure of the RNA searched.
     """
     dir = Path(dir).resolve()
-    filename = dir / f"{SEQ_SS_PREFIX}{id_}.dat"
+    filename = dir / f"{SEQ_SS_PREFIX}{rna_id}.dat"
 
     with open(filename) as f:
         ss = f.readlines()[1].strip()

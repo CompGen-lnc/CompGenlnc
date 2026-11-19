@@ -23,19 +23,19 @@ class SeqSSRecord:
     ss: StructureRecord
 
     def __init__(
-        self, id_: str, seq: str | SeqRecord, ss: str | StructureRecord, /
+        self, rna_id: str, seq: str | SeqRecord, ss: str | StructureRecord, /
     ) -> None:
         """Initialize the SeqSSRecord object.
 
         Parameters
         ----------
-        id_ : str
+        rna_id : str
             The ID of the RNA.
         seq : SeqRecord
             The sequence of the RNA.
         ss : StructureRecord
             The 2D structure of the RNA.
         """
-        self.id = id_
+        self.id = rna_id
         self.seq = SeqRecord(seq)
         self.ss = StructureRecord(ss)

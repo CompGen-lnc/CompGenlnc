@@ -13,14 +13,14 @@ if TYPE_CHECKING:
     from _typeshed import StrPath
 
 
-def join_seq_ss(dir: StrPath, id_: str, seq: str, ss: str) -> None:
+def join_seq_ss(dir: StrPath, rna_id: str, seq: str, ss: str) -> None:
     """Save the sequence and 2D structure in the same file.
 
     Parameters
     ----------
     dir : str or os.PathLike
         Path of the directory where the seq+ss file will be stored.
-    id_ : str
+    rna_id : str
         ID of the RNA.
     seq : str
         The RNA sequence on ACGT alphabet.
@@ -29,7 +29,7 @@ def join_seq_ss(dir: StrPath, id_: str, seq: str, ss: str) -> None:
     """
     dir = Path(dir).resolve()
 
-    path = dir / f"{SEQ_SS_PREFIX}{id_}.dat"
+    path = dir / f"{SEQ_SS_PREFIX}{rna_id}.dat"
     with open(path, "w") as out_file:
         out_file.write(seq + "\n")
         out_file.write(ss)
