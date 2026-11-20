@@ -22,9 +22,7 @@ def get_pyg_wheel_url() -> str:
 
 def install_pyg_lib() -> None:
     """Install pyg_lib for the current PyTorch version."""
-    try:
-        importlib.util.find_spec("pyg_lib")
-    except ImportError:
+    if importlib.util.find_spec("pyg_lib") is None:
         url = get_pyg_wheel_url()
         cmd = [sys.executable, "-m", "pip", "install", "pyg_lib", "-f", url]
         print(f"Ejecutando: {' '.join(cmd)}")
