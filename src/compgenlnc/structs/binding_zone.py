@@ -102,7 +102,7 @@ class BindingZone:
         """The end position of the interaction miRNA."""
         return self._mir_range.stop
 
-    def fit_mirna_range(self, start: int, /) -> None:
+    def fit_mirna_range(self, start: int, /) -> BindingZone:
         """Fit the miRNA range for the precursor.
 
         Parameters

@@ -9,7 +9,7 @@
 project = "CompGenlnc"
 copyright = "2026, Cindy Calderón Arce, Gabriel Calvo Montero"
 author = "Cindy Calderón Arce, Gabriel Calvo Montero"
-release = "0.1.0"
+release = "0.1.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -18,6 +18,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
+    "numpydoc",
 ]
 
 templates_path = ["_templates"]
