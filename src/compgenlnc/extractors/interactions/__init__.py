@@ -7,6 +7,7 @@ from .binding_zone import (
 )
 from .substructure_loops import (
     gen_substructure_loops_dict,
+    gen_substructure_loops_dict_from_files,
     get_substructure_loops,
     get_substructure_loops_from_list,
 )

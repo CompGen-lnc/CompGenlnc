@@ -4,6 +4,7 @@ from warnings import warn
 from . import consts, extractors, fileman, generators, structs
 from .config import (
     set_base_path,
+    set_conda_env,
     set_doc2vec_seed,
     set_log_file,
 )
@@ -34,6 +35,7 @@ from .feat_loader import (
 )
 from .fileman import *
 from .generators import *
+from .structs import *
 from .version import __version__
 
 HAS_PYG = importlib.util.find_spec("pyg_lib") is not None

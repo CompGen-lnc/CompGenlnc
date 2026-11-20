@@ -5,7 +5,6 @@ from .dict_manager import (
 )
 from .fasta_manager import (
     iter_fasta,
-    iter_seq_fasta,
     iter_seq_ss,
     load_fasta,
     load_seq_ss,
@@ -17,7 +16,13 @@ from .loops_manager import (
     read_2d_structure_loops,
     read_2d_structure_loops_from_dir,
 )
-from .miranda_manager import read_binding_zone
+from .miranda_manager import (
+    get_subrecord,
+    get_subrecord_list,
+    get_subrecord_list_from_dir,
+    read_binding_zone,
+    read_binding_zones_from_list,
+)
 
 __all__ = [
     "iter_fasta",
