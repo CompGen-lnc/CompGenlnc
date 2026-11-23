@@ -1,5 +1,6 @@
+=========================================================================
 Base File Fetcher (``compgenlnc.extractors.sourcedata.basefile_fetcher``)
-============================================================================
+=========================================================================
 
 .. automodule:: compgenlnc.extractors.sourcedata.basefile_fetcher
 

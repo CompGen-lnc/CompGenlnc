@@ -1,5 +1,6 @@
+=============================================================
 Source Data Extractors (``compgenlnc.extractors.sourcedata``)
-=========================================================
+=============================================================
 
 .. automodule:: compgenlnc.extractors.sourcedata
 

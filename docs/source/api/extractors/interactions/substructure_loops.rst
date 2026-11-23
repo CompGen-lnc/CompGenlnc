@@ -1,3 +1,4 @@
+==============================================================================
 Substructure Loops (``compgenlnc.extractors.interactions.substructure_loops``)
 ==============================================================================
 
@@ -11,4 +12,4 @@ Functions
 
    .. autofunction:: compgenlnc.gen_substructure_loops_dict
 
-   .. autofunction:: compgenlnc.gen_substructure_loops_dict_from_list
+   .. autofunction:: compgenlnc.gen_substructure_loops_dict_from_files

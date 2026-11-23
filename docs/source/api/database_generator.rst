@@ -1,5 +1,6 @@
+======================================================
 Database Generator (``compgenlnc.database_generator``)
-=====================================
+======================================================
 
 .. automodule:: compgenlnc.database_generator
 

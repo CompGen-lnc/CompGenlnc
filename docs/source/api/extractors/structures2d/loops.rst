@@ -1,5 +1,6 @@
+====================================================
 Loops (``compgenlnc.extractors.structures2d.loops``)
-=====================================================
+====================================================
 
 .. automodule:: compgenlnc.extractors.structures2d.loops
 

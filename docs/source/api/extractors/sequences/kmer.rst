@@ -1,5 +1,6 @@
+================================================
 K-mer (``compgenlnc.extractors.sequences.kmer``)
-=================================================
+================================================
 
 .. automodule:: compgenlnc.extractors.sequences.kmer
 

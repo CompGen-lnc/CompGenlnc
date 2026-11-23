@@ -3,6 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+==========
 CompGenlnc
 ==========
 
@@ -25,7 +26,7 @@ Contents
 About
 -----
 
-This package has been developed by the CompGen-lnc team at the [Costa Rica Institute of Technology](https://www.tec.ac.cr)
-(TEC). The source code is hosted on [GitHub](https://github.com/CompGen-lnc/CompGenlnc),
+This package has been developed by the CompGen-lnc team at the `Costa Rica Institute of Technology <https://www.tec.ac.cr>`__
+(TEC). The source code is hosted on `GitHub <https://github.com/CompGen-lnc/CompGenlnc>`__,
 you are welcome to contribute to the project and look at the codebase.
 
