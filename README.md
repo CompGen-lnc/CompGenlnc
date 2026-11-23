@@ -2,7 +2,8 @@
 
 A Feature Vector Generation Package for lncRNA-miRNA Interaction Probability
 
-<!---Links--->
+[![pypi](https://img.shields.io/pypi/v/compgenlnc.svg)](https://pypi.org/project/compgenlnc/)
+[![GitHub License](https://img.shields.io/github/license/CompGen-lnc/CompGenlnc)](https://github.com/CompGen-lnc/CompGenlnc/blob/main/LICENSE)
 
 ## Introduction
 
