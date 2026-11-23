@@ -10,7 +10,7 @@ def test_fasta_to_seq_ss(tmp_path):
 
 
 def test_join_seq_ss(tmp_path):
-    records = cgl.iter_seq_fasta(cgl.paths.PRE_MIRNA_FASTA)
+    records = cgl.iter_fasta(cgl.paths.PRE_MIRNA_FASTA, mode = cgl.SEQ_MODE)
 
     for record in records:
         seq = str(record.seq)

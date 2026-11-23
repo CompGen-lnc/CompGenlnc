@@ -13,6 +13,7 @@ from .database_generator import gen_database, gen_source_data, load_source_data
 from .dict_indexer import (
     dict_to_numpy,
     gen_indexes,
+    gen_indexes_from_files,
     get_mature_index,
     index_lncrna,
     index_mature_mirna,
@@ -59,6 +60,7 @@ __all__ = [
     "get_ss_features",
     "gen_database",
     "gen_indexes",
+    "gen_indexes_from_files",
     "gen_source_data",
     "index_lncrna",
     "index_mature_mirna",
@@ -67,6 +69,7 @@ __all__ = [
     "load_indexes",
     "load_source_data",
     "set_base_path",
+    "set_conda_env",
     "set_doc2vec_seed",
     "set_log_file",
 ]

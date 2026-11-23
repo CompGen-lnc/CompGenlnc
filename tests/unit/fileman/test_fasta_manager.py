@@ -1,6 +1,7 @@
 import pytest
 
 import compgenlnc as cgl
+import compgenlnc.fileman.fasta_manager as fasta_manager
 
 
 def test_load_fasta():
@@ -27,7 +28,7 @@ def test_save_fasta(tmp_path):
 
 
 def test_iter_seq_fasta():
-    records = cgl.iter_seq_fasta(cgl.paths.PRE_MIRNA_FASTA)
+    records = fasta_manager.iter_seq_fasta(cgl.paths.PRE_MIRNA_FASTA)
     for record in records:
         assert isinstance(record, cgl.structs.SeqSSRecord)
         assert len(record.seq) > len(record.ss) or len(record.seq) == 0
@@ -45,7 +46,9 @@ def test_iter_seq_fasta():
 def test_iter_seq_fasta_filtered(filter, expected):
     records_list = [
         record
-        for record in cgl.iter_seq_fasta(cgl.paths.PRE_MIRNA_FASTA, filter)
+        for record in fasta_manager.iter_seq_fasta(
+            cgl.paths.PRE_MIRNA_FASTA, filter
+        )
     ]
     assert len(records_list) == expected
 
