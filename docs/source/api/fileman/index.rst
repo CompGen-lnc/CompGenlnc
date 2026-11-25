@@ -2,9 +2,8 @@
 File Manager (``compgenlnc.fileman``)
 =====================================
 
-.. rubric:: Submodules
-
 .. toctree::
+   :caption: Submodules
    :maxdepth: 1
 
    csv_manager

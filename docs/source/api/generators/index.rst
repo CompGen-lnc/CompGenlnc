@@ -2,9 +2,8 @@
 Generators (``compgenlnc.generators``)
 ======================================
 
-.. rubric:: Submodules
-
 .. toctree::
+   :caption: Submodules
    :maxdepth: 1
 
    interaction_features

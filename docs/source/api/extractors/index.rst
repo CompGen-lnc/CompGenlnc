@@ -4,9 +4,8 @@ Extractors (``compgenlnc.extractors``)
 
 .. automodule:: compgenlnc.extractors
 
-.. rubric:: Subpackages
-
 .. toctree::
+   :caption: Subpackages
    :maxdepth: 2
    
    interactions/index

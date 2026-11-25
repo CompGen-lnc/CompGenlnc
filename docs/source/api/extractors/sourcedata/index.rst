@@ -4,9 +4,8 @@ Source Data Extractors (``compgenlnc.extractors.sourcedata``)
 
 .. automodule:: compgenlnc.extractors.sourcedata
 
-.. rubric:: Submodules
-
 .. toctree::
+   :caption: Submodules
    :maxdepth: 1
    
    basefile_fetcher

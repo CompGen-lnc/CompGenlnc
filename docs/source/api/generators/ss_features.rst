@@ -1,5 +1,5 @@
 =============================================================
-2d Structure Features (``compgenlnc.generators.ss_features``)
+2D Structure Features (``compgenlnc.generators.ss_features``)
 =============================================================
 
 .. automodule:: compgenlnc.generators.ss_features

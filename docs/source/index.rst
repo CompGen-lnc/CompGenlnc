@@ -14,10 +14,8 @@ algorithm to predict the binding zone of interactions and provide a database
 to train machine learning models to predict the interaction probability between
 a lncRNA and a miRNA or the implicatation that the interaction could have.
 
-Contents
---------
-
 .. toctree::
+   :caption: Contents
    :maxdepth: 2
    
    Quickstart <quickstart>

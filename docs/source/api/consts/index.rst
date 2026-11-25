@@ -2,9 +2,8 @@
 Constants (``compgenlnc.consts``)
 =================================
 
-.. rubric:: Submodules
-
 .. toctree::
+   :caption: Submodules
    :maxdepth: 1
 
    fields

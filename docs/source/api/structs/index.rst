@@ -2,9 +2,8 @@
 Structs (``compgenlnc.structs``)
 ================================
 
-.. rubric:: Submodules
-
 .. toctree::
+   :caption: Submodules
    :maxdepth: 1
 
    binding_zone

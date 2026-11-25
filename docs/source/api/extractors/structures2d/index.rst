@@ -4,9 +4,8 @@
 
 .. automodule:: compgenlnc.extractors.structures2d
 
-.. rubric:: Submodules
-
 .. toctree::
+   :caption: Submodules
    :maxdepth: 2
    
    adjacency_matrix

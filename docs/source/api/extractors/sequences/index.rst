@@ -4,9 +4,8 @@ Sequence Extractors (``compgenlnc.extractors.sequences``)
 
 .. automodule:: compgenlnc.extractors.sequences
 
-.. rubric:: Submodules
-
 .. toctree::
+   :caption: Submodules
    :maxdepth: 1
    
    ctd
