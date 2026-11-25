@@ -3,10 +3,12 @@ import re
 EXTERNAL_LOOP_RE = re.compile(
     r"^(?P<kind>External loop)\s*:\s*(?P<energy>[+-]?\d+)\s*$"
 )
+"""Regular expression to match external loops."""
 LOOP_RE = re.compile(
     r"^(?P<kind>Interior loop|Hairpin\s+loop|Multi\s+loop)"
     r"\s*\(\s*(?P<low>\d+),\s*(?P<high>\d+)\).*?:\s*(?P<energy>[+-]?\d+)\s*$"
 )
+"""Regular expression to match internal, multi and stack loops."""
 MIRANDA_INFO = re.compile(
     (
         r"Forward:.*?Q:(?P<mir_first>\d+)\s+to\s+(?P<mir_last>\d+).*?"
@@ -15,3 +17,4 @@ MIRANDA_INFO = re.compile(
     ),
     re.S,
 )
+"""Regular expression to match binding zone main data."""

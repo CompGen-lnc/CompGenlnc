@@ -6,11 +6,6 @@ from typing import Any
 
 import compgenlnc.config as config
 
-SEQ_SS_PREFIX = "seq+ss_join_"
-LOOPS_PREFIX = "loops_"
-MIRANDA_PREFIX = "miranda_"
-BINDING_PREFIX = "binding_"
-
 
 class DyPath(Path):
     """A path that is relative to `config.base_path`."""
@@ -64,7 +59,7 @@ class DyPath(Path):
         str
             The printable representation.
         """
-        return repr(self._real_path)
+        return f"base_path/{self._relative_subpath}".replace("\\", "/")
 
     def __fspath__(self) -> str:
         """Get the file system path representation of the object.
@@ -119,59 +114,108 @@ class DyPath(Path):
         return Path, (str(self._real_path),)
 
 
+SEQ_SS_PREFIX = "seq+ss_join_"
+"""Prefix for seq+ss files."""
+LOOPS_PREFIX = "loops_"
+"""Prefix for loop files."""
+MIRANDA_PREFIX = "miranda_"
+"""Prefix for miRanda output files."""
+BINDING_PREFIX = "binding_"
+"""Prefix for binding zone files."""
+
 # Main data dirs
 DATA_DIR = DyPath("data")
+"""Path of the data directory for the package."""
 EMBEDDING_DIR = DATA_DIR / "embedding"
+"""Path of the embedding directory."""
+
 INTERACTIONS_DIR = DATA_DIR / "interactions"
+"""Path of the interaction files directory."""
 LNCRNA_DIR = DATA_DIR / "lncrna"
+"""Path of the lncRNA files directory."""
 MIRNA_DIR = DATA_DIR / "mirna"
+"""Path of the miRNA files directory."""
 TEMP_DIR = DATA_DIR / "temp"
 
 # Embedding
 INDEX_NPY = EMBEDDING_DIR / "index.npy"
+"""Path of the index file."""
 DATASET_DIR = EMBEDDING_DIR / "dataset"
+"""Path of the dataset directory."""
 
 MODELS_DIR = EMBEDDING_DIR / "models"
+"""Path of the directory for feature models."""
 LNCRNA_DOC2VEC_MODEL = MODELS_DIR / "lnc_doc2vec.model"
+"""Path of the Doc2Vec model file for lncRNA sequences."""
 PRE_MIRNA_DOC2VEC_MODEL = MODELS_DIR / "pre_mir_doc2vec.model"
+"""Path of the Doc2Vec model file for precursor miRNA sequences."""
 MAT_MIRNA_DOC2VEC_MODEL = MODELS_DIR / "mat_mir_doc2vec.model"
+"""Path of the Doc2Vec model file for mature miRNA sequences."""
 LNCRNA_INTERACTION_DOV2VEC_MODEL = MODELS_DIR / "binding_lnc_doc2vec.model"
+"""Path of the Doc2Vec model file for lncRNA subsequences."""
 MIRNA_INTERACTION_DOV2VEC_MODEL = MODELS_DIR / "binding_mir_doc2vec.model"
+"""Path of the Doc2Vec model file for miRNA subsequences."""
 
 # Interactions
 PAIRS_FILE = INTERACTIONS_DIR / "interactions.csv"
+"""Path of the interaction file."""
 PAIRS_FILE_NEGATIVE = INTERACTIONS_DIR / "pairs" / "negative_pairs.csv"
+"""Path of the positive interaction file."""
 PAIRS_FILE_POSITIVE = INTERACTIONS_DIR / "pairs" / "positive_pairs.csv"
+"""Path of the negative interaction file."""
 
 BINDING_DIR = INTERACTIONS_DIR / "binding"
+"""Path of the directory for binding zone files."""
 MIRANDA_DIR = INTERACTIONS_DIR / "miranda"
+"""Path of the directory for miRanda output files."""
 
 # lncRNA
 LNCRNA_FASTA = LNCRNA_DIR / "fasta" / "lncRNA.fa"
+"""Path of the lncRNA sequence FASTA file."""
 LNCRNA_SS_FASTA = LNCRNA_DIR / "fasta" / "lncrna_2d.fa"
+"""Path of the lncRNA 2D structure FASTA file."""
 
 LNCRNA_SEQ_SS_DIR = LNCRNA_DIR / "characterization" / "seq+ss_join"
+"""Path of the directory for lncRNA seq+ss files."""
 LNCRNA_LOOPS_DIR = LNCRNA_DIR / "characterization" / "ss_loops"
+"""Path of the directory for lncRNA loop files."""
 LNCRNA_DICTS_DIR = LNCRNA_DIR / "dicts"
+"""Path of the directory for lncRNA dictionary files."""
 
 # miRNA
 DATA_MIRNA = MIRNA_DIR / "data_miRNA.csv"
+"""Path of the precursor-mature miRNA association file."""
 PRE_MIRNA_FASTA = MIRNA_DIR / "fasta" / "miRNA.fa"
+"""Path of the precursor miRNA sequence FASTA file."""
 MAT_MIRNA_FASTA = MIRNA_DIR / "fasta" / "mature_miRNA.fa"
+"""Path of the mature miRNA sequence FASTA file."""
 MIRNA_SS_FASTA = MIRNA_DIR / "fasta" / "miRNA_2d.fa"
+"""Path of the precursor miRNA 2D structure FASTA file."""
 
 MIRNA_SEQ_SS_DIR = MIRNA_DIR / "characterization" / "seq+ss_join"
+"""Path of the directory for miRNA seq+ss files."""
 MIRNA_LOOPS_DIR = MIRNA_DIR / "characterization" / "ss_loops"
+"""Path of the directory for miRNA loop files."""
 MIRNA_DICTS_DIR = MIRNA_DIR / "dicts"
+"""Path of the directory for miRNA dictionary files."""
 PRE_MIRNA_DICTS_DIR = MIRNA_DICTS_DIR / "precursor"
+"""Path of the directory for precursor miRNA dictionary files."""
 MAT_MIRNA_DICTS_DIR = MIRNA_DICTS_DIR / "mature"
+"""Path of the directory for mature miRNA dictionary files."""
 
 # Dictionaries
 KMER_DICT = "kmer.dict"
+"Filename for k-mer dictionaries."
 CTD_DICT = "ctd.dict"
+"Filename for CTD dictionaries."
 DOC2VEC_DICT = "doc2vec.dict"
+"Filename for Doc2Vec dictionaries."
 ROLE2VEC_DICT = "role2vec.dict"
+"Filename for Role2Vec dictionaries."
 NORMAL_SEQ_DICT = "normal_seq.dict"
+"Filename for normalized sequence dictionaries."
 
 LOOPS_DICT = "loops.dict"
+"Filename for vectorized loop dictionaries."
 NORMAL_MAT_DICT = "normal_matrix.dict"
+"Filename for normalized adjacency matrix dictionaries."
