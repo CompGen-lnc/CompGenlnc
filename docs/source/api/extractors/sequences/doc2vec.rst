@@ -4,8 +4,7 @@ Doc2Vec (``compgenlnc.extractors.sequences.doc2vec``)
 
 .. automodule:: compgenlnc.extractors.sequences.doc2vec
    
-Functions
----------
+.. rubric:: Functions
    .. autofunction:: compgenlnc.train_doc2vec_model
 
    .. autofunction:: compgenlnc.train_doc2vec_model_from_fasta

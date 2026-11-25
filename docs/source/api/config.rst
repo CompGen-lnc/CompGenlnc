@@ -4,8 +4,7 @@ Configuration (``compgenlnc.config``)
 
 .. automodule:: compgenlnc.config
 
-Functions
----------
+   .. rubric:: Constants
    .. autofunction:: compgenlnc.set_base_path
 
    .. autofunction:: compgenlnc.set_conda_env

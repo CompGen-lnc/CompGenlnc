@@ -4,8 +4,7 @@ Mature to Precursor (``compgenlnc.extractors.sourcedata.mature_to_precursor``)
 
 .. automodule:: compgenlnc.extractors.sourcedata.mature_to_precursor
 
-Functions
----------
+.. rubric:: Functions
    .. autofunction:: compgenlnc.extract_precursor
 
    .. autofunction:: compgenlnc.gen_precursors_csv

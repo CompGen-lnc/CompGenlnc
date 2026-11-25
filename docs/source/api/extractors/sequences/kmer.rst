@@ -4,8 +4,7 @@ K-mer (``compgenlnc.extractors.sequences.kmer``)
 
 .. automodule:: compgenlnc.extractors.sequences.kmer
 
-Functions
----------
+.. rubric:: Functions
    .. autofunction:: compgenlnc.get_kmer
 
    .. autofunction:: compgenlnc.get_kmer_by_name

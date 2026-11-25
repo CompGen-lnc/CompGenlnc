@@ -4,8 +4,7 @@ CTD (``compgenlnc.extractors.sequences.ctd``)
 
 .. automodule:: compgenlnc.extractors.sequences.ctd
 
-Functions
----------
+.. rubric:: Functions
    .. autofunction:: compgenlnc.get_ctd
 
    .. autofunction:: compgenlnc.get_ctd_by_name

@@ -4,8 +4,7 @@ Structure Predictor (``compgenlnc.extractors.sourcedata.structure_predictor``)
 
 .. automodule:: compgenlnc.extractors.sourcedata.structure_predictor
 
-Functions
----------
+.. rubric:: Functions
    .. autofunction:: compgenlnc.extract_2d_structure
 
    .. autofunction:: compgenlnc.extract_2d_structure_list

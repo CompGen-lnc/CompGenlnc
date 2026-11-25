@@ -4,8 +4,7 @@
 
 .. automodule:: compgenlnc.generators.ss_features
 
-Functions
----------
+.. rubric:: Functions
    .. autofunction:: compgenlnc.gen_ss_features
 
    .. autofunction:: compgenlnc.gen_lncrna_ss_features
