@@ -4,7 +4,7 @@ Loops (``compgenlnc.extractors.structures2d.loops``)
 
 .. automodule:: compgenlnc.extractors.structures2d.loops
 
-.. rubric:: Functions
+   .. rubric:: Functions
    .. autofunction:: compgenlnc.extract_2d_structure_loops
 
    .. autofunction:: compgenlnc.extract_2d_structure_loops_from_list

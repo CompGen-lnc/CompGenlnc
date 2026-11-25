@@ -4,7 +4,7 @@ Substructure Loops (``compgenlnc.extractors.interactions.substructure_loops``)
 
 .. automodule:: compgenlnc.extractors.interactions.substructure_loops
    
-.. rubric:: Functions
+   .. rubric:: Functions
    .. autofunction:: compgenlnc.get_substructure_loops
 
    .. autofunction:: compgenlnc.get_substructure_loops_from_list

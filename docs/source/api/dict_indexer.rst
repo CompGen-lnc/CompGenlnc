@@ -4,7 +4,7 @@ Dictionary Indexer (``compgenlnc.dict_indexer``)
 
 .. automodule:: compgenlnc.dict_indexer
 
-.. rubric:: Functions
+   .. rubric:: Functions
    .. autofunction:: compgenlnc.gen_indexes
 
    .. autofunction:: compgenlnc.gen_indexes_from_files

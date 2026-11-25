@@ -4,7 +4,7 @@ Base File Fetcher (``compgenlnc.extractors.sourcedata.basefile_fetcher``)
 
 .. automodule:: compgenlnc.extractors.sourcedata.basefile_fetcher
 
-.. rubric:: Functions
+   .. rubric:: Functions
    .. autofunction:: compgenlnc.fetch_file
 
    .. autofunction:: compgenlnc.fetch_lncrna_files

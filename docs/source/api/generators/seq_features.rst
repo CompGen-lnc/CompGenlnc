@@ -4,7 +4,7 @@ Sequence Features (``compgenlnc.generators.seq_features``)
 
 .. automodule:: compgenlnc.generators.seq_features
 
-.. rubric:: Functions
+   .. rubric:: Functions
    .. autofunction:: compgenlnc.gen_seq_features
 
    .. autofunction:: compgenlnc.gen_lncrna_seq_features

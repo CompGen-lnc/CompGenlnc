@@ -4,6 +4,6 @@
 
 .. automodule:: compgenlnc.structs.structure_record
 
-.. rubric:: Classes
+   .. rubric:: Classes
    .. autoclass:: compgenlnc.StructureRecord
       :members:

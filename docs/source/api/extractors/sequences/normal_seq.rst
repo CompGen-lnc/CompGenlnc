@@ -4,7 +4,7 @@ Normalized Sequence (``compgenlnc.extractors.sequences.normal_sequence``)
 
 .. automodule:: compgenlnc.extractors.sequences.normal_sequence
 
-.. rubric:: Functions
+   .. rubric:: Functions
    .. autofunction:: compgenlnc.recode_sequence
 
    .. autofunction:: compgenlnc.recode_sequence_list
