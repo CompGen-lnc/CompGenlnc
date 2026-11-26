@@ -1,0 +1,4 @@
+[TEMPLATE_CONFIGURATION]
+name = manualpdf
+template = book
+stylesheet = rinohtype_style.rst
