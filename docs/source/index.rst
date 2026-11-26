@@ -18,8 +18,13 @@ a lncRNA and a miRNA or the implicatation that the interaction could have.
    :caption: Contents
    :maxdepth: 2
    
-   Quickstart <quickstart>
-   API reference <api/index>
+   quickstart
+   database
+
+.. toctree::
+   :titlesonly:
+   
+   api/index
 
 About
 -----

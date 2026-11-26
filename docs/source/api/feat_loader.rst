@@ -4,7 +4,8 @@ Feature Loader (``compgenlnc.feat_loader``)
 
 .. automodule:: compgenlnc.feat_loader
 
-   .. rubric:: Functions
+   Functions
+   ---------
    .. autofunction:: compgenlnc.feat_loader.load_feature_set
    .. autofunction:: compgenlnc.get_seq_features
    .. autofunction:: compgenlnc.get_ss_features

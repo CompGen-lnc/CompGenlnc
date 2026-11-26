@@ -4,7 +4,8 @@ Sequence Record (``compgenlnc.structs.seq_record``)
 
 .. automodule:: compgenlnc.structs.seq_record
 
-   .. rubric:: Classes
+   Classes
+   -------
    .. autoclass:: compgenlnc.SeqRecord
       :members:
       

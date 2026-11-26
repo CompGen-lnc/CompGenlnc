@@ -4,7 +4,8 @@ Paths (``compgenlnc.consts.paths``)
 
 .. automodule:: compgenlnc.consts.paths
 
-   .. rubric:: Constants
+   Constants
+   ---------
    .. autodata:: compgenlnc.consts.paths.SEQ_SS_PREFIX
    .. autodata:: compgenlnc.consts.paths.LOOPS_PREFIX
    .. autodata:: compgenlnc.consts.paths.MIRANDA_PREFIX

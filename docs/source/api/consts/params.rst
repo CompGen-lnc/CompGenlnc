@@ -4,7 +4,8 @@ Params (``compgenlnc.consts.params``)
 
 .. automodule:: compgenlnc.consts.params
 
-   .. rubric:: Constants
+   Constants
+   ---------
    .. autodata:: compgenlnc.consts.params.LNCRNA
    .. autodata:: compgenlnc.consts.params.MIRNA
    .. autodata:: compgenlnc.consts.params.PRECURSOR

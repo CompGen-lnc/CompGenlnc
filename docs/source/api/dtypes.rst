@@ -4,7 +4,8 @@ Data Types (``compgenlnc.dtypes``)
 
 .. automodule:: compgenlnc.dtypes
 
-   .. rubric:: Variables
+   Variables
+   ---------
    .. autodata:: compgenlnc.dtypes.dtype_index
       :no-value:
    .. autodata:: compgenlnc.dtypes.dtype_interaction_pair

@@ -4,7 +4,8 @@ Binding Zone (``compgenlnc.extractors.interactions.binding_zone``)
 
 .. automodule:: compgenlnc.extractors.interactions.binding_zone
 
-   .. rubric:: Functions
+   Functions
+   ---------
    .. autofunction:: compgenlnc.predict_miranda
    .. autofunction:: compgenlnc.predict_miranda_from_list
    .. autofunction:: compgenlnc.predict_miranda_from_files

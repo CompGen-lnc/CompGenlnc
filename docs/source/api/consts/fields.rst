@@ -4,7 +4,8 @@ Fields (``compgenlnc.consts.fields``)
 
 .. automodule:: compgenlnc.consts.fields
 
-   .. rubric:: Constants
+   Constants
+   ---------
    .. autodata:: compgenlnc.consts.fields.KIND_FIELD
    .. autodata:: compgenlnc.consts.fields.LOW_POSITION
    .. autodata:: compgenlnc.consts.fields.HIGH_POSITION

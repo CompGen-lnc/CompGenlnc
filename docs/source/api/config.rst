@@ -4,11 +4,13 @@ Configuration (``compgenlnc.config``)
 
 .. automodule:: compgenlnc.config
 
-   .. rubric:: Constants
+   Constants
+   ---------
    .. autodata:: compgenlnc.config.PACKAGE_DIR
       :no-value:
 
-   .. rubric:: Variables
+   Variables
+   ---------
    .. autodata:: compgenlnc.config.base_path
       :no-value:
    .. autodata:: compgenlnc.config.conda_environment
@@ -18,7 +20,8 @@ Configuration (``compgenlnc.config``)
    .. autodata:: compgenlnc.config.log_file
       :no-value:
 
-   .. rubric:: Functions
+   Functions
+   ---------
    .. autofunction:: compgenlnc.set_base_path
    .. autofunction:: compgenlnc.set_conda_env
    .. autofunction:: compgenlnc.set_doc2vec_seed

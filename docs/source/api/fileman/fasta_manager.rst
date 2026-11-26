@@ -4,7 +4,8 @@ FASTA Manager (``compgenlnc.fileman.fasta_manager``)
 
 .. automodule:: compgenlnc.fileman.fasta_manager
 
-   .. rubric:: Functions
+   Functions
+   ---------
    .. autofunction:: compgenlnc.iter_fasta
    .. autofunction:: compgenlnc.load_fasta
    .. autofunction:: compgenlnc.save_fasta
