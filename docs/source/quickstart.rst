@@ -79,6 +79,45 @@ user:
 - binding zone files: files with the selected binding zones of interactions.
 - ``index.npy``: a numpy array with the indices of the interactions.
 
+Data organization
+^^^^^^^^^^^^^^^^^^^^^
+
+All files are stored in the same directory, which has the following structure:
+
+#. **lncrna**
+
+   Stores all the lncRNA files.
+
+   - `characterization`: stores seq+ss and loops files for each lncRNA.
+   - `dicts`: stores dictionaries of the lncRNA features.
+   - `fasta`: stores sequence and 2D structure FASTA files for lncRNAs.
+
+#. **mirna**
+
+   Stores all the precursor and mature miRNA files.
+
+   - `characterization`: stores seq+ss and loops files for each precursor
+     miRNA.
+   - `dicts`: stores dictionaries of the miRNA features.
+   - `fasta`: stores sequence FASTA files for miRNAs and 2D structure for
+     precursor miRNAs.
+
+#. **interactions**
+
+   Stores all the interaction files.
+
+   - `binding`: stores files with the selected binding zones.
+   - `miranda`: stores files with the miRanda output for each interaction.
+   - `pairs`: stores files with the positive and negative interactions 
+     separately.
+
+#. **embedding**
+
+   Stores all the indexing and model files.
+
+   - `dataset`: stores files with the indexed features.
+   - `models`: stores files with the trained models for some features.
+
 Using the package
 -----------------
 

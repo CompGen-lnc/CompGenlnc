@@ -1,4 +1,3 @@
-.. module:: compgenlnc
 
 =============
 API Reference
