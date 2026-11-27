@@ -121,7 +121,7 @@ LOOPS_PREFIX = "loops_"
 MIRANDA_PREFIX = "miranda_"
 """Prefix for miRanda output files."""
 BINDING_PREFIX = "binding_"
-"""Prefix for binding zone files."""
+"""Prefix for binding zone files and feature dictionaries for pairs."""
 
 # Main data dirs
 DATA_DIR = DyPath("data")

@@ -32,6 +32,7 @@ from compgenlnc.fileman.fasta_manager import iter_fasta, iter_seq_ss
 from compgenlnc.typing.numpy_dtypes import (
     Index,
     InteractionPair,
+    InteractionTuple,
 )
 
 if TYPE_CHECKING:
@@ -264,7 +265,7 @@ def interactions_from_index(
     *,
     interactions_csv: StrPath = PAIRS_FILE,
     index_file: StrPath = INDEX_NPY,
-) -> NDArray[InteractionPair]:
+) -> NDArray[InteractionTuple]:
     """Index the interaction pairs.
 
     Parameters
@@ -278,7 +279,7 @@ def interactions_from_index(
 
     Returns
     -------
-    numpy.ndarray of InteractionPair
+    numpy.ndarray of InteractionTuple
         A 1D array of the interaction pairs sorted by indexes.
     """
     global _indexed_interactions
