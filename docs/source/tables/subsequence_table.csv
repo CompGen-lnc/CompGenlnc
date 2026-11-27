@@ -1,0 +1,11 @@
+Feature,lncRNA,pre-miRNA,miRNA,Format
+Sequence,✓,,✓,FASTA
+Interaction length,✓,,✓,Number
+Interaction energy,✓,,✓,Number
+"Sub. k-mers(k = 1, 2, 3)",,,✓,Vector (84)
+"Sub. k-mers (k = 1, 2, 3, 4)",✓,,,Vector (340)
+Sub. CTD,✓,,✓,Vector (30)
+Sub. Doc2Vec,✓,,✓,Vector (256)
+Sub. Role2Vec,✓,,✓,Vector (256)
+Recodede subsequence,✓,,✓,Vector (Length)
+Normalized subsequence,✓,,✓,Vector (N)

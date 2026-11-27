@@ -1,0 +1,12 @@
+Feature,lncRNA,pre-miRNA,miRNA,Format
+2D structure,✓,✓,,Dot-bracket
+MFE,✓,✓,,Number
+Hairpins,✓,✓,,Number
+Hairpins MFE,✓,✓,,Number
+Stack,✓,✓,,Number
+Stack MFE,✓,✓,,Number
+Multi-loops,✓,✓,,Number
+Multi-loops MFE,✓,✓,,Number
+Recoded structure [#]_,✓,✓,,Vector (Length)
+Adjacency matrix [#]_,✓,✓,,Matrix (Length x Length)
+Normalized matrix,✓,✓,,Matrix (N x N)

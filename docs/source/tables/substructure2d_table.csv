@@ -1,0 +1,10 @@
+Feature,lncRNA,pre-miRNA,miRNA,Format
+2D substructure,✓,✓,,Dot-bracket
+Sub. MFE,✓,✓,,Number
+Sub. Hairpins,✓,✓,,Number
+Sub. Hairpins MFE,✓,✓,,Number
+Sub. Stack,✓,✓,,Number
+Sub. Stack MFE,✓,✓,,Number
+Sub. Multi-loops,✓,✓,,Number
+Sub. Multi-loops MFE,✓,✓,,Number
+Recoded substructure,✓,✓,,Vector (Length)

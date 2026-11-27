@@ -1,0 +1,10 @@
+Feature,lncRNA,pre-miRNA,miRNA,Format
+Sequence,✓,✓,✓,FASTA
+Length,✓,✓,✓,Number
+"k-mers(k = 1, 2, 3)",,✓,✓,Vector (84)
+"k-mers (k = 1, 2, 3, 4)",✓,,,Vector (340)
+CTD,✓,✓,✓,Vector (30)
+Doc2Vec,✓,✓,✓,Vector (256)
+Role2Vec,✓,✓,✓,Vector (256)
+Recoded sequence [#]_,✓,,✓,Vector (Length)
+Normalized sequence [#]_,✓,,✓,Vector (N)

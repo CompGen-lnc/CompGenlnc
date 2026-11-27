@@ -10,7 +10,7 @@ structure is organized as follows.
 Sequence Characterization
 -------------------------
 .. csv-table:: Sequence Features
-   :file: data/sequence_table.csv
+   :file: tables/sequence_table.csv
    :header-rows: 1
    :align: center
 
@@ -173,7 +173,7 @@ deviation.
 2D Structure Characterization
 -----------------------------
 .. csv-table:: 2D Structure Features
-   :file: data/structure2d_table.csv
+   :file: tables/structure2d_table.csv
    :header-rows: 1
    :align: center
 
@@ -252,12 +252,12 @@ To achieve fixed-size, length-independent representation:
 Interaction Characterization
 ----------------------------
 .. csv-table:: Subsequence Features
-   :file: data/subsequence_table.csv
+   :file: tables/subsequence_table.csv
    :header-rows: 1
    :align: center
 
 .. csv-table:: 2D Substructure Features
-   :file: data/substructure2d_table.csv
+   :file: tables/substructure2d_table.csv
    :header-rows: 1
    :align: center
 
