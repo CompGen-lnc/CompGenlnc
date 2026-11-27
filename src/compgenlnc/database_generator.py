@@ -245,11 +245,11 @@ def gen_source_data(
         mask = np.isin(str_interactions, binding_files)
         binding_exclude = interactions[mask]
     predict_miranda_from_files(
+        MIRANDA_DIR,
         PAIRS_FILE,
         LNCRNA_FASTA,
         PRE_MIRNA_FASTA,
         MAT_MIRNA_FASTA,
-        MIRANDA_DIR,
         exclude=miranda_exclude,
     )
     extract_binding_zone_from_dir(

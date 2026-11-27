@@ -189,7 +189,7 @@ def gen_doc2vec_dict(
             complete_msg = "\r  Model loaded in memory\n"
         else:
             send_msg("  Training data model")
-            model = train_doc2vec_model(records, model_file)
+            model = train_doc2vec_model(records, model_file=model_file)
             complete_msg = "\r  Data model trained \n"
         send_msg(complete_msg)
 
