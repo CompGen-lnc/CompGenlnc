@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import requests
@@ -59,6 +60,7 @@ def fetch_file(
     it = req.iter_content(4096)
     desc = f"Downloading {file_desc}"
     chunks = track_progress(it, desc, total, _funits[exp], steps=steps)
+    Path(file).parent.mkdir(parents=True, exist_ok=True)
     with open(file, "wb") as out_file:
         for chunk in chunks:
             out_file.write(chunk)

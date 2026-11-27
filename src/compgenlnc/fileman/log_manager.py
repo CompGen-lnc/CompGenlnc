@@ -28,7 +28,7 @@ def send_msg(
     """
     if config.log_file is None:
         return
-    if seek is not None:
+    if seek != 0:
         config.log_file.seek(seek, seek_mode)
     config.log_file.write(msg)
     if flush:
