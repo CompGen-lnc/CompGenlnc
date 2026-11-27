@@ -40,6 +40,11 @@ license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 readme = "README.md"
 
+[dependency-groups]
+test = ["pytest"]
+docs = ["sphinx", "furo", "rinohtype", "numpydoc"]
+style = ["ruff"]
+
 # Package CLI
 [project.scripts]
 compgenlnc-install-deps = "compgenlnc.setup_deps:install_deps"
