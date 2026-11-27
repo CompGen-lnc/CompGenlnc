@@ -39,3 +39,13 @@ class SeqSSRecord:
         self.id = rna_id
         self.seq = SeqRecord(seq)
         self.ss = StructureRecord(ss)
+
+    def __hash__(self) -> int:
+        """Generate the hash value from the RNA ID.
+
+        Returns
+        -------
+        int
+            Hash value for the RNA.
+        """
+        return hash(self.id)
