@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 log_file: TextIOBase = sys.stdout
 """Text buffer to which the processing logs will be written.
 
-Default: `sys.stdout`.
+Default: `sys.stdout`
 """
 
 # Seeds
 doc2vec_seed: _ArrayLikeFloat_co | None = None
 """Seed used for Doc2Vec calculation.
 
-Default: `None`.
+Default: `None`
 """
 
 # Paths
@@ -31,14 +31,14 @@ PACKAGE_DIR: Final[Path] = Path(__file__).resolve().parent
 base_path: Path = PACKAGE_DIR
 """Path where the data directory is located.
 
-Default: `PACKAGE_DIR`.
+Default: `PACKAGE_DIR`
 """
 
 # Environments
 conda_environment: str = "base"
 """Conda virtual environment where miRanda is installed.
 
-Default: `'base'`.
+Default: `'base'`
 """
 
 
